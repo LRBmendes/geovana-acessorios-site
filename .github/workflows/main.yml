@@ -10,9 +10,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Baixar site
-        run: |
-          curl -L "https://catalogo.innosystem.com.br/atacadoaj_g2" -o site.html
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Mostrar arquivo
-        run: cat site.html
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar bibliotecas
+        run: pip install requests beautifulsoup4
+
+      - name: Rodar scraper inicial
+        run: |
+          python <<EOF
+          import requests
+          from bs4 import BeautifulSoup
+
+          url = "https://catalogo.innosystem.com.br/atacadoaj_g2"
+          html = requests.get(url, timeout=30).text
+
+          print("SITE BAIXADO:", len(html), "caracteres")
+
+          soup = BeautifulSoup(html, "html.parser")
+
+          links = soup.find_all("a")
+
+          encontrados = 0
+          for a in links:
+              href = a.get("href", "")
+              texto = a.get_text(" ", strip=True)
+
+              if href and texto:
+                  print("LINK:", texto[:120], "=>", href)
+                  encontrados += 1
+
+              if encontrados >= 30:
+                  break
+
+          print("FIM")
+          EOF
