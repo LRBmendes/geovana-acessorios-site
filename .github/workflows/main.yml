@@ -9,14 +9,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - run: pip install requests beautifulsoup4
 
-      - name: Ler HTML Produtos
+      - name: Extrair Produtos Reais
         run: |
           python <<EOF
           import requests
@@ -29,46 +27,35 @@ jobs:
           html = session.get(url).text
           soup = BeautifulSoup(html,"html.parser")
 
-          alvo = None
+          alvo=None
 
           for a in soup.find_all("a"):
-              txt = a.get_text(" ", strip=True).lower()
+              txt=a.get_text(" ",strip=True).lower()
               if "brincos" in txt and "semijoia" in txt:
-                  alvo = a.get("href")
+                  alvo=a.get("href")
                   break
 
-          m = re.search(r"__doPostBack\('([^']+)',''\)", alvo)
-          target = m.group(1)
+          m=re.search(r"__doPostBack\('([^']+)',''\)",alvo)
+          target=m.group(1)
 
-          form = {}
+          form={}
           for i in soup.find_all("input"):
-              n = i.get("name")
-              v = i.get("value","")
+              n=i.get("name")
+              v=i.get("value","")
               if n:
                   form[n]=v
 
           form["__EVENTTARGET"]=target
           form["__EVENTARGUMENT"]=""
 
-          r = session.post(url,data=form)
+          r=session.post(url,data=form)
 
-          soup2 = BeautifulSoup(r.text,"html.parser")
+          html2=r.text
+          linhas=html2.splitlines()
 
-          print("STATUS:", r.status_code)
-
-          print("IMAGENS:")
-          for img in soup2.find_all("img")[:20]:
-              src = img.get("src","")
-              if src:
-                  print(src)
-
-          print("TEXTOS:")
-          textos = soup2.stripped_strings
-
-          c=0
-          for t in textos:
-              print(t)
-              c+=1
-              if c>=200:
-                  break
+          for i,l in enumerate(linhas[:600]):
+              if "produto.jpg" in l.lower():
+                  print("----- BLOCO -----")
+                  for x in linhas[i:i+20]:
+                      print(x.strip())
           EOF
