@@ -9,53 +9,106 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - run: pip install requests beautifulsoup4
 
-      - name: Extrair Produtos Reais
+      - name: Capturar 100 produtos reais
+        env:
+          SUPABASE_URL: https://kcydlzerrhezpcxkqonx.supabase.co
+          SUPABASE_KEY: sb_publishable_49LGouu90RYiPtXoTh8-rg_yOWJd46d
         run: |
           python <<EOF
           import requests
-          from bs4 import BeautifulSoup
           import re
+          import json
+          import os
+          from bs4 import BeautifulSoup
 
-          session = requests.Session()
+          SUPABASE_URL = os.environ["SUPABASE_URL"]
+          SUPABASE_KEY = os.environ["SUPABASE_KEY"]
+
           url = "https://catalogo.innosystem.com.br/atacadoaj_g2"
 
-          html = session.get(url).text
-          soup = BeautifulSoup(html,"html.parser")
+          html = requests.get(url, timeout=30).text
+          soup = BeautifulSoup(html, "html.parser")
 
-          alvo=None
+          cards = soup.select("div.margem")
 
-          for a in soup.find_all("a"):
-              txt=a.get_text(" ",strip=True).lower()
-              if "brincos" in txt and "semijoia" in txt:
-                  alvo=a.get("href")
-                  break
+          print("CARDS ENCONTRADOS:", len(cards))
 
-          m=re.search(r"__doPostBack\('([^']+)',''\)",alvo)
-          target=m.group(1)
+          headers = {
+              "apikey": SUPABASE_KEY,
+              "Authorization": "Bearer " + SUPABASE_KEY,
+              "Content-Type": "application/json",
+              "Prefer": "return=minimal"
+          }
 
-          form={}
-          for i in soup.find_all("input"):
-              n=i.get("name")
-              v=i.get("value","")
+          enviados = 0
+
+          for card in cards[:100]:
+              nome = ""
+              preco = 0
+              categoria = ""
+              codigo = ""
+              imagem = ""
+
+              n = card.select_one(".tnom")
               if n:
-                  form[n]=v
+                  nome = n.get_text(" ", strip=True)
 
-          form["__EVENTTARGET"]=target
-          form["__EVENTARGUMENT"]=""
+              p = card.select_one(".tprc")
+              if p:
+                  txt = p.get_text(" ", strip=True)
+                  txt = re.sub(r'[^0-9,\.]', '', txt)
+                  txt = txt.replace('.', '').replace(',', '.')
+                  try:
+                      preco = float(txt)
+                  except:
+                      preco = 0
 
-          r=session.post(url,data=form)
+              c = card.select_one(".tcat")
+              if c:
+                  categoria = c.get_text(" ", strip=True)
 
-          html2=r.text
-          linhas=html2.splitlines()
+                  m = re.search(r'c[oó]d\.?\s*(\d+)', categoria.lower())
+                  if m:
+                      codigo = m.group(1)
 
-          for i,l in enumerate(linhas[:600]):
-              if "produto.jpg" in l.lower():
-                  print("----- BLOCO -----")
-                  for x in linhas[i:i+20]:
-                      print(x.strip())
+              img = card.select_one("img")
+              if img:
+                  imagem = img.get("src", "")
+                  if imagem.startswith("/"):
+                      imagem = "https://catalogo.innosystem.com.br" + imagem
+
+              if not nome:
+                  continue
+
+              payload = {
+                  "nome": nome,
+                  "codigo": codigo,
+                  "categoria": categoria,
+                  "preco_custo": preco,
+                  "preco_venda": round(preco * 2.2, 2),
+                  "imagem_url": imagem,
+                  "produto_url": url,
+                  "ativo": True
+              }
+
+              r = requests.post(
+                  SUPABASE_URL + "/rest/v1/produtos",
+                  headers=headers,
+                  data=json.dumps(payload),
+                  timeout=30
+              )
+
+              print(nome[:60], "->", r.status_code)
+
+              if r.status_code in [200, 201]:
+                  enviados += 1
+
+          print("TOTAL ENVIADOS:", enviados)
           EOF
