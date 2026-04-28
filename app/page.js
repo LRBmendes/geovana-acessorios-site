@@ -3,10 +3,9 @@ export default function Home() {
     <main
       style={{
         minHeight: "100vh",
-        margin: 0,
+        background: "#f7f1e8",
         fontFamily: "Georgia, serif",
-        background: "#f8f3ed",
-        color: "#5e5146",
+        color: "#5f5347",
       }}
     >
       {/* TOPO */}
@@ -15,22 +14,24 @@ export default function Home() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "24px 30px",
-          borderBottom: "1px solid #e6ddd1",
+          padding: "18px 25px",
           background: "#ffffff",
+          borderBottom: "1px solid #eee",
           position: "sticky",
           top: 0,
-          zIndex: 10,
+          zIndex: 99,
         }}
       >
-        <h2 style={{ margin: 0, letterSpacing: "2px" }}>
-          GEOVANA
-        </h2>
+        <img
+          src="/logo.jpeg"
+          alt="Geovana"
+          style={{ height: "70px", borderRadius: "10px" }}
+        />
 
         <a
-          href="https://wa.me/5567999999999"
+          href="https://wa.me/5567999481768"
           style={{
-            background: "#b89d7b",
+            background: "#b79d7b",
             color: "#fff",
             padding: "12px 22px",
             borderRadius: "30px",
@@ -45,24 +46,19 @@ export default function Home() {
       {/* HERO */}
       <section
         style={{
-          padding: "90px 20px",
           textAlign: "center",
-          background: "linear-gradient(to bottom,#f8f3ed,#efe6da)",
+          padding: "70px 20px",
         }}
       >
-        <p style={{ letterSpacing: "4px", fontSize: "14px" }}>
-          JOIAS E ACESSÓRIOS
-        </p>
-
         <h1
           style={{
-            fontSize: "64px",
+            fontSize: "56px",
             maxWidth: "900px",
-            margin: "20px auto",
+            margin: "0 auto 20px",
             lineHeight: "1.2",
           }}
         >
-          Elegância para mulheres que gostam de se destacar
+          Acessórios que transformam sua presença
         </h1>
 
         <p
@@ -73,35 +69,35 @@ export default function Home() {
             lineHeight: "1.7",
           }}
         >
-          Peças delicadas, modernas e escolhidas para valorizar sua beleza em
-          qualquer ocasião.
+          Peças delicadas, modernas e elegantes para valorizar sua beleza todos
+          os dias.
         </p>
 
         <a
-          href="https://wa.me/5567999999999"
+          href="https://wa.me/5567999481768"
           style={{
-            background: "#5e5146",
+            background: "#5f5347",
             color: "#fff",
             padding: "18px 34px",
-            borderRadius: "40px",
+            borderRadius: "35px",
             textDecoration: "none",
             fontWeight: "bold",
             fontSize: "18px",
           }}
         >
-          Comprar Agora
+          Comprar no WhatsApp
         </a>
       </section>
 
-      {/* CATEGORIAS */}
+      {/* PRODUTOS */}
       <section
         style={{
-          padding: "70px 25px",
+          padding: "50px 20px",
           textAlign: "center",
         }}
       >
-        <h2 style={{ fontSize: "42px", marginBottom: "40px" }}>
-          Nossas Categorias
+        <h2 style={{ fontSize: "42px", marginBottom: "35px" }}>
+          Destaques
         </h2>
 
         <div
@@ -113,44 +109,61 @@ export default function Home() {
             margin: "0 auto",
           }}
         >
-          {["Brincos", "Colares", "Pulseiras", "Anéis"].map((item) => (
+          {[
+            "Brincos Elegantes",
+            "Colares Delicados",
+            "Pulseiras Premium",
+            "Anéis Modernos",
+          ].map((item) => (
             <div
               key={item}
               style={{
-                background: "#ffffff",
+                background: "#fff",
                 padding: "40px 20px",
                 borderRadius: "16px",
-                boxShadow: "0 8px 18px rgba(0,0,0,0.05)",
-                fontSize: "24px",
+                boxShadow: "0 10px 20px rgba(0,0,0,0.05)",
               }}
             >
-              {item}
+              <p style={{ fontSize: "22px" }}>{item}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* BENEFICIOS */}
+      {/* CTA */}
       <section
         style={{
-          background: "#ffffff",
-          padding: "70px 25px",
+          background: "#e8dccd",
+          padding: "70px 20px",
           textAlign: "center",
         }}
       >
-        <h2 style={{ fontSize: "42px", marginBottom: "35px" }}>
-          Por que comprar conosco?
+        <h2 style={{ fontSize: "40px" }}>
+          Receba nosso catálogo atualizado
         </h2>
 
-        <p style={{ fontSize: "22px", maxWidth: "800px", margin: "0 auto" }}>
-          Atendimento personalizado, catálogo atualizado e peças que acompanham
-          sua personalidade.
+        <p style={{ fontSize: "22px", marginBottom: "30px" }}>
+          Fale conosco e veja as novidades.
         </p>
+
+        <a
+          href="https://wa.me/5567999481768"
+          style={{
+            background: "#5f5347",
+            color: "#fff",
+            padding: "16px 34px",
+            borderRadius: "30px",
+            textDecoration: "none",
+            fontWeight: "bold",
+          }}
+        >
+          Chamar no WhatsApp
+        </a>
       </section>
 
-      {/* WHATS FIXO */}
+      {/* BOTAO FIXO */}
       <a
-        href="https://wa.me/5567999999999"
+        href="https://wa.me/5567999481768"
         style={{
           position: "fixed",
           right: "20px",
@@ -167,15 +180,13 @@ export default function Home() {
         💬
       </a>
 
-      {/* RODAPE */}
       <footer
         style={{
           textAlign: "center",
-          padding: "35px",
-          fontSize: "15px",
+          padding: "30px",
         }}
       >
-        © 2026 Geovana Acessórios
+        © 2026 Geovana Joias e Acessórios
       </footer>
     </main>
   );
