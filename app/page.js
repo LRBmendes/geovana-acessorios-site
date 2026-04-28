@@ -1,4 +1,21 @@
-export default function Home() {
+async function getProdutos() {
+  const res = await fetch(
+    "https://kcydlzerrhezpcxkqonx.supabase.co/rest/v1/produtos?select=*&order=id.desc&limit=8",
+    {
+      headers: {
+        apikey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  return res.json();
+}
+
+export default async function Home() {
+  const produtos = await getProdutos();
+
   return (
     <main
       style={{
@@ -6,34 +23,20 @@ export default function Home() {
         background: "#f7f1e8",
         fontFamily: "Georgia, serif",
         color: "#5f5347",
-        margin: 0,
       }}
     >
-      {/* TOPO */}
       <header
         style={{
           display: "flex",
-          flexWrap: "wrap",
           justifyContent: "space-between",
           alignItems: "center",
-          gap: "15px",
-          padding: "18px 20px",
-          background: "#ffffff",
-          borderBottom: "1px solid #eee",
-          position: "sticky",
-          top: 0,
-          zIndex: 99,
+          padding: "20px",
+          background: "#fff",
         }}
       >
         <img
           src="/logo.jpeg"
-          alt="Geovana"
-          style={{
-            width: "90px",
-            height: "90px",
-            objectFit: "cover",
-            borderRadius: "8px",
-          }}
+          style={{ width: "90px", borderRadius: "8px" }}
         />
 
         <a
@@ -41,194 +44,89 @@ export default function Home() {
           style={{
             background: "#b79d7b",
             color: "#fff",
-            padding: "12px 22px",
+            padding: "12px 20px",
             borderRadius: "30px",
             textDecoration: "none",
-            fontWeight: "bold",
-            fontSize: "16px",
           }}
         >
           WhatsApp
         </a>
       </header>
 
-      {/* HERO */}
-      <section
-        style={{
-          textAlign: "center",
-          padding: "60px 20px 30px",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "clamp(32px, 8vw, 58px)",
-            maxWidth: "900px",
-            margin: "0 auto 20px",
-            lineHeight: "1.15",
-          }}
-        >
-          Acessórios que transformam sua presença
+      <section style={{ padding: "50px 20px", textAlign: "center" }}>
+        <h1 style={{ fontSize: "52px" }}>
+          Geovana Acessórios
         </h1>
-
-        <p
-          style={{
-            fontSize: "clamp(18px,4vw,22px)",
-            maxWidth: "760px",
-            margin: "0 auto 35px",
-            lineHeight: "1.7",
-          }}
-        >
-          Peças delicadas, modernas e elegantes para valorizar sua beleza todos
-          os dias.
-        </p>
-
-        <a
-          href="https://wa.me/5567999481768"
-          style={{
-            background: "#5f5347",
-            color: "#fff",
-            padding: "16px 30px",
-            borderRadius: "35px",
-            textDecoration: "none",
-            fontWeight: "bold",
-            fontSize: "16px",
-            display: "inline-block",
-          }}
-        >
-          Comprar no WhatsApp
-        </a>
+        <p>Peças modernas e elegantes</p>
       </section>
 
-      {/* DESTAQUES */}
-      <section
-        style={{
-          padding: "40px 20px",
-          textAlign: "center",
-        }}
-      >
+      <section style={{ padding: "20px" }}>
         <h2
           style={{
-            fontSize: "clamp(30px,7vw,42px)",
+            textAlign: "center",
             marginBottom: "30px",
+            fontSize: "38px",
           }}
         >
-          Destaques
+          Novidades
         </h2>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
-            gap: "18px",
-            maxWidth: "1100px",
+            gridTemplateColumns:
+              "repeat(auto-fit,minmax(230px,1fr))",
+            gap: "20px",
+            maxWidth: "1200px",
             margin: "0 auto",
           }}
         >
-          {[
-            "Brincos Elegantes",
-            "Colares Delicados",
-            "Pulseiras Premium",
-            "Anéis Modernos",
-          ].map((item) => (
+          {produtos.map((item) => (
             <div
-              key={item}
+              key={item.id}
               style={{
-                background: "#ffffff",
-                padding: "30px 18px",
+                background: "#fff",
                 borderRadius: "18px",
-                boxShadow: "0 10px 22px rgba(0,0,0,0.05)",
+                padding: "15px",
+                boxShadow: "0 10px 25px rgba(0,0,0,.05)",
               }}
             >
-              <p
+              <img
+                src={item.imagem_url}
                 style={{
-                  fontSize: "clamp(18px,4vw,22px)",
-                  margin: 0,
+                  width: "100%",
+                  height: "230px",
+                  objectFit: "cover",
+                  borderRadius: "12px",
+                }}
+              />
+
+              <h3 style={{ fontSize: "16px" }}>
+                {item.nome}
+              </h3>
+
+              <p style={{ fontWeight: "bold" }}>
+                R$ {item.preco_venda}
+              </p>
+
+              <a
+                href={`https://wa.me/5567999481768?text=Olá,%20tenho%20interesse%20em:%20${item.nome}`}
+                target="_blank"
+                style={{
+                  display: "block",
+                  background: "#5f5347",
+                  color: "#fff",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  textDecoration: "none",
                 }}
               >
-                {item}
-              </p>
+                Comprar no WhatsApp
+              </a>
             </div>
           ))}
         </div>
       </section>
-
-      {/* CTA */}
-      <section
-        style={{
-          background: "#e7dac8",
-          padding: "60px 20px",
-          textAlign: "center",
-          marginTop: "30px",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "clamp(30px,7vw,42px)",
-            marginBottom: "18px",
-            lineHeight: "1.2",
-          }}
-        >
-          Receba nosso catálogo atualizado
-        </h2>
-
-        <p
-          style={{
-            fontSize: "clamp(18px,4vw,22px)",
-            marginBottom: "28px",
-          }}
-        >
-          Fale conosco no WhatsApp e veja as novidades.
-        </p>
-
-        <a
-          href="https://wa.me/5567999481768"
-          style={{
-            background: "#5f5347",
-            color: "#fff",
-            padding: "16px 30px",
-            borderRadius: "30px",
-            textDecoration: "none",
-            fontWeight: "bold",
-            display: "inline-block",
-          }}
-        >
-          Chamar no WhatsApp
-        </a>
-      </section>
-
-      {/* BOTÃO FIXO */}
-      <a
-        href="https://wa.me/5567999481768"
-        style={{
-          position: "fixed",
-          right: "15px",
-          bottom: "15px",
-          background: "#25D366",
-          color: "#fff",
-          width: "58px",
-          height: "58px",
-          borderRadius: "50%",
-          textDecoration: "none",
-          fontSize: "26px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
-        }}
-      >
-        💬
-      </a>
-
-      {/* RODAPÉ */}
-      <footer
-        style={{
-          textAlign: "center",
-          padding: "25px 15px",
-          fontSize: "14px",
-        }}
-      >
-        © 2026 02 Geovana Joias e Acessórios
-      </footer>
     </main>
   );
 }
