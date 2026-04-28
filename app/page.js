@@ -22,11 +22,15 @@ export default function Home() {
           zIndex: 99,
         }}
       >
-        <img
-          src="/logo.jpeg"
-          alt="Geovana"
-          style={{ height: "70px", borderRadius: "10px" }}
-        />
+       <img
+  src="/logo.jpeg"
+  alt="Geovana"
+  style={{
+    height: "120px",
+    width: "auto",
+    objectFit: "contain"
+  }}
+/>
 
         <a
           href="https://wa.me/5567999481768"
