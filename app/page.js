@@ -24,7 +24,7 @@ export default function Home() {
         }}
       >
         <img
-          src="/app/public/logo.jpeg"
+          src="/logo.jpeg"
           alt="Geovana"
           style={{
             height: "120px",
@@ -193,7 +193,7 @@ export default function Home() {
           padding: "30px",
         }}
       >
-        © 2026 Geovana Joias e Acessórios
+        © 2026 01 Geovana Joias e Acessórios
       </footer>
     </main>
   );
