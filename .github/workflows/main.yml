@@ -21,31 +21,76 @@ jobs:
       - name: Instalar bibliotecas
         run: pip install requests beautifulsoup4
 
-      - name: Rodar scraper inicial
+      - name: Rodar ETAPA 2
         run: |
           python <<EOF
           import requests
           from bs4 import BeautifulSoup
+          import re
+
+          session = requests.Session()
 
           url = "https://catalogo.innosystem.com.br/atacadoaj_g2"
-          html = requests.get(url, timeout=30).text
 
-          print("SITE BAIXADO:", len(html), "caracteres")
+          print("ABRINDO SITE...")
+          html = session.get(url, timeout=30).text
 
           soup = BeautifulSoup(html, "html.parser")
 
-          links = soup.find_all("a")
+          categorias = []
 
-          encontrados = 0
-          for a in links:
+          for a in soup.find_all("a"):
               href = a.get("href", "")
               texto = a.get_text(" ", strip=True)
 
-              if href and texto:
-                  print("LINK:", texto[:120], "=>", href)
-                  encontrados += 1
+              if "__doPostBack" in href and texto:
+                  categorias.append((texto, href))
 
-              if encontrados >= 30:
+          print("TOTAL CATEGORIAS:", len(categorias))
+
+          for nome, href in categorias[:5]:
+              print("CATEGORIA:", nome)
+
+          print("------ TESTANDO PRIMEIRA CATEGORIA ------")
+
+          nome_cat, href = categorias[0]
+
+          m = re.search(r"__doPostBack\('([^']+)',''\)", href)
+
+          if not m:
+              print("POSTBACK NÃO ENCONTRADO")
+              exit()
+
+          target = m.group(1)
+
+          form = {}
+
+          for inp in soup.find_all("input"):
+              name = inp.get("name")
+              value = inp.get("value", "")
+              if name:
+                  form[name] = value
+
+          form["__EVENTTARGET"] = target
+          form["__EVENTARGUMENT"] = ""
+
+          resposta = session.post(url, data=form, timeout=30)
+
+          print("RESPOSTA:", resposta.status_code)
+          print("HTML RECEBIDO:", len(resposta.text))
+
+          soup2 = BeautifulSoup(resposta.text, "html.parser")
+
+          textos = soup2.get_text("\n", strip=True).split("\n")
+
+          exibidos = 0
+          for t in textos:
+              t = t.strip()
+              if len(t) > 8:
+                  print(t[:120])
+                  exibidos += 1
+
+              if exibidos >= 50:
                   break
 
           print("FIM")
