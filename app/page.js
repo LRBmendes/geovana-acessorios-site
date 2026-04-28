@@ -13,9 +13,11 @@ export default function Home() {
       <header
         style={{
           display: "flex",
+          flexWrap: "wrap",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "18px 28px",
+          gap: "15px",
+          padding: "18px 20px",
           background: "#ffffff",
           borderBottom: "1px solid #eee",
           position: "sticky",
@@ -27,9 +29,10 @@ export default function Home() {
           src="/logo.jpeg"
           alt="Geovana"
           style={{
-            height: "120px",
-            width: "auto",
-            objectFit: "contain",
+            width: "90px",
+            height: "90px",
+            objectFit: "cover",
+            borderRadius: "8px",
           }}
         />
 
@@ -38,10 +41,11 @@ export default function Home() {
           style={{
             background: "#b79d7b",
             color: "#fff",
-            padding: "12px 24px",
+            padding: "12px 22px",
             borderRadius: "30px",
             textDecoration: "none",
             fontWeight: "bold",
+            fontSize: "16px",
           }}
         >
           WhatsApp
@@ -52,15 +56,15 @@ export default function Home() {
       <section
         style={{
           textAlign: "center",
-          padding: "70px 20px 40px",
+          padding: "60px 20px 30px",
         }}
       >
         <h1
           style={{
-            fontSize: "58px",
+            fontSize: "clamp(32px, 8vw, 58px)",
             maxWidth: "900px",
             margin: "0 auto 20px",
-            lineHeight: "1.2",
+            lineHeight: "1.15",
           }}
         >
           Acessórios que transformam sua presença
@@ -68,7 +72,7 @@ export default function Home() {
 
         <p
           style={{
-            fontSize: "22px",
+            fontSize: "clamp(18px,4vw,22px)",
             maxWidth: "760px",
             margin: "0 auto 35px",
             lineHeight: "1.7",
@@ -83,11 +87,12 @@ export default function Home() {
           style={{
             background: "#5f5347",
             color: "#fff",
-            padding: "18px 34px",
+            padding: "16px 30px",
             borderRadius: "35px",
             textDecoration: "none",
             fontWeight: "bold",
-            fontSize: "18px",
+            fontSize: "16px",
+            display: "inline-block",
           }}
         >
           Comprar no WhatsApp
@@ -97,19 +102,24 @@ export default function Home() {
       {/* DESTAQUES */}
       <section
         style={{
-          padding: "50px 20px",
+          padding: "40px 20px",
           textAlign: "center",
         }}
       >
-        <h2 style={{ fontSize: "42px", marginBottom: "35px" }}>
+        <h2
+          style={{
+            fontSize: "clamp(30px,7vw,42px)",
+            marginBottom: "30px",
+          }}
+        >
           Destaques
         </h2>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-            gap: "20px",
+            gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
+            gap: "18px",
             maxWidth: "1100px",
             margin: "0 auto",
           }}
@@ -124,12 +134,19 @@ export default function Home() {
               key={item}
               style={{
                 background: "#ffffff",
-                padding: "40px 20px",
+                padding: "30px 18px",
                 borderRadius: "18px",
                 boxShadow: "0 10px 22px rgba(0,0,0,0.05)",
               }}
             >
-              <p style={{ fontSize: "22px", margin: 0 }}>{item}</p>
+              <p
+                style={{
+                  fontSize: "clamp(18px,4vw,22px)",
+                  margin: 0,
+                }}
+              >
+                {item}
+              </p>
             </div>
           ))}
         </div>
@@ -139,16 +156,27 @@ export default function Home() {
       <section
         style={{
           background: "#e7dac8",
-          padding: "70px 20px",
+          padding: "60px 20px",
           textAlign: "center",
-          marginTop: "40px",
+          marginTop: "30px",
         }}
       >
-        <h2 style={{ fontSize: "42px", marginBottom: "18px" }}>
+        <h2
+          style={{
+            fontSize: "clamp(30px,7vw,42px)",
+            marginBottom: "18px",
+            lineHeight: "1.2",
+          }}
+        >
           Receba nosso catálogo atualizado
         </h2>
 
-        <p style={{ fontSize: "22px", marginBottom: "30px" }}>
+        <p
+          style={{
+            fontSize: "clamp(18px,4vw,22px)",
+            marginBottom: "28px",
+          }}
+        >
           Fale conosco no WhatsApp e veja as novidades.
         </p>
 
@@ -157,10 +185,11 @@ export default function Home() {
           style={{
             background: "#5f5347",
             color: "#fff",
-            padding: "16px 34px",
+            padding: "16px 30px",
             borderRadius: "30px",
             textDecoration: "none",
             fontWeight: "bold",
+            display: "inline-block",
           }}
         >
           Chamar no WhatsApp
@@ -172,14 +201,18 @@ export default function Home() {
         href="https://wa.me/5567999481768"
         style={{
           position: "fixed",
-          right: "20px",
-          bottom: "20px",
+          right: "15px",
+          bottom: "15px",
           background: "#25D366",
           color: "#fff",
-          padding: "16px 18px",
+          width: "58px",
+          height: "58px",
           borderRadius: "50%",
           textDecoration: "none",
-          fontSize: "22px",
+          fontSize: "26px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
         }}
       >
@@ -190,10 +223,11 @@ export default function Home() {
       <footer
         style={{
           textAlign: "center",
-          padding: "30px",
+          padding: "25px 15px",
+          fontSize: "14px",
         }}
       >
-        © 2026 01 Geovana Joias e Acessórios
+        © 2026 02 Geovana Joias e Acessórios
       </footer>
     </main>
   );
