@@ -8,84 +8,81 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - run: pip install requests beautifulsoup4
+      - name: Instalar bibliotecas
+        run: pip install requests beautifulsoup4
 
-      - name: Capturar 100 produtos e enviar Supabase
+      - name: Capturar Brincos Semijoia
         run: |
           python <<EOF
           import requests
           from bs4 import BeautifulSoup
           import re
-          import json
 
-          SUPABASE_URL = "https://kcydlzerrhezpcxkqonx.supabase.co/rest/v1/produtos"
-          SUPABASE_KEY = "sb_publishable_49LGouu90RYiPtXoTh8-rg_yOWJd46d"
-
-          headers = {
-              "apikey": SUPABASE_KEY,
-              "Authorization": f"Bearer {SUPABASE_KEY}",
-              "Content-Type": "application/json",
-              "Prefer": "return=minimal"
-          }
-
+          session = requests.Session()
           url = "https://catalogo.innosystem.com.br/atacadoaj_g2"
 
-          html = requests.get(url, timeout=30).text
+          print("ABRINDO SITE...")
+          html = session.get(url, timeout=30).text
           soup = BeautifulSoup(html, "html.parser")
 
-          produtos = []
-          usados = set()
+          alvo = None
 
-          textos = soup.get_text("\n", strip=True).split("\n")
+          for a in soup.find_all("a"):
+              txt = a.get_text(" ", strip=True).lower()
+              href = a.get("href", "")
 
-          for linha in textos:
+              if "brincos" in txt and "semijoia" in txt:
+                  alvo = href
+                  print("LINK ACHADO:", txt)
+                  break
+
+          if not alvo:
+              print("LINK NÃO ENCONTRADO")
+              exit()
+
+          m = re.search(r"__doPostBack\('([^']+)',''\)", alvo)
+
+          if not m:
+              print("POSTBACK NÃO IDENTIFICADO")
+              exit()
+
+          target = m.group(1)
+
+          form = {}
+
+          for inp in soup.find_all("input"):
+              name = inp.get("name")
+              value = inp.get("value", "")
+              if name:
+                  form[name] = value
+
+          form["__EVENTTARGET"] = target
+          form["__EVENTARGUMENT"] = ""
+
+          resposta = session.post(url, data=form, timeout=30)
+
+          print("STATUS:", resposta.status_code)
+
+          soup2 = BeautifulSoup(resposta.text, "html.parser")
+          linhas = soup2.get_text("\n", strip=True).split("\n")
+
+          total = 0
+
+          for linha in linhas:
               t = linha.strip()
 
               if "r$" in t.lower() and "cód." in t.lower():
-                  if t in usados:
-                      continue
+                  print(t)
+                  total += 1
 
-                  usados.add(t)
-
-                  nome = t.split("r$")[0].strip()
-
-                  preco_match = re.search(r'r\$ ?([\d\,]+)', t.lower())
-                  cod_match = re.search(r'cód\. ?(\d+)', t.lower())
-
-                  preco = None
-                  codigo = ""
-
-                  if preco_match:
-                      preco = float(preco_match.group(1).replace(",", "."))
-
-                  if cod_match:
-                      codigo = cod_match.group(1)
-
-                  produtos.append({
-                      "nome": nome[:200],
-                      "codigo": codigo,
-                      "categoria": "Catalogo Geral",
-                      "preco_custo": preco,
-                      "preco_venda": round(preco * 2, 2) if preco else None,
-                      "imagem_url": "",
-                      "produto_url": "",
-                      "ativo": True
-                  })
-
-              if len(produtos) >= 100:
-                  break
-
-          print("PRODUTOS ENCONTRADOS:", len(produtos))
-
-          if produtos:
-              r = requests.post(SUPABASE_URL, headers=headers, data=json.dumps(produtos))
-              print("SUPABASE STATUS:", r.status_code)
-              print(r.text)
-
+          print("TOTAL PRODUTOS:", total)
+          print("FIM")
           EOF
