@@ -1,12 +1,16 @@
 // app/page.js
 
 // ==========================================
-// CONFIG
+// V3 PREMIUM INSTAGRAM 2026
+// Geovana Acessórios
+// Produtos por página: 16
 // ==========================================
+
 const WHATSAPP = "55679999481768";
+const PRODUTOS_POR_PAGINA = 16;
 
 // ==========================================
-// SUPABASE
+// BUSCAR PRODUTOS
 // ==========================================
 async function getProdutos() {
   try {
@@ -37,15 +41,15 @@ function moeda(v) {
   });
 }
 
-function categoriaPrincipal(txt = "") {
+function categoria(txt = "") {
   txt = txt.toLowerCase();
 
   if (txt.includes("prata")) return "Prata";
   if (txt.includes("semijoia")) return "Semijoia";
-  return "Outros";
+  return "Acessórios";
 }
 
-function tipoProduto(txt = "") {
+function tipo(txt = "") {
   txt = txt.toLowerCase();
 
   if (txt.includes("brinco")) return "Brincos";
@@ -62,27 +66,26 @@ function tipoProduto(txt = "") {
 // ==========================================
 export default async function Home() {
   const produtos = await getProdutos();
-
-  const destaque = produtos.slice(0, 16);
+  const lista = produtos.slice(0, PRODUTOS_POR_PAGINA);
 
   return (
     <main
       style={{
-        background: "#f3eee6",
+        background: "#ffffff",
+        color: "#111",
         minHeight: "100vh",
-        fontFamily: "Georgia, serif",
-        color: "#5b4a3e",
+        fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* TOPO */}
+      {/* HEADER */}
       <header
         style={{
+          borderBottom: "1px solid #eee",
           padding: "18px 30px",
-          borderBottom: "1px solid #e3dbd0",
-          background: "#f8f4ed",
           position: "sticky",
           top: 0,
-          zIndex: 10,
+          background: "#fff",
+          zIndex: 99,
         }}
       >
         <div
@@ -95,7 +98,6 @@ export default async function Home() {
             gap: 20,
           }}
         >
-          {/* LOGO + NOME */}
           <div
             style={{
               display: "flex",
@@ -105,31 +107,23 @@ export default async function Home() {
           >
             <img
               src="/logo.jpeg"
-              alt="Geovana Acessórios"
+              alt="Logo"
               style={{
                 width: 52,
                 height: 52,
-                objectFit: "cover",
                 borderRadius: 12,
               }}
             />
 
-            <h2
-              style={{
-                margin: 0,
-                fontSize: 28,
-              }}
-            >
-              Geovana Acessórios
-            </h2>
+            <strong style={{ fontSize: 28 }}>Geovana Acessórios</strong>
           </div>
 
-          {/* MENU */}
           <nav
             style={{
               display: "flex",
-              gap: 20,
+              gap: 22,
               fontSize: 15,
+              color: "#555",
             }}
           >
             <span>Início</span>
@@ -143,38 +137,74 @@ export default async function Home() {
       {/* HERO */}
       <section
         style={{
+          maxWidth: 1300,
+          margin: "0 auto",
+          padding: "70px 20px 50px",
           textAlign: "center",
-          padding: "70px 20px 40px",
         }}
       >
         <h1
           style={{
-            fontSize: 64,
-            marginBottom: 15,
+            fontSize: 62,
+            marginBottom: 20,
+            lineHeight: 1.1,
           }}
         >
-          Elegância que Encanta
+          Peças que elevam sua presença.
         </h1>
 
-        <p style={{ fontSize: 22, opacity: 0.8 }}>
-          Peças modernas, femininas e sofisticadas
+        <p
+          style={{
+            maxWidth: 700,
+            margin: "0 auto",
+            fontSize: 22,
+            color: "#666",
+            lineHeight: 1.5,
+          }}
+        >
+          Semijoias e acessórios selecionados para mulheres que gostam de
+          elegância.
         </p>
 
-        <p style={{ marginTop: 15, fontSize: 14, opacity: 0.6 }}>
-          Versão Premium V2.2
+        <p
+          style={{
+            marginTop: 18,
+            fontSize: 13,
+            color: "#999",
+          }}
+        >
+          V3 Premium Instagram 2026
         </p>
+      </section>
+
+      {/* BUSCA */}
+      <section
+        style={{
+          maxWidth: 1000,
+          margin: "0 auto",
+          padding: "0 20px 30px",
+        }}
+      >
+        <input
+          placeholder="Buscar produtos..."
+          style={{
+            width: "100%",
+            padding: 18,
+            borderRadius: 14,
+            border: "1px solid #ddd",
+            fontSize: 16,
+          }}
+        />
       </section>
 
       {/* FILTROS */}
       <section
         style={{
-          maxWidth: 1200,
-          margin: "0 auto",
           display: "flex",
-          gap: 15,
           justifyContent: "center",
+          gap: 12,
           flexWrap: "wrap",
-          padding: "10px 20px 50px",
+          padding: "0 20px 60px",
         }}
       >
         {[
@@ -188,13 +218,12 @@ export default async function Home() {
           <button
             key={item}
             style={{
-              padding: "12px 22px",
-              borderRadius: 30,
-              border: "none",
-              background: "#6b5a4e",
-              color: "#fff",
+              padding: "12px 20px",
+              borderRadius: 40,
+              border: "1px solid #ddd",
+              background: "#fff",
               cursor: "pointer",
-              fontSize: 14,
+              fontWeight: "bold",
             }}
           >
             {item}
@@ -202,139 +231,171 @@ export default async function Home() {
         ))}
       </section>
 
+      {/* TITULO */}
+      <section
+        style={{
+          textAlign: "center",
+          marginBottom: 45,
+        }}
+      >
+        <h2
+          style={{
+            fontSize: 48,
+            margin: 0,
+          }}
+        >
+          Catálogo Premium
+        </h2>
+      </section>
+
       {/* PRODUTOS */}
       <section
         style={{
           maxWidth: 1450,
           margin: "0 auto",
-          padding: "0 20px 80px",
+          padding: "0 20px 70px",
         }}
       >
-        <h2
-          style={{
-            textAlign: "center",
-            fontSize: 54,
-            marginBottom: 50,
-          }}
-        >
-          Catálogo Premium
-        </h2>
-
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
-            gap: 28,
+            gap: 26,
           }}
         >
-          {destaque.map((p) => {
-            const cat1 = categoriaPrincipal(p.categoria);
-            const cat2 = tipoProduto(p.nome);
-
-            return (
+          {lista.map((p) => (
+            <div
+              key={p.id}
+              style={{
+                border: "1px solid #eee",
+                borderRadius: 18,
+                overflow: "hidden",
+                background: "#fff",
+                transition: "0.2s",
+              }}
+            >
               <div
-                key={p.id}
                 style={{
-                  background: "#fff",
-                  borderRadius: 22,
+                  height: 300,
                   overflow: "hidden",
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+                  background: "#f8f8f8",
                 }}
               >
-                {/* IMAGEM */}
+                <img
+                  src={p.imagem_url}
+                  alt={p.nome}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+
+              <div style={{ padding: 18 }}>
                 <div
                   style={{
-                    height: 280,
-                    overflow: "hidden",
+                    display: "flex",
+                    gap: 8,
+                    marginBottom: 10,
+                    flexWrap: "wrap",
                   }}
                 >
-                  <img
-                    src={p.imagem_url}
-                    alt={p.nome}
+                  <span
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
+                      background: "#f5f5f5",
+                      padding: "6px 10px",
+                      borderRadius: 20,
+                      fontSize: 12,
                     }}
-                  />
+                  >
+                    {categoria(p.categoria)}
+                  </span>
+
+                  <span
+                    style={{
+                      background: "#f5f5f5",
+                      padding: "6px 10px",
+                      borderRadius: 20,
+                      fontSize: 12,
+                    }}
+                  >
+                    {tipo(p.nome)}
+                  </span>
                 </div>
 
-                {/* TEXTO */}
-                <div style={{ padding: 18 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: 8,
-                      marginBottom: 12,
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <span
-                      style={{
-                        background: "#efe8dd",
-                        padding: "5px 10px",
-                        borderRadius: 20,
-                        fontSize: 12,
-                      }}
-                    >
-                      {cat1}
-                    </span>
+                <h3
+                  style={{
+                    fontSize: 22,
+                    lineHeight: 1.25,
+                    minHeight: 65,
+                    marginBottom: 14,
+                  }}
+                >
+                  {p.nome}
+                </h3>
 
-                    <span
-                      style={{
-                        background: "#efe8dd",
-                        padding: "5px 10px",
-                        borderRadius: 20,
-                        fontSize: 12,
-                      }}
-                    >
-                      {cat2}
-                    </span>
-                  </div>
-
-                  <h3
-                    style={{
-                      fontSize: 24,
-                      lineHeight: 1.2,
-                      minHeight: 68,
-                    }}
-                  >
-                    {p.nome}
-                  </h3>
-
-                  <p
-                    style={{
-                      fontSize: 34,
-                      margin: "10px 0 20px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {moeda(p.preco_venda)}
-                  </p>
-
-                  <a
-                    href={`https://wa.me/${WHATSAPP}?text=Olá! Tenho interesse em: ${encodeURIComponent(
-                      p.nome
-                    )}`}
-                    target="_blank"
-                    style={{
-                      display: "block",
-                      textAlign: "center",
-                      background: "#6b5a4e",
-                      color: "#fff",
-                      padding: "14px",
-                      borderRadius: 14,
-                      textDecoration: "none",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Comprar no WhatsApp
-                  </a>
+                <div
+                  style={{
+                    fontSize: 34,
+                    fontWeight: "bold",
+                    marginBottom: 18,
+                  }}
+                >
+                  {moeda(p.preco_venda)}
                 </div>
+
+                <a
+                  href={`https://wa.me/${WHATSAPP}?text=Olá! Tenho interesse em: ${encodeURIComponent(
+                    p.nome
+                  )}`}
+                  target="_blank"
+                  style={{
+                    display: "block",
+                    textAlign: "center",
+                    background: "#111",
+                    color: "#fff",
+                    padding: "15px",
+                    borderRadius: 12,
+                    textDecoration: "none",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Comprar no WhatsApp
+                </a>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
+      </section>
+
+      {/* PAGINACAO VISUAL */}
+      <section
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 10,
+          paddingBottom: 80,
+          flexWrap: "wrap",
+        }}
+      >
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: 10,
+              border: "1px solid #ddd",
+              background: n === 1 ? "#111" : "#fff",
+              color: n === 1 ? "#fff" : "#111",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
+            {n}
+          </button>
+        ))}
       </section>
     </main>
   );
