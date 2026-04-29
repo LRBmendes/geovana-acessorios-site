@@ -1,9 +1,9 @@
-import Image from "next/image";
+// app/page.js
 
 // ==========================================
 // CONFIG
 // ==========================================
-const WHATSAPP = "55679999481768"; // atualizado
+const WHATSAPP = "55679999481768";
 
 // ==========================================
 // SUPABASE
@@ -77,7 +77,7 @@ export default async function Home() {
       {/* TOPO */}
       <header
         style={{
-          padding: "20px 30px",
+          padding: "18px 30px",
           borderBottom: "1px solid #e3dbd0",
           background: "#f8f4ed",
           position: "sticky",
@@ -87,16 +87,51 @@ export default async function Home() {
       >
         <div
           style={{
-            maxWidth: 1400,
+            maxWidth: 1450,
             margin: "0 auto",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            gap: 20,
           }}
         >
-          <h2 style={{ margin: 0, fontSize: 28 }}>Geovana Acessórios</h2>
+          {/* LOGO + NOME */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+            }}
+          >
+            <img
+              src="/logo.jpeg"
+              alt="Geovana Acessórios"
+              style={{
+                width: 52,
+                height: 52,
+                objectFit: "cover",
+                borderRadius: 12,
+              }}
+            />
 
-          <nav style={{ display: "flex", gap: 20, fontSize: 15 }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: 28,
+              }}
+            >
+              Geovana Acessórios
+            </h2>
+          </div>
+
+          {/* MENU */}
+          <nav
+            style={{
+              display: "flex",
+              gap: 20,
+              fontSize: 15,
+            }}
+          >
             <span>Início</span>
             <span>Prata</span>
             <span>Semijoia</span>
@@ -126,7 +161,7 @@ export default async function Home() {
         </p>
 
         <p style={{ marginTop: 15, fontSize: 14, opacity: 0.6 }}>
-          Versão Premium V2.1
+          Versão Premium V2.2
         </p>
       </section>
 
@@ -170,7 +205,7 @@ export default async function Home() {
       {/* PRODUTOS */}
       <section
         style={{
-          maxWidth: 1400,
+          maxWidth: 1450,
           margin: "0 auto",
           padding: "0 20px 80px",
         }}
@@ -206,15 +241,25 @@ export default async function Home() {
                   boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
                 }}
               >
-                <div style={{ position: "relative", height: 280 }}>
-                  <Image
+                {/* IMAGEM */}
+                <div
+                  style={{
+                    height: 280,
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
                     src={p.imagem_url}
                     alt={p.nome}
-                    fill
-                    style={{ objectFit: "cover" }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
 
+                {/* TEXTO */}
                 <div style={{ padding: 18 }}>
                   <div
                     style={{
