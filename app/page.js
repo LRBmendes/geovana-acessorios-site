@@ -5,8 +5,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
-const POR_PAGINA = 16;
-const SITE_VERSION = "2.1.0";
+const POR_PAGINA = 15;
+const SITE_VERSION = "2.1.1";
 
 // =====================================================
 // API
@@ -221,9 +221,6 @@ export default function Home() {
     window.open(url, "_blank");
   }
 
-  // =====================================================
-  // HTML
-  // =====================================================
   return (
     <main
       style={{
@@ -458,7 +455,6 @@ export default function Home() {
                 overflow: "hidden",
                 boxShadow:
                   "0 14px 34px rgba(0,0,0,.06)",
-                transition: ".2s",
               }}
             >
               <div
@@ -480,30 +476,48 @@ export default function Home() {
                 />
               </div>
 
-              <div style={{ padding: 18 }}>
+              <div style={{ padding: 20 }}>
                 <h3
                   style={{
-                    minHeight: 58,
+                    minHeight: 60,
                     fontSize: 20,
                     lineHeight: 1.35,
-                    marginTop: 0,
-                    marginBottom: 12,
+                    margin: 0,
                     color: "#4e3d31",
                   }}
                 >
                   {nomeBonito(p.nome).slice(0, 42)}
                 </h3>
 
+                {/* PREÇO REPOSICIONADO */}
                 <div
                   style={{
-                    fontSize: 36,
-                    fontWeight: "bold",
-                    color: "#8f735d",
-                    marginBottom: 16,
-                    letterSpacing: "-1px",
+                    marginTop: 20,
+                    marginBottom: 22,
+                    textAlign: "center",
                   }}
                 >
-                  {moeda(p.preco_venda)}
+                  <div
+                    style={{
+                      fontSize: 14,
+                      color: "#9a7e69",
+                      marginBottom: 4,
+                      letterSpacing: 1,
+                    }}
+                  >
+                    VALOR
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 34,
+                      fontWeight: "bold",
+                      color: "#8f735d",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {moeda(p.preco_venda)}
+                  </div>
                 </div>
 
                 <button
@@ -529,7 +543,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PAGINAÇÃO PREMIUM */}
+      {/* PAGINAÇÃO */}
       {totalPaginas > 1 && (
         <section
           style={{
@@ -542,37 +556,9 @@ export default function Home() {
           }}
         >
           {pagina > 1 && (
-            <button
-              onClick={() =>
-                setPagina(pagina - 1)
-              }
-              style={{
-                padding: "10px 16px",
-                borderRadius: 12,
-                border: "1px solid #ddd",
-                cursor: "pointer",
-              }}
-            >
+            <button onClick={() => setPagina(pagina - 1)}>
               ←
             </button>
-          )}
-
-          {pagina > 3 && (
-            <>
-              <button
-                onClick={() => setPagina(1)}
-                style={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: 12,
-                  border: "1px solid #ddd",
-                }}
-              >
-                1
-              </button>
-
-              <span>...</span>
-            </>
           )}
 
           {paginasVisiveis().map((n) => (
@@ -584,54 +570,18 @@ export default function Home() {
                 height: 42,
                 borderRadius: 12,
                 border: "1px solid #ddd",
-                cursor: "pointer",
-                fontWeight: "bold",
                 background:
-                  pagina === n
-                    ? "#8f735d"
-                    : "#fff",
+                  pagina === n ? "#8f735d" : "#fff",
                 color:
-                  pagina === n
-                    ? "#fff"
-                    : "#6d5848",
+                  pagina === n ? "#fff" : "#6d5848",
               }}
             >
               {n}
             </button>
           ))}
 
-          {pagina < totalPaginas - 2 && (
-            <>
-              <span>...</span>
-
-              <button
-                onClick={() =>
-                  setPagina(totalPaginas)
-                }
-                style={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: 12,
-                  border: "1px solid #ddd",
-                }}
-              >
-                {totalPaginas}
-              </button>
-            </>
-          )}
-
           {pagina < totalPaginas && (
-            <button
-              onClick={() =>
-                setPagina(pagina + 1)
-              }
-              style={{
-                padding: "10px 16px",
-                borderRadius: 12,
-                border: "1px solid #ddd",
-                cursor: "pointer",
-              }}
-            >
+            <button onClick={() => setPagina(pagina + 1)}>
               →
             </button>
           )}
@@ -650,162 +600,6 @@ export default function Home() {
       >
         © {new Date().getFullYear()} Geovana Acessórios • Versão {SITE_VERSION}
       </footer>
-
-      {/* DRAWER */}
-      {drawer && (
-        <>
-          <div
-            onClick={() => setDrawer(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background:
-                "rgba(0,0,0,.35)",
-              zIndex: 100,
-            }}
-          />
-
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              right: 0,
-              width: 390,
-              maxWidth: "100%",
-              height: "100vh",
-              background: "#fff",
-              zIndex: 101,
-              padding: 22,
-              overflowY: "auto",
-            }}
-          >
-            <h2 style={{ marginTop: 0 }}>
-              💎 Minha Seleção
-            </h2>
-
-            {selecao.length === 0 && (
-              <p>Nenhum item selecionado.</p>
-            )}
-
-            {selecao.map((item) => (
-              <div
-                key={item.id}
-                style={{
-                  display: "flex",
-                  gap: 12,
-                  borderBottom:
-                    "1px solid #eee",
-                  paddingBottom: 12,
-                  marginBottom: 14,
-                }}
-              >
-                <img
-                  src={item.imagem_url}
-                  style={{
-                    width: 70,
-                    height: 70,
-                    borderRadius: 12,
-                    objectFit: "cover",
-                  }}
-                />
-
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      marginBottom: 6,
-                    }}
-                  >
-                    {nomeBonito(item.nome)}
-                  </div>
-
-                  <strong>
-                    {moeda(
-                      item.preco_venda
-                    )}
-                  </strong>
-                </div>
-
-                <button
-                  onClick={() =>
-                    remover(item.id)
-                  }
-                  style={{
-                    border: "none",
-                    background:
-                      "transparent",
-                    cursor: "pointer",
-                  }}
-                >
-                  🗑
-                </button>
-              </div>
-            ))}
-
-            {selecao.length > 0 && (
-              <>
-                <button
-                  onClick={reservar}
-                  style={{
-                    width: "100%",
-                    padding: 14,
-                    border: "none",
-                    borderRadius: 14,
-                    background: "#8f735d",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                >
-                  ✨ Reservar no WhatsApp
-                </button>
-
-                <button
-                  onClick={limpar}
-                  style={{
-                    width: "100%",
-                    padding: 12,
-                    marginTop: 10,
-                    borderRadius: 14,
-                    border: "1px solid #ddd",
-                    background: "#fff",
-                    cursor: "pointer",
-                  }}
-                >
-                  Limpar Seleção
-                </button>
-              </>
-            )}
-          </div>
-        </>
-      )}
-
-      {/* ZOOM */}
-      {zoom && (
-        <div
-          onClick={() => setZoom(null)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background:
-              "rgba(0,0,0,.82)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 999,
-            padding: 20,
-          }}
-        >
-          <img
-            src={zoom}
-            style={{
-              maxWidth: "92%",
-              maxHeight: "92%",
-              borderRadius: 18,
-            }}
-          />
-        </div>
-      )}
     </main>
   );
 }
