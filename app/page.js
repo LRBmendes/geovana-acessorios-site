@@ -1,25 +1,32 @@
 export const dynamic = "force-dynamic";
 
-const VERSAO = "v1.0.3";
+const VERSAO = "v1.0.4";
 
 async function getProdutos() {
   try {
     const res = await fetch(
-      "https://kcydlzerrhezpcxkqonx.supabase.co/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc&limit=8",
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc&limit=8`,
       {
+        method: "GET",
         headers: {
           apikey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
+          "Content-Type": "application/json",
         },
+        cache: "no-store",
       }
     );
 
+    const data = await res.json();
+
+    console.log("STATUS:", res.status);
+    console.log("DATA:", data);
+
     if (!res.ok) {
-      console.error("Erro ao buscar produtos:", res.status, await res.text());
       return [];
     }
 
-    return await res.json();
+    return data;
   } catch (error) {
     console.error("Erro geral:", error);
     return [];
@@ -89,7 +96,6 @@ export default async function Home() {
 
         <p>Peças modernas e elegantes</p>
 
-        {/* CAMPO DE VERSÃO */}
         <p
           style={{
             marginTop: "15px",
@@ -159,7 +165,7 @@ export default async function Home() {
                     marginBottom: "15px",
                   }}
                 >
-                  R$ {item.preco_venda}
+                  R$ {Number(item.preco_venda).toFixed(2)}
                 </p>
 
                 <a
