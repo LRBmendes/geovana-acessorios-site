@@ -257,7 +257,7 @@ export default function Home() {
       maxWidth: 1320,
       margin: "0 auto",
       display: "grid",
-      gridTemplateColumns: "1fr auto",
+      gridTemplateColumns:  window.innerWidth <= 768 ? "1fr" : "1fr auto",
       alignItems: "center",
       gap: 18,
     }}
@@ -284,7 +284,7 @@ export default function Home() {
       <div>
         <div
           style={{
-            fontSize: 32,
+            fontSize: window.innerWidth <= 768 ? 24 : 32,
             fontWeight: "bold",
             color: "#5a4333",
             lineHeight: 1,
@@ -316,6 +316,10 @@ export default function Home() {
         fontWeight: "bold",
         cursor: "pointer",
         whiteSpace: "nowrap",
+        width:
+  window.innerWidth <= 768 ? "100%" : "auto",
+marginTop:
+  window.innerWidth <= 768 ? 12 : 0,
       }}
     >
       💎 Minha Seleção ({selecao.length})
