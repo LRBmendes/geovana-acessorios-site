@@ -128,6 +128,7 @@ function ehAnel(produto) {
 // COMPONENTE
 // =====================================================
 export default function Home() {
+  const mobile = typeof window !== "undefined" && window.innerWidth <= 768;
   const [produtos, setProdutos] = useState([]);
   const [busca, setBusca] = useState("");
   const [colecao, setColecao] = useState("Todos");
@@ -257,7 +258,7 @@ export default function Home() {
       maxWidth: 1320,
       margin: "0 auto",
       display: "grid",
-      gridTemplateColumns:  window.innerWidth <= 768 ? "1fr" : "1fr auto",
+      gridTemplateColumns:  mobile ? "1fr" : "1fr auto",
       alignItems: "center",
       gap: 18,
     }}
@@ -284,7 +285,7 @@ export default function Home() {
       <div>
         <div
           style={{
-            fontSize: window.innerWidth <= 768 ? 24 : 32,
+            fontSize: mobile ? 24 : 32,
             fontWeight: "bold",
             color: "#5a4333",
             lineHeight: 1,
@@ -317,9 +318,9 @@ export default function Home() {
         cursor: "pointer",
         whiteSpace: "nowrap",
         width:
-  window.innerWidth <= 768 ? "100%" : "auto",
+  mobile ? "100%" : "auto",
 marginTop:
-  window.innerWidth <= 768 ? 12 : 0,
+  mobile ? 12 : 0,
       }}
     >
       💎 Minha Seleção ({selecao.length})
