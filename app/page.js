@@ -1,8 +1,4 @@
 // app/page.js
-// VERSÃO 3.0.3
-// PATCH CIRÚRGICO:
-// Corrigido filtros usando produto.categoria
-// NÃO ALTERADO layout / zoom / drawer / paginação / visual
 
 "use client";
 
@@ -10,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 15;
-const SITE_VERSION = "3.0.3";
+const SITE_VERSION = "3.0.4";
 
 // =====================================================
 // API
@@ -48,10 +44,6 @@ function textoCompleto(produto) {
   return normalizar(`${produto.nome || ""} ${produto.categoria || ""}`);
 }
 
-function categoriaTexto(produto) {
-  return normalizar(produto.categoria || "");
-}
-
 function moeda(v) {
   const n = Math.floor(Number(v || 0));
   return `R$ ${n},90`;
@@ -61,62 +53,80 @@ function nomeBonito(nome = "") {
   return nome
     .toLowerCase()
     .split(" ")
-    .map((p) => (p ? p.charAt(0).toUpperCase() + p.slice(1) : ""))
+    .map((p) =>
+      p ? p.charAt(0).toUpperCase() + p.slice(1) : ""
+    )
     .join(" ")
     .trim();
 }
 
 // =====================================================
-// FILTROS BASEADOS NA CATEGORIA
+// FILTROS (CORRIGIDOS SEM ALTERAR RESTANTE)
 // =====================================================
 function ehPrata(produto) {
-  const cat = categoriaTexto(produto);
+  const txt = textoCompleto(produto);
 
   return (
-    cat.includes("prata") ||
-    cat.includes("925") ||
-    cat.includes("rodio branco")
+    txt.includes("prata") ||
+    txt.includes("925") ||
+    txt.includes("rodio branco")
   );
 }
 
 function ehSemijoia(produto) {
-  const cat = categoriaTexto(produto);
+  const txt = textoCompleto(produto);
 
   return (
-    cat.includes("semijoia") ||
-    cat.includes("semi joia") ||
-    cat.includes("dourado") ||
-    cat.includes("rodio") ||
-    cat.includes("ouro")
+    txt.includes("semijoia") ||
+    txt.includes("semi joia") ||
+    txt.includes("semi-joia") ||
+    txt.includes("dourado") ||
+    txt.includes("rodio") ||
+    txt.includes("ouro")
   );
 }
 
 function ehBrinco(produto) {
-  return categoriaTexto(produto).includes("brinco");
+  const txt = textoCompleto(produto);
+
+  return (
+    txt.includes("brinco") ||
+    txt.includes("argola") ||
+    txt.includes("ear cuff") ||
+    txt.includes("piercing")
+  );
 }
 
 function ehColar(produto) {
-  const cat = categoriaTexto(produto);
+  const txt = textoCompleto(produto);
 
   return (
-    cat.includes("colar") ||
-    cat.includes("corrente") ||
-    cat.includes("gargantilha") ||
-    cat.includes("choker")
+    txt.includes("colar") ||
+    txt.includes("corrente") ||
+    txt.includes("choker") ||
+    txt.includes("gargantilha") ||
+    txt.includes("pingente")
   );
 }
 
 function ehPulseira(produto) {
-  const cat = categoriaTexto(produto);
+  const txt = textoCompleto(produto);
 
   return (
-    cat.includes("pulseira") ||
-    cat.includes("bracelete")
+    txt.includes("pulseira") ||
+    txt.includes("bracelete")
   );
 }
 
 function ehAnel(produto) {
-  return categoriaTexto(produto).includes("anel");
+  const txt = textoCompleto(produto);
+
+  return (
+    txt.includes("anel") ||
+    txt.includes("alianca") ||
+    txt.includes("aliança") ||
+    txt.includes("solitario")
+  );
 }
 
 // =====================================================
