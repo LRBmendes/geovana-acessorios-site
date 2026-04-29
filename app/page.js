@@ -6,9 +6,9 @@ import { useEffect, useMemo, useState } from "react";
 const WHATSAPP = "55679999481768";
 const POR_PAGINA = 16;
 
-// =====================================
+// ===================================
 // API
-// =====================================
+// ===================================
 async function getProdutos() {
   try {
     const res = await fetch(
@@ -27,9 +27,9 @@ async function getProdutos() {
   }
 }
 
-// =====================================
+// ===================================
 // HELPERS
-// =====================================
+// ===================================
 function moeda(v) {
   const n = Math.floor(Number(v || 0));
   return `R$ ${n},90`;
@@ -40,6 +40,7 @@ function grupo(txt = "") {
 
   if (txt.includes("prata")) return "Prata";
   if (txt.includes("semi")) return "Semijoia";
+
   return "Acessórios";
 }
 
@@ -54,81 +55,112 @@ function tipo(txt = "") {
   return "Diversos";
 }
 
-// =====================================
+// ===================================
 // PAGE
-// =====================================
+// ===================================
 export default function Home() {
   const [produtos, setProdutos] = useState([]);
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState("Todos");
   const [pagina, setPagina] = useState(1);
+
   const [zoom, setZoom] = useState(null);
 
   const [selecao, setSelecao] = useState([]);
-  const [abrirSelecao, setAbrirSelecao] =
-    useState(false);
+  const [drawer, setDrawer] = useState(false);
 
+  // carregar produtos
   useEffect(() => {
     getProdutos().then(setProdutos);
   }, []);
 
-  // =====================================
-  // FILTRO
-  // =====================================
+  // ===================================
+  // FILTRO GERAL
+  // ===================================
   const filtrados = useMemo(() => {
     return produtos.filter((p) => {
       const nome = (p.nome || "").toLowerCase();
-      const categoria = (
-        p.categoria || ""
-      ).toLowerCase();
+      const categoria = (p.categoria || "").toLowerCase();
 
-      const okBusca = nome.includes(
-        busca.toLowerCase()
-      );
+      const okBusca =
+        busca.trim() === ""
+          ? true
+          : nome.includes(busca.toLowerCase());
 
       let okFiltro = true;
 
-      if (filtro === "Prata")
-        okFiltro =
-          grupo(categoria) === "Prata";
+      if (filtro === "Prata") {
+        okFiltro = grupo(categoria) === "Prata";
+      }
 
-      if (filtro === "Semijoia")
-        okFiltro =
-          grupo(categoria) ===
-          "Semijoia";
+      if (filtro === "Semijoia") {
+        okFiltro = grupo(categoria) === "Semijoia";
+      }
 
-      if (
-        [
-          "Brincos",
-          "Colares",
-          "Pulseiras",
-          "Anéis",
-        ].includes(filtro)
-      ) {
-        okFiltro =
-          tipo(nome) === filtro;
+      if (filtro === "Brincos") {
+        okFiltro = tipo(nome) === "Brincos";
+      }
+
+      if (filtro === "Colares") {
+        okFiltro = tipo(nome) === "Colares";
+      }
+
+      if (filtro === "Pulseiras") {
+        okFiltro = tipo(nome) === "Pulseiras";
       }
 
       return okBusca && okFiltro;
     });
-  }, [produtos, busca, filtro]);
+  }, [produtos, filtro, busca]);
 
+  // reset pagina ao trocar filtro
   useEffect(() => {
     setPagina(1);
-  }, [busca, filtro]);
+  }, [filtro, busca]);
 
-  const totalPaginas = Math.ceil(
-    filtrados.length / POR_PAGINA
+  // FIX PREMIUM PAGINACAO
+  useEffect(() => {
+    const max = Math.max(
+      1,
+      Math.ceil(filtrados.length / POR_PAGINA)
+    );
+
+    if (pagina > max) {
+      setPagina(1);
+    }
+  }, [filtrados, pagina]);
+
+  // ===================================
+  // PAGINACAO
+  // ===================================
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(filtrados.length / POR_PAGINA)
   );
 
-  const lista = filtrados.slice(
-    (pagina - 1) * POR_PAGINA,
-    pagina * POR_PAGINA
-  );
+  const lista = useMemo(() => {
+    const inicio = (pagina - 1) * POR_PAGINA;
+    const fim = inicio + POR_PAGINA;
 
-  // =====================================
+    return filtrados.slice(inicio, fim);
+  }, [filtrados, pagina]);
+
+  function paginasVisiveis() {
+    let inicio = Math.max(1, pagina - 2);
+    let fim = Math.min(totalPaginas, pagina + 2);
+
+    let arr = [];
+
+    for (let i = inicio; i <= fim; i++) {
+      arr.push(i);
+    }
+
+    return arr;
+  }
+
+  // ===================================
   // SELECAO
-  // =====================================
+  // ===================================
   function adicionar(item) {
     const existe = selecao.find(
       (x) => x.id === item.id
@@ -137,50 +169,29 @@ export default function Home() {
     if (existe) return;
 
     setSelecao([...selecao, item]);
-    setAbrirSelecao(true);
+    setDrawer(true);
   }
 
   function remover(id) {
     setSelecao(
-      selecao.filter(
-        (x) => x.id !== id
-      )
+      selecao.filter((x) => x.id !== id)
     );
   }
 
-  function limpar() {
+  function limparSelecao() {
     setSelecao([]);
   }
 
   function reservarWhats() {
     if (selecao.length === 0) return;
 
-    const texto = selecao
+    const itens = selecao
       .map((p) => `• ${p.nome}`)
       .join("%0A");
 
-    const url = `https://wa.me/${WHATSAPP}?text=Olá! Gostaria de reservar estas peças:%0A%0A${texto}`;
+    const url = `https://wa.me/${WHATSAPP}?text=Olá! Gostaria de reservar essas peças:%0A%0A${itens}`;
 
     window.open(url, "_blank");
-  }
-
-  function paginasVisiveis() {
-    let ini = Math.max(
-      1,
-      pagina - 2
-    );
-    let fim = Math.min(
-      totalPaginas,
-      pagina + 2
-    );
-
-    const arr = [];
-
-    for (let i = ini; i <= fim; i++) {
-      arr.push(i);
-    }
-
-    return arr;
   }
 
   return (
@@ -188,18 +199,16 @@ export default function Home() {
       style={{
         background: "#faf8f5",
         minHeight: "100vh",
+        fontFamily: "Georgia, serif",
         color: "#4d3d31",
-        fontFamily:
-          "Georgia, serif",
       }}
     >
       {/* HEADER */}
       <header
         style={{
-          background:
-            "#ffffffee",
-          borderBottom:
-            "1px solid #ece6de",
+          background: "#ffffffee",
+          borderBottom: "1px solid #ece6de",
+          padding: "16px 24px",
           position: "sticky",
           top: 0,
           zIndex: 99,
@@ -207,25 +216,20 @@ export default function Home() {
       >
         <div
           style={{
-            maxWidth: 1450,
+            maxWidth: 1500,
             margin: "0 auto",
-            padding:
-              "16px 24px",
             display: "flex",
-            justifyContent:
-              "space-between",
-            alignItems:
-              "center",
-            flexWrap: "wrap",
+            justifyContent: "space-between",
+            alignItems: "center",
             gap: 20,
+            flexWrap: "wrap",
           }}
         >
           <div
             style={{
               display: "flex",
+              alignItems: "center",
               gap: 14,
-              alignItems:
-                "center",
             }}
           >
             <img
@@ -247,27 +251,18 @@ export default function Home() {
           </div>
 
           <button
-            onClick={() =>
-              setAbrirSelecao(
-                true
-              )
-            }
+            onClick={() => setDrawer(true)}
             style={{
-              background:
-                "#8f735d",
+              background: "#8f735d",
               color: "#fff",
               border: "none",
-              padding:
-                "12px 18px",
+              padding: "12px 18px",
               borderRadius: 30,
-              fontWeight:
-                "bold",
-              cursor:
-                "pointer",
+              fontWeight: "bold",
+              cursor: "pointer",
             }}
           >
-            💎 Minha Seleção (
-            {selecao.length})
+            💎 Minha Seleção ({selecao.length})
           </button>
         </div>
       </header>
@@ -276,52 +271,42 @@ export default function Home() {
       <section
         style={{
           textAlign: "center",
-          padding:
-            "55px 20px 30px",
+          padding: "45px 20px 25px",
         }}
       >
-        <h1
-          style={{
-            fontSize: 58,
-          }}
-        >
+        <h1 style={{ fontSize: 62 }}>
           Elegância que encanta.
         </h1>
 
         <p
           style={{
-            fontSize: 22,
+            fontSize: 20,
             color: "#7e6d60",
           }}
         >
-          Versão V4.3 Drawer
-          Premium
+          Versão V4.4 Paginação Premium
         </p>
       </section>
 
       {/* BUSCA */}
       <section
         style={{
-          maxWidth: 850,
+          maxWidth: 900,
           margin: "0 auto",
-          padding:
-            "0 20px",
+          padding: "0 20px",
         }}
       >
         <input
           value={busca}
           onChange={(e) =>
-            setBusca(
-              e.target.value
-            )
+            setBusca(e.target.value)
           }
           placeholder="Buscar produtos..."
           style={{
             width: "100%",
             padding: 18,
             borderRadius: 14,
-            border:
-              "1px solid #ddd",
+            border: "1px solid #ddd",
             fontSize: 16,
           }}
         />
@@ -331,13 +316,10 @@ export default function Home() {
       <section
         style={{
           display: "flex",
-          justifyContent:
-            "center",
+          justifyContent: "center",
           gap: 10,
-          flexWrap:
-            "wrap",
-          padding:
-            "28px 20px 50px",
+          flexWrap: "wrap",
+          padding: "30px 20px 45px",
         }}
       >
         {[
@@ -347,50 +329,37 @@ export default function Home() {
           "Brincos",
           "Colares",
           "Pulseiras",
-        ].map(
-          (item) => (
-            <button
-              key={item}
-              onClick={() =>
-                setFiltro(
-                  item
-                )
-              }
-              style={{
-                padding:
-                  "10px 18px",
-                borderRadius: 30,
-                border:
-                  "1px solid #ddd",
-                background:
-                  filtro ===
-                  item
-                    ? "#8f735d"
-                    : "#fff",
-                color:
-                  filtro ===
-                  item
-                    ? "#fff"
-                    : "#6f5d4f",
-                fontWeight:
-                  "bold",
-                cursor:
-                  "pointer",
-              }}
-            >
-              {item}
-            </button>
-          )
-        )}
+        ].map((item) => (
+          <button
+            key={item}
+            onClick={() => setFiltro(item)}
+            style={{
+              padding: "10px 18px",
+              borderRadius: 30,
+              border: "1px solid #ddd",
+              background:
+                filtro === item
+                  ? "#8f735d"
+                  : "#fff",
+              color:
+                filtro === item
+                  ? "#fff"
+                  : "#6f5d4f",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
+            {item}
+          </button>
+        ))}
       </section>
 
-      {/* PRODUTOS */}
+      {/* GRID */}
       <section
         style={{
-          maxWidth: 1450,
+          maxWidth: 1500,
           margin: "0 auto",
-          padding:
-            "0 20px 70px",
+          padding: "0 20px 60px",
         }}
       >
         <div
@@ -405,50 +374,36 @@ export default function Home() {
             <div
               key={p.id}
               style={{
-                background:
-                  "#fff",
+                background: "#fff",
                 borderRadius: 18,
-                overflow:
-                  "hidden",
+                overflow: "hidden",
                 boxShadow:
-                  "0 8px 28px rgba(0,0,0,0.05)",
+                  "0 8px 28px rgba(0,0,0,.05)",
               }}
             >
               <div
                 onClick={() =>
-                  setZoom(
-                    p.imagem_url
-                  )
+                  setZoom(p.imagem_url)
                 }
                 style={{
                   height: 290,
-                  cursor:
-                    "zoom-in",
+                  cursor: "zoom-in",
                 }}
               >
                 <img
-                  src={
-                    p.imagem_url
-                  }
+                  src={p.imagem_url}
                   style={{
-                    width:
-                      "100%",
-                    height:
-                      "100%",
-                    objectFit:
-                      "cover",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
                   }}
                 />
               </div>
 
-              <div
-                style={{
-                  padding: 18,
-                }}
-              >
+              <div style={{ padding: 18 }}>
                 <h3
                   style={{
-                    minHeight: 70,
+                    minHeight: 78,
                     fontSize: 18,
                     lineHeight: 1.3,
                   }}
@@ -459,8 +414,7 @@ export default function Home() {
                 <div
                   style={{
                     fontSize: 34,
-                    fontWeight:
-                      "bold",
+                    fontWeight: "bold",
                     margin:
                       "12px 0 16px",
                   }}
@@ -472,29 +426,20 @@ export default function Home() {
 
                 <button
                   onClick={() =>
-                    adicionar(
-                      p
-                    )
+                    adicionar(p)
                   }
                   style={{
-                    width:
-                      "100%",
-                    padding: 12,
-                    border:
-                      "none",
+                    width: "100%",
+                    padding: 13,
+                    border: "none",
                     borderRadius: 12,
-                    background:
-                      "#8f735d",
-                    color:
-                      "#fff",
-                    fontWeight:
-                      "bold",
-                    cursor:
-                      "pointer",
+                    background: "#8f735d",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    cursor: "pointer",
                   }}
                 >
-                  💎 Adicionar
-                  à Seleção
+                  💎 Adicionar à Seleção
                 </button>
               </div>
             </div>
@@ -503,38 +448,31 @@ export default function Home() {
       </section>
 
       {/* PAGINACAO */}
-      <section
-        style={{
-          display: "flex",
-          justifyContent:
-            "center",
-          gap: 8,
-          flexWrap:
-            "wrap",
-          paddingBottom: 80,
-        }}
-      >
-        {pagina > 1 && (
-          <button
-            onClick={() =>
-              setPagina(
-                pagina -
-                  1
-              )
-            }
-          >
-            {"<"}
-          </button>
-        )}
+      {totalPaginas > 1 && (
+        <section
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 8,
+            flexWrap: "wrap",
+            paddingBottom: 80,
+          }}
+        >
+          {pagina > 1 && (
+            <button
+              onClick={() =>
+                setPagina(pagina - 1)
+              }
+            >
+              {"<"}
+            </button>
+          )}
 
-        {paginasVisiveis().map(
-          (n) => (
+          {paginasVisiveis().map((n) => (
             <button
               key={n}
               onClick={() =>
-                setPagina(
-                  n
-                )
+                setPagina(n)
               }
               style={{
                 width: 42,
@@ -543,51 +481,41 @@ export default function Home() {
                 border:
                   "1px solid #ddd",
                 background:
-                  pagina ===
-                  n
+                  pagina === n
                     ? "#8f735d"
                     : "#fff",
                 color:
-                  pagina ===
-                  n
+                  pagina === n
                     ? "#fff"
                     : "#6f5d4f",
-                fontWeight:
-                  "bold",
+                fontWeight: "bold",
               }}
             >
               {n}
             </button>
-          )
-        )}
+          ))}
 
-        {pagina <
-          totalPaginas && (
-          <button
-            onClick={() =>
-              setPagina(
-                pagina +
-                  1
-              )
-            }
-          >
-            {">"}
-          </button>
-        )}
-      </section>
+          {pagina < totalPaginas && (
+            <button
+              onClick={() =>
+                setPagina(pagina + 1)
+              }
+            >
+              {">"}
+            </button>
+          )}
+        </section>
+      )}
 
       {/* DRAWER */}
-      {abrirSelecao && (
+      {drawer && (
         <>
           <div
             onClick={() =>
-              setAbrirSelecao(
-                false
-              )
+              setDrawer(false)
             }
             style={{
-              position:
-                "fixed",
+              position: "fixed",
               inset: 0,
               background:
                 "rgba(0,0,0,.35)",
@@ -597,179 +525,107 @@ export default function Home() {
 
           <div
             style={{
-              position:
-                "fixed",
-              top: 0,
+              position: "fixed",
               right: 0,
-              width: 380,
-              maxWidth:
-                "100%",
-              height:
-                "100vh",
-              background:
-                "#fff",
+              top: 0,
+              width: 390,
+              maxWidth: "100%",
+              height: "100vh",
+              background: "#fff",
               zIndex: 201,
               padding: 20,
-              overflowY:
-                "auto",
-              boxShadow:
-                "-8px 0 30px rgba(0,0,0,.15)",
+              overflowY: "auto",
             }}
           >
-            <div
-              style={{
-                display:
-                  "flex",
-                justifyContent:
-                  "space-between",
-                alignItems:
-                  "center",
-                marginBottom: 20,
-              }}
-            >
-              <h2>
-                💎 Minha
-                Seleção
-              </h2>
+            <h2>💎 Minha Seleção</h2>
 
-              <button
-                onClick={() =>
-                  setAbrirSelecao(
-                    false
-                  )
-                }
-              >
-                X
-              </button>
-            </div>
-
-            {selecao.length ===
-            0 ? (
+            {selecao.length === 0 && (
               <p>
-                Nenhum item
-                selecionado.
+                Nenhum item selecionado.
               </p>
-            ) : (
+            )}
+
+            {selecao.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  display: "flex",
+                  gap: 12,
+                  marginTop: 15,
+                  borderBottom:
+                    "1px solid #eee",
+                  paddingBottom: 12,
+                }}
+              >
+                <img
+                  src={item.imagem_url}
+                  style={{
+                    width: 70,
+                    height: 70,
+                    borderRadius: 10,
+                    objectFit: "cover",
+                  }}
+                />
+
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: 14,
+                    }}
+                  >
+                    {item.nome}
+                  </div>
+
+                  <strong>
+                    {moeda(
+                      item.preco_venda
+                    )}
+                  </strong>
+                </div>
+
+                <button
+                  onClick={() =>
+                    remover(item.id)
+                  }
+                >
+                  🗑
+                </button>
+              </div>
+            ))}
+
+            {selecao.length > 0 && (
               <>
-                {selecao.map(
-                  (item) => (
-                    <div
-                      key={
-                        item.id
-                      }
-                      style={{
-                        display:
-                          "flex",
-                        gap: 12,
-                        marginBottom: 14,
-                        borderBottom:
-                          "1px solid #eee",
-                        paddingBottom: 12,
-                      }}
-                    >
-                      <img
-                        src={
-                          item.imagem_url
-                        }
-                        style={{
-                          width: 70,
-                          height: 70,
-                          objectFit:
-                            "cover",
-                          borderRadius: 10,
-                        }}
-                      />
-
-                      <div
-                        style={{
-                          flex: 1,
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: 14,
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {
-                            item.nome
-                          }
-                        </div>
-
-                        <strong>
-                          {moeda(
-                            item.preco_venda
-                          )}
-                        </strong>
-                      </div>
-
-                      <button
-                        onClick={() =>
-                          remover(
-                            item.id
-                          )
-                        }
-                        style={{
-                          border:
-                            "none",
-                          background:
-                            "transparent",
-                          cursor:
-                            "pointer",
-                        }}
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  )
-                )}
-
                 <button
                   onClick={
                     reservarWhats
                   }
                   style={{
-                    width:
-                      "100%",
+                    width: "100%",
+                    marginTop: 20,
                     padding: 14,
-                    border:
-                      "none",
+                    border: "none",
                     borderRadius: 12,
                     background:
                       "#8f735d",
-                    color:
-                      "#fff",
+                    color: "#fff",
                     fontWeight:
                       "bold",
-                    marginTop: 15,
-                    cursor:
-                      "pointer",
                   }}
                 >
-                  ✨ Reservar
-                  Peças
+                  ✨ Reservar Peças
                 </button>
 
                 <button
                   onClick={
-                    limpar
+                    limparSelecao
                   }
                   style={{
-                    width:
-                      "100%",
-                    padding: 12,
-                    border:
-                      "1px solid #ddd",
-                    borderRadius: 12,
-                    background:
-                      "#fff",
+                    width: "100%",
                     marginTop: 10,
-                    cursor:
-                      "pointer",
+                    padding: 12,
                   }}
                 >
-                  Limpar
-                  Seleção
+                  Limpar Seleção
                 </button>
               </>
             )}
@@ -784,11 +640,10 @@ export default function Home() {
             setZoom(null)
           }
           style={{
-            position:
-              "fixed",
+            position: "fixed",
             inset: 0,
             background:
-              "rgba(0,0,0,0.75)",
+              "rgba(0,0,0,.75)",
             display: "flex",
             justifyContent:
               "center",
@@ -800,10 +655,8 @@ export default function Home() {
           <img
             src={zoom}
             style={{
-              maxWidth:
-                "90%",
-              maxHeight:
-                "90%",
+              maxWidth: "90%",
+              maxHeight: "90%",
               borderRadius: 18,
             }}
           />
