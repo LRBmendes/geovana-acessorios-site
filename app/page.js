@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-const VERSAO = "v1.0.5";
+const VERSAO = "v1.0.6";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_KEY;
