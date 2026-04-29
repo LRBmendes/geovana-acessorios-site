@@ -297,7 +297,7 @@ export default function Home() {
           style={{
             fontSize: 13,
             color: "#9a7e69",
-            marginTop: 4,
+            marginTop: 10,
           }}
         >
           Luxo acessível para todos os momentos
@@ -329,12 +329,12 @@ export default function Home() {
           maxWidth: 1200,
           margin: "0 auto",
           textAlign: "center",
-          padding: "70px 20px 30px",
+          padding: "32px 20px 18px",
         }}
       >
         <h1
           style={{
-            fontSize: "clamp(38px,6vw,72px)",
+            fontSize: "clamp(34px,5vw,58px)",
             margin: 0,
             color: "#503a2f",
             lineHeight: 1.1,
