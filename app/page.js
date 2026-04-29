@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-const VERSAO = "v1.0.1";
+const VERSAO = "v1.0.2";
 
 async function getProdutos() {
   try {
