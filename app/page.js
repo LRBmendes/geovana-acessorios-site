@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "55679999481768";
-const POR_PAGINA = 16;
+const POR_PAGINA = 15;
 
 // =====================================================
 // API
@@ -50,7 +50,7 @@ function moeda(v) {
 }
 
 // =====================================================
-// COLEÇÕES
+// FILTRO PRINCIPAL
 // =====================================================
 function ehPrata(produto) {
   const txt = textoCompleto(produto);
@@ -58,22 +58,14 @@ function ehPrata(produto) {
   return (
     txt.includes("prata") ||
     txt.includes("925") ||
-    txt.includes("inox") ||
-    txt.includes("aco inox")
+    txt.includes("inox")
   );
 }
 
 function ehSemijoia(produto) {
   const txt = textoCompleto(produto);
 
-  return (
-    txt.includes("semijoia") ||
-    txt.includes("semi joia") ||
-    txt.includes("semi-joia") ||
-    txt.includes("dourado") ||
-    txt.includes("rodio") ||
-    txt.includes("zirc")
-  );
+  return !ehPrata(produto) || txt.includes("semi");
 }
 
 // =====================================================
@@ -89,8 +81,8 @@ function ehColar(produto) {
   return (
     txt.includes("colar") ||
     txt.includes("corrente") ||
-    txt.includes("choker") ||
-    txt.includes("gargantilha")
+    txt.includes("gargantilha") ||
+    txt.includes("choker")
   );
 }
 
@@ -112,7 +104,8 @@ function ehAnel(produto) {
     txt.includes("anel") ||
     txt.includes("alianca") ||
     txt.includes("aliança") ||
-    txt.includes("solitario")
+    txt.includes("solitario") ||
+    txt.includes("aro")
   );
 }
 
@@ -155,8 +148,13 @@ export default function Home() {
 
       let okColecao = true;
 
-      if (colecao === "Prata") okColecao = ehPrata(p);
-      if (colecao === "Semijoias") okColecao = ehSemijoia(p);
+      if (colecao === "Prata") {
+        okColecao = ehPrata(p);
+      }
+
+      if (colecao === "Semijoias") {
+        okColecao = ehSemijoia(p);
+      }
 
       let okTipo = true;
 
@@ -179,16 +177,17 @@ export default function Home() {
 
   const lista = useMemo(() => {
     const inicio = (pagina - 1) * POR_PAGINA;
-    const fim = inicio + POR_PAGINA;
-
-    return filtrados.slice(inicio, fim);
+    return filtrados.slice(
+      inicio,
+      inicio + POR_PAGINA
+    );
   }, [filtrados, pagina]);
 
   function paginasVisiveis() {
     let ini = Math.max(1, pagina - 2);
     let fim = Math.min(totalPaginas, pagina + 2);
 
-    let arr = [];
+    const arr = [];
 
     for (let i = ini; i <= fim; i++) {
       arr.push(i);
@@ -201,15 +200,19 @@ export default function Home() {
   // SELEÇÃO
   // =====================================================
   function adicionar(item) {
-    const existe = selecao.find((x) => x.id === item.id);
-    if (existe) return;
+    if (
+      selecao.find((x) => x.id === item.id)
+    )
+      return;
 
     setSelecao([...selecao, item]);
     setDrawer(true);
   }
 
   function remover(id) {
-    setSelecao(selecao.filter((x) => x.id !== id));
+    setSelecao(
+      selecao.filter((x) => x.id !== id)
+    );
   }
 
   function limpar() {
@@ -223,13 +226,14 @@ export default function Home() {
       .map((p) => `• ${p.nome}`)
       .join("%0A");
 
-    const url = `https://wa.me/${WHATSAPP}?text=Olá! Gostaria de reservar:%0A%0A${texto}`;
-
-    window.open(url, "_blank");
+    window.open(
+      `https://wa.me/${WHATSAPP}?text=Olá! Gostaria de reservar:%0A%0A${texto}`,
+      "_blank"
+    );
   }
 
   // =====================================================
-  // HTML
+  // RENDER
   // =====================================================
   return (
     <main
@@ -240,84 +244,24 @@ export default function Home() {
         fontFamily: "Georgia, serif",
       }}
     >
-      {/* HEADER */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          background: "#ffffffee",
-          borderBottom: "1px solid #ece6de",
-          padding: "16px 24px",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1500,
-            margin: "0 auto",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 20,
-            flexWrap: "wrap",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: 14,
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/logo.jpeg"
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 14,
-              }}
-            />
-
-            <strong style={{ fontSize: 30 }}>
-              Geovana Acessórios
-            </strong>
-          </div>
-
-          <button
-            onClick={() => setDrawer(true)}
-            style={{
-              background: "#8f735d",
-              color: "#fff",
-              border: "none",
-              padding: "12px 18px",
-              borderRadius: 30,
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            💎 Minha Seleção ({selecao.length})
-          </button>
-        </div>
-      </header>
-
       {/* HERO */}
       <section
         style={{
           textAlign: "center",
-          padding: "45px 20px 25px",
+          padding: "40px 20px",
         }}
       >
-        <h1 style={{ fontSize: 58 }}>
+        <h1 style={{ fontSize: 54 }}>
           Elegância que encanta.
         </h1>
 
         <p
           style={{
-            fontSize: 20,
+            fontSize: 18,
             color: "#7e6d60",
           }}
         >
-          Versão V5.2 Correção Final
+          Versão V5.3 Correção Real Final
         </p>
       </section>
 
@@ -331,14 +275,15 @@ export default function Home() {
       >
         <input
           value={busca}
-          onChange={(e) => setBusca(e.target.value)}
+          onChange={(e) =>
+            setBusca(e.target.value)
+          }
           placeholder="Buscar produtos..."
           style={{
             width: "100%",
             padding: 18,
             borderRadius: 14,
             border: "1px solid #ddd",
-            fontSize: 16,
           }}
         />
       </section>
@@ -350,24 +295,19 @@ export default function Home() {
           justifyContent: "center",
           gap: 10,
           flexWrap: "wrap",
-          padding: "30px 20px 14px",
+          padding: "30px 20px 12px",
         }}
       >
-        {["Todos", "Prata", "Semijoias"].map((item) => (
+        {[
+          "Todos",
+          "Prata",
+          "Semijoias",
+        ].map((item) => (
           <button
             key={item}
-            onClick={() => setColecao(item)}
-            style={{
-              padding: "12px 20px",
-              borderRadius: 30,
-              border: "1px solid #ddd",
-              cursor: "pointer",
-              background:
-                colecao === item ? "#8f735d" : "#fff",
-              color:
-                colecao === item ? "#fff" : "#6f5d4f",
-              fontWeight: "bold",
-            }}
+            onClick={() =>
+              setColecao(item)
+            }
           >
             {item}
           </button>
@@ -381,7 +321,7 @@ export default function Home() {
           justifyContent: "center",
           gap: 10,
           flexWrap: "wrap",
-          padding: "0 20px 40px",
+          paddingBottom: 40,
         }}
       >
         {[
@@ -394,16 +334,6 @@ export default function Home() {
           <button
             key={item}
             onClick={() => setTipo(item)}
-            style={{
-              padding: "10px 16px",
-              borderRadius: 30,
-              border: "1px solid #ddd",
-              cursor: "pointer",
-              background:
-                tipo === item ? "#d7c4b0" : "#fff",
-              color: "#6f5d4f",
-              fontWeight: "bold",
-            }}
           >
             {item}
           </button>
@@ -433,18 +363,16 @@ export default function Home() {
                 background: "#fff",
                 borderRadius: 18,
                 overflow: "hidden",
-                boxShadow:
-                  "0 8px 28px rgba(0,0,0,.05)",
               }}
             >
               <div
-                style={{
-                  height: 290,
-                  cursor: "zoom-in",
-                }}
                 onClick={() =>
                   setZoom(p.imagem_url)
                 }
+                style={{
+                  height: 280,
+                  cursor: "zoom-in",
+                }}
               >
                 <img
                   src={p.imagem_url}
@@ -459,9 +387,7 @@ export default function Home() {
               <div style={{ padding: 18 }}>
                 <h3
                   style={{
-                    minHeight: 78,
-                    fontSize: 18,
-                    lineHeight: 1.3,
+                    minHeight: 80,
                   }}
                 >
                   {p.nome}
@@ -471,7 +397,6 @@ export default function Home() {
                   style={{
                     fontSize: 34,
                     fontWeight: "bold",
-                    margin: "12px 0 16px",
                   }}
                 >
                   {moeda(p.preco_venda)}
@@ -483,16 +408,10 @@ export default function Home() {
                   }
                   style={{
                     width: "100%",
-                    padding: 13,
-                    border: "none",
-                    borderRadius: 12,
-                    background: "#8f735d",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    cursor: "pointer",
+                    marginTop: 14,
                   }}
                 >
-                  💎 Adicionar à Seleção
+                  💎 Adicionar
                 </button>
               </div>
             </div>
@@ -507,185 +426,82 @@ export default function Home() {
             display: "flex",
             justifyContent: "center",
             gap: 8,
-            flexWrap: "wrap",
             paddingBottom: 80,
+            flexWrap: "wrap",
           }}
         >
-          {pagina > 1 && (
-            <button
-              onClick={() =>
-                setPagina(pagina - 1)
-              }
-            >
-              {"<"}
-            </button>
-          )}
-
           {paginasVisiveis().map((n) => (
             <button
               key={n}
-              onClick={() => setPagina(n)}
-              style={{
-                width: 42,
-                height: 42,
-                borderRadius: 10,
-                border: "1px solid #ddd",
-                background:
-                  pagina === n
-                    ? "#8f735d"
-                    : "#fff",
-                color:
-                  pagina === n
-                    ? "#fff"
-                    : "#6f5d4f",
-                fontWeight: "bold",
-              }}
+              onClick={() =>
+                setPagina(n)
+              }
             >
               {n}
             </button>
           ))}
-
-          {pagina < totalPaginas && (
-            <button
-              onClick={() =>
-                setPagina(pagina + 1)
-              }
-            >
-              {">"}
-            </button>
-          )}
         </section>
       )}
 
       {/* DRAWER */}
       {drawer && (
-        <>
-          <div
-            onClick={() => setDrawer(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background:
-                "rgba(0,0,0,.35)",
-              zIndex: 100,
-            }}
-          />
+        <div
+          style={{
+            position: "fixed",
+            right: 0,
+            top: 0,
+            width: 360,
+            height: "100vh",
+            background: "#fff",
+            padding: 20,
+            overflowY: "auto",
+            zIndex: 999,
+          }}
+        >
+          <h2>💎 Minha Seleção</h2>
 
-          <div
-            style={{
-              position: "fixed",
-              right: 0,
-              top: 0,
-              width: 390,
-              maxWidth: "100%",
-              height: "100vh",
-              background: "#fff",
-              zIndex: 101,
-              padding: 20,
-              overflowY: "auto",
-            }}
-          >
-            <h2>💎 Minha Seleção</h2>
+          {selecao.map((item) => (
+            <div key={item.id}>
+              {item.nome}
 
-            {selecao.length === 0 && (
-              <p>Nenhum item selecionado.</p>
-            )}
-
-            {selecao.map((item) => (
-              <div
-                key={item.id}
-                style={{
-                  display: "flex",
-                  gap: 12,
-                  marginTop: 14,
-                  borderBottom:
-                    "1px solid #eee",
-                  paddingBottom: 12,
-                }}
+              <button
+                onClick={() =>
+                  remover(item.id)
+                }
               >
-                <img
-                  src={item.imagem_url}
-                  style={{
-                    width: 70,
-                    height: 70,
-                    borderRadius: 10,
-                    objectFit: "cover",
-                  }}
-                />
+                🗑
+              </button>
+            </div>
+          ))}
 
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontSize: 14,
-                    }}
-                  >
-                    {item.nome}
-                  </div>
+          <button
+            onClick={reservar}
+          >
+            Reservar
+          </button>
 
-                  <strong>
-                    {moeda(
-                      item.preco_venda
-                    )}
-                  </strong>
-                </div>
-
-                <button
-                  onClick={() =>
-                    remover(item.id)
-                  }
-                >
-                  🗑
-                </button>
-              </div>
-            ))}
-
-            {selecao.length > 0 && (
-              <>
-                <button
-                  onClick={reservar}
-                  style={{
-                    width: "100%",
-                    marginTop: 20,
-                    padding: 14,
-                    border: "none",
-                    borderRadius: 12,
-                    background: "#8f735d",
-                    color: "#fff",
-                    fontWeight: "bold",
-                  }}
-                >
-                  ✨ Reservar Peças
-                </button>
-
-                <button
-                  onClick={limpar}
-                  style={{
-                    width: "100%",
-                    marginTop: 10,
-                    padding: 12,
-                  }}
-                >
-                  Limpar Seleção
-                </button>
-              </>
-            )}
-          </div>
-        </>
+          <button
+            onClick={limpar}
+          >
+            Limpar
+          </button>
+        </div>
       )}
 
       {/* ZOOM */}
       {zoom && (
         <div
-          onClick={() => setZoom(null)}
+          onClick={() =>
+            setZoom(null)
+          }
           style={{
             position: "fixed",
             inset: 0,
             background:
-              "rgba(0,0,0,.75)",
+              "rgba(0,0,0,.8)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            zIndex: 999,
           }}
         >
           <img
@@ -693,7 +509,6 @@ export default function Home() {
             style={{
               maxWidth: "90%",
               maxHeight: "90%",
-              borderRadius: 18,
             }}
           />
         </div>
