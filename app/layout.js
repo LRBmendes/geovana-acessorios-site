@@ -1,5 +1,3 @@
-// app/layout.js
-
 export const metadata = {
   title: "Geovana Acessórios | Elegância que encanta",
   description:
@@ -20,12 +18,6 @@ export default function RootLayout({ children }) {
       >
         {children}
       </body>
-    </html>
-  );
-}export default function RootLayout({ children }) {
-  return (
-    <html lang="pt-BR">
-      <body>{children}</body>
     </html>
   );
 }
