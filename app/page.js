@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
-const POR_PAGINA = 16;
+const POR_PAGINA = 15;
 const SITE_VERSION = "3.0.0";
 
 // =====================================================
