@@ -1,75 +1,84 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
-const VERSAO = "v1.0.6";
+const VERSAO = "v1.0.7";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+const SUPABASE_URL = "https://kcydlzerrhezpcxkqonx.supabase.co";
 
-// =======================
-// Busca configurações
-// =======================
-async function getConfiguracoes() {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/configuracoes?select=*`,
-    {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-      },
-      cache: "no-store",
-    }
-  );
-
-  const data = await res.json();
-
-  const config = {};
-
-  data.forEach((item) => {
-    config[item.chave] = item.valor;
-  });
-
-  return config;
-}
-
-// =======================
-// Busca produtos
-// =======================
+// ==========================
+// BUSCAR PRODUTOS
+// ==========================
 async function getProdutos() {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc&limit=8`,
-    {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-      },
-      cache: "no-store",
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc&limit=8`,
+      {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
+        },
+        next: { revalidate: 60 },
+      }
+    );
+
+    if (!res.ok) {
+      console.error("Erro ao buscar produtos:", res.status);
+      return [];
     }
-  );
 
-  return await res.json();
+    return await res.json();
+  } catch (error) {
+    console.error("Erro produtos:", error);
+    return [];
+  }
 }
 
-// =======================
-// Preço vendedor
-// =======================
-function calcularPreco(custo, markup) {
-  let valor = Number(custo) * Number(markup);
+// ==========================
+// BUSCAR CONFIGURAÇÕES
+// ==========================
+async function getConfiguracoes() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/configuracoes?select=*`,
+      {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
+        },
+        next: { revalidate: 60 },
+      }
+    );
 
-  // arredonda para xx,90
-  valor = Math.ceil(valor);
-  valor = valor - 0.10;
+    if (!res.ok) {
+      console.error("Erro config:", res.status);
+      return {};
+    }
 
-  return valor.toFixed(2);
+    const data = await res.json();
+
+    const config = {};
+
+    data.forEach((item) => {
+      config[item.chave] = item.valor;
+    });
+
+    return config;
+  } catch (error) {
+    console.error("Erro configurações:", error);
+    return {};
+  }
 }
 
-// =======================
-// Página
-// =======================
+// ==========================
+// HOME
+// ==========================
 export default async function Home() {
   const produtos = await getProdutos();
   const config = await getConfiguracoes();
 
- const markup = Number(config.markup_padrao) || 2.7;
+  const markup = Number(config.markup_padrao) || 2.7;
+  const frete = Number(config.frete_medio) || 0;
+  const taxa = Number(config.taxa_extra) || 0;
+  const arredondamento = Number(config.arredondamento) || 0.9;
 
   return (
     <main
@@ -80,10 +89,12 @@ export default async function Home() {
         color: "#5f5347",
       }}
     >
+      {/* HEADER */}
       <header
         style={{
           display: "flex",
           justifyContent: "space-between",
+          alignItems: "center",
           padding: "20px",
           background: "#fff",
         }}
@@ -91,12 +102,16 @@ export default async function Home() {
         <img
           src="/logo.jpeg"
           alt="Logo"
-          style={{ width: "90px", borderRadius: "8px" }}
+          style={{
+            width: "90px",
+            borderRadius: "8px",
+          }}
         />
 
         <a
           href="https://wa.me/5567999481768"
           target="_blank"
+          rel="noopener noreferrer"
           style={{
             background: "#b79d7b",
             color: "#fff",
@@ -109,24 +124,42 @@ export default async function Home() {
         </a>
       </header>
 
-      <section style={{ padding: "50px 20px", textAlign: "center" }}>
-        <h1 style={{ fontSize: "52px", marginBottom: "10px" }}>
+      {/* HERO */}
+      <section
+        style={{
+          padding: "50px 20px",
+          textAlign: "center",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "52px",
+            marginBottom: "10px",
+          }}
+        >
           Geovana Acessórios
         </h1>
 
         <p>Peças modernas e elegantes</p>
 
-        <p style={{ marginTop: "10px", opacity: 0.7 }}>
+        <p
+          style={{
+            marginTop: "15px",
+            fontSize: "14px",
+            opacity: 0.7,
+          }}
+        >
           Versão do site: {VERSAO}
         </p>
       </section>
 
+      {/* PRODUTOS */}
       <section style={{ padding: "20px" }}>
         <h2
           style={{
             textAlign: "center",
             marginBottom: "30px",
-            fontSize: "42px",
+            fontSize: "38px",
           }}
         >
           Novidades
@@ -135,79 +168,95 @@ export default async function Home() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
+            gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))",
             gap: "20px",
             maxWidth: "1200px",
             margin: "0 auto",
           }}
         >
-          {produtos.map((item) => {
-            const precoFinal = calcularPreco(
-              item.preco_custo,
-              markup
-            );
+          {produtos.length > 0 ? (
+            produtos.map((item) => {
+              const precoBase = Number(item.preco_venda) || 0;
 
-            return (
-              <div
-                key={item.id}
-                style={{
-                  background: "#fff",
-                  borderRadius: "18px",
-                  padding: "15px",
-                  boxShadow: "0 10px 25px rgba(0,0,0,.05)",
-                }}
-              >
-                <img
-                  src={item.imagem_url}
-                  alt={item.nome}
-                  style={{
-                    width: "100%",
-                    height: "250px",
-                    objectFit: "cover",
-                    borderRadius: "12px",
-                  }}
-                />
+              let precoFinal =
+                precoBase * markup + frete + taxa;
 
-                <h3
+              precoFinal =
+                Math.floor(precoFinal) + arredondamento;
+
+              return (
+                <div
+                  key={item.id}
                   style={{
-                    fontSize: "18px",
-                    marginTop: "12px",
-                    minHeight: "55px",
+                    background: "#fff",
+                    borderRadius: "18px",
+                    padding: "15px",
+                    boxShadow: "0 10px 25px rgba(0,0,0,.05)",
                   }}
                 >
-                  {item.nome}
-                </h3>
+                  <img
+                    src={item.imagem_url}
+                    alt={item.nome}
+                    style={{
+                      width: "100%",
+                      height: "230px",
+                      objectFit: "cover",
+                      borderRadius: "12px",
+                    }}
+                  />
 
-                <p
-                  style={{
-                    fontSize: "28px",
-                    fontWeight: "bold",
-                    marginBottom: "15px",
-                  }}
-                >
-                  R$ {precoFinal.replace(".", ",")}
-                </p>
+                  <h3
+                    style={{
+                      fontSize: "16px",
+                      minHeight: "50px",
+                      marginTop: "10px",
+                    }}
+                  >
+                    {item.nome}
+                  </h3>
 
-                <a
-                  href={`https://wa.me/5567999481768?text=Olá,%20tenho%20interesse%20em:%20${encodeURIComponent(
-                    item.nome
-                  )}`}
-                  target="_blank"
-                  style={{
-                    display: "block",
-                    background: "#5f5347",
-                    color: "#fff",
-                    padding: "12px",
-                    borderRadius: "12px",
-                    textDecoration: "none",
-                    textAlign: "center",
-                  }}
-                >
-                  Comprar no WhatsApp
-                </a>
-              </div>
-            );
-          })}
+                  <p
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: "18px",
+                      marginBottom: "15px",
+                    }}
+                  >
+                    R$ {precoFinal.toFixed(2).replace(".", ",")}
+                  </p>
+
+                  <a
+                    href={`https://wa.me/5567999481768?text=Olá,%20tenho%20interesse%20em:%20${encodeURIComponent(
+                      item.nome
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "block",
+                      background: "#5f5347",
+                      color: "#fff",
+                      padding: "12px",
+                      borderRadius: "12px",
+                      textDecoration: "none",
+                      textAlign: "center",
+                    }}
+                  >
+                    Comprar no WhatsApp
+                  </a>
+                </div>
+              );
+            })
+          ) : (
+            <p
+              style={{
+                textAlign: "center",
+                gridColumn: "1 / -1",
+                fontSize: "18px",
+              }}
+            >
+              Nenhum produto disponível no momento.
+            </p>
+          )}
         </div>
       </section>
     </main>
