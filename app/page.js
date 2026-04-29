@@ -1,6 +1,6 @@
 export const revalidate = 60;
 
-const VERSAO = "v1.0.8";
+const VERSAO = "v1.0.9";
 
 const SUPABASE_URL = "https://kcydlzerrhezpcxkqonx.supabase.co";
 
@@ -67,7 +67,7 @@ export default async function Home() {
   const produtos = await getProdutos();
   const config = await getConfiguracoes();
 
-  const markup = Number(config.markup_padrao) || 2.2;
+  const markup = Number(config.markup_padrao) || 2.0;
   const frete = Number(config.frete_medio) || 0;
   const taxa = Number(config.taxa_extra) || 0;
   const arredondamento = Number(config.arredondamento) || 0.9;
