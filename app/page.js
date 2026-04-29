@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.5";
+const SITE_VERSION = "4.1.6";
 
 // =====================================================
 // API
@@ -246,11 +246,9 @@ typeof navigator !== "undefined" &&
      {/* HEADER */}
 <header
   style={{
-    position: "sticky",
-    top: 0,
-    zIndex: 50,
-    background: "rgba(255,255,255,.95)",
-    backdropFilter: "blur(10px)",
+    position: "relative",
+    zIndex: 1,
+    background: "#fff",
     borderBottom: "1px solid #eee",
     padding: "14px 24px",
   }}
