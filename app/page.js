@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.3";
+const SITE_VERSION = "4.1.4";
 
 // =====================================================
 // API
@@ -128,7 +128,9 @@ function ehAnel(produto) {
 // COMPONENTE
 // =====================================================
 export default function Home() {
-  const mobile = false;
+  const mobile =
+typeof navigator !== "undefined" &&
+/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
   const [produtos, setProdutos] = useState([]);
   const [busca, setBusca] = useState("");
   const [colecao, setColecao] = useState("Todos");
