@@ -1,18 +1,15 @@
 // app/page.js
+"use client";
 
-// ==========================================
-// V3 PREMIUM INSTAGRAM 2026
-// Geovana Acessórios
-// Produtos por página: 16
-// ==========================================
+import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "55679999481768";
-const PRODUTOS_POR_PAGINA = 16;
+const POR_PAGINA = 16;
 
-// ==========================================
-// BUSCAR PRODUTOS
-// ==========================================
-async function getProdutos() {
+// ============================
+// BUSCA DADOS
+// ============================
+async function carregarProdutos() {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc`,
@@ -21,7 +18,6 @@ async function getProdutos() {
           apikey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
         },
-        cache: "no-store",
       }
     );
 
@@ -31,61 +27,104 @@ async function getProdutos() {
   }
 }
 
-// ==========================================
+// ============================
 // HELPERS
-// ==========================================
-function moeda(v) {
-  return Number(v).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
+// ============================
+function precoPsicologico(v) {
+  const n = Number(v || 0);
+  const inteiro = Math.floor(n);
+  return `${inteiro},90`;
 }
 
-function categoria(txt = "") {
-  txt = txt.toLowerCase();
+function moeda(v) {
+  return `R$ ${precoPsicologico(v)}`;
+}
 
-  if (txt.includes("prata")) return "Prata";
-  if (txt.includes("semijoia")) return "Semijoia";
+function grupo(cat = "") {
+  const t = cat.toLowerCase();
+
+  if (t.includes("prata")) return "Prata";
+  if (t.includes("semi")) return "Semijoia";
+
   return "Acessórios";
 }
 
-function tipo(txt = "") {
-  txt = txt.toLowerCase();
+function tipo(nome = "") {
+  const t = nome.toLowerCase();
 
-  if (txt.includes("brinco")) return "Brincos";
-  if (txt.includes("colar")) return "Colares";
-  if (txt.includes("pulseira")) return "Pulseiras";
-  if (txt.includes("anel")) return "Anéis";
-  if (txt.includes("corrente")) return "Correntes";
+  if (t.includes("brinco")) return "Brincos";
+  if (t.includes("colar")) return "Colares";
+  if (t.includes("pulseira")) return "Pulseiras";
+  if (t.includes("anel")) return "Anéis";
+  if (t.includes("corrente")) return "Correntes";
 
   return "Diversos";
 }
 
-// ==========================================
-// PAGE
-// ==========================================
-export default async function Home() {
-  const produtos = await getProdutos();
-  const lista = produtos.slice(0, PRODUTOS_POR_PAGINA);
+// ============================
+// COMPONENTE
+// ============================
+export default function Home() {
+  const [produtos, setProdutos] = useState([]);
+  const [busca, setBusca] = useState("");
+  const [filtro, setFiltro] = useState("Todos");
+  const [pagina, setPagina] = useState(1);
+
+  useEffect(() => {
+    carregarProdutos().then(setProdutos);
+  }, []);
+
+  const lista = useMemo(() => {
+    return produtos.filter((p) => {
+      const nome = (p.nome || "").toLowerCase();
+      const categoria = (p.categoria || "").toLowerCase();
+
+      const matchBusca = nome.includes(busca.toLowerCase());
+
+      let matchFiltro = true;
+
+      if (filtro === "Prata")
+        matchFiltro = grupo(categoria) === "Prata";
+
+      if (filtro === "Semijoia")
+        matchFiltro = grupo(categoria) === "Semijoia";
+
+      if (["Brincos", "Colares", "Pulseiras", "Anéis"].includes(filtro))
+        matchFiltro = tipo(nome) === filtro;
+
+      return matchBusca && matchFiltro;
+    });
+  }, [produtos, busca, filtro]);
+
+  const totalPaginas = Math.ceil(lista.length / POR_PAGINA);
+
+  const paginados = lista.slice(
+    (pagina - 1) * POR_PAGINA,
+    pagina * POR_PAGINA
+  );
+
+  useEffect(() => {
+    setPagina(1);
+  }, [busca, filtro]);
 
   return (
     <main
       style={{
-        background: "#ffffff",
-        color: "#111",
+        background: "#faf8f5",
         minHeight: "100vh",
-        fontFamily: "Arial, sans-serif",
+        color: "#4b3c32",
+        fontFamily: "Georgia, serif",
       }}
     >
       {/* HEADER */}
       <header
         style={{
-          borderBottom: "1px solid #eee",
+          borderBottom: "1px solid #ece7e1",
+          background: "#fff",
           padding: "18px 30px",
           position: "sticky",
           top: 0,
-          background: "#fff",
-          zIndex: 99,
+          zIndex: 100,
         }}
       >
         <div
@@ -95,6 +134,7 @@ export default async function Home() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexWrap: "wrap",
             gap: 20,
           }}
         >
@@ -107,23 +147,24 @@ export default async function Home() {
           >
             <img
               src="/logo.jpeg"
-              alt="Logo"
+              alt="logo"
               style={{
-                width: 52,
-                height: 52,
-                borderRadius: 12,
+                width: 56,
+                height: 56,
+                borderRadius: 14,
               }}
             />
 
-            <strong style={{ fontSize: 28 }}>Geovana Acessórios</strong>
+            <strong style={{ fontSize: 34 }}>
+              Geovana Acessórios
+            </strong>
           </div>
 
           <nav
             style={{
               display: "flex",
-              gap: 22,
-              fontSize: 15,
-              color: "#555",
+              gap: 18,
+              fontSize: 16,
             }}
           >
             <span>Início</span>
@@ -137,55 +178,53 @@ export default async function Home() {
       {/* HERO */}
       <section
         style={{
-          maxWidth: 1300,
-          margin: "0 auto",
-          padding: "70px 20px 50px",
           textAlign: "center",
+          padding: "70px 20px 40px",
         }}
       >
         <h1
           style={{
             fontSize: 62,
-            marginBottom: 20,
-            lineHeight: 1.1,
+            marginBottom: 16,
           }}
         >
-          Peças que elevam sua presença.
+          Elegância que encanta.
         </h1>
 
         <p
           style={{
+            fontSize: 24,
+            color: "#7b6b5f",
             maxWidth: 700,
             margin: "0 auto",
-            fontSize: 22,
-            color: "#666",
             lineHeight: 1.5,
           }}
         >
-          Semijoias e acessórios selecionados para mulheres que gostam de
-          elegância.
+          Peças delicadas e sofisticadas para valorizar sua beleza.
         </p>
 
         <p
           style={{
             marginTop: 18,
-            fontSize: 13,
-            color: "#999",
+            fontSize: 14,
+            color: "#b09a87",
           }}
         >
-          V3 Premium Instagram 2026
+          V4 Luxury Light
         </p>
       </section>
 
       {/* BUSCA */}
       <section
         style={{
-          maxWidth: 1000,
+          maxWidth: 800,
           margin: "0 auto",
-          padding: "0 20px 30px",
+          padding: "0 20px",
         }}
       >
         <input
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
           placeholder="Buscar produtos..."
           style={{
             width: "100%",
@@ -193,6 +232,7 @@ export default async function Home() {
             borderRadius: 14,
             border: "1px solid #ddd",
             fontSize: 16,
+            background: "#fff",
           }}
         />
       </section>
@@ -202,9 +242,9 @@ export default async function Home() {
         style={{
           display: "flex",
           justifyContent: "center",
-          gap: 12,
           flexWrap: "wrap",
-          padding: "0 20px 60px",
+          gap: 12,
+          padding: "28px 20px 55px",
         }}
       >
         {[
@@ -214,14 +254,19 @@ export default async function Home() {
           "Brincos",
           "Colares",
           "Pulseiras",
+          "Anéis",
         ].map((item) => (
           <button
             key={item}
+            onClick={() => setFiltro(item)}
             style={{
               padding: "12px 20px",
-              borderRadius: 40,
-              border: "1px solid #ddd",
-              background: "#fff",
+              borderRadius: 30,
+              border: "1px solid #d8c8b8",
+              background:
+                filtro === item ? "#8c735f" : "#fff",
+              color:
+                filtro === item ? "#fff" : "#6d5848",
               cursor: "pointer",
               fontWeight: "bold",
             }}
@@ -235,13 +280,12 @@ export default async function Home() {
       <section
         style={{
           textAlign: "center",
-          marginBottom: 45,
+          marginBottom: 40,
         }}
       >
         <h2
           style={{
-            fontSize: 48,
-            margin: 0,
+            fontSize: 52,
           }}
         >
           Catálogo Premium
@@ -259,26 +303,26 @@ export default async function Home() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
+            gridTemplateColumns:
+              "repeat(auto-fit,minmax(260px,1fr))",
             gap: 26,
           }}
         >
-          {lista.map((p) => (
+          {paginados.map((p) => (
             <div
               key={p.id}
               style={{
-                border: "1px solid #eee",
+                background: "#fff",
                 borderRadius: 18,
                 overflow: "hidden",
-                background: "#fff",
-                transition: "0.2s",
+                boxShadow:
+                  "0 10px 30px rgba(0,0,0,0.06)",
               }}
             >
               <div
                 style={{
                   height: 300,
                   overflow: "hidden",
-                  background: "#f8f8f8",
                 }}
               >
                 <img
@@ -297,24 +341,24 @@ export default async function Home() {
                   style={{
                     display: "flex",
                     gap: 8,
-                    marginBottom: 10,
                     flexWrap: "wrap",
+                    marginBottom: 10,
                   }}
                 >
                   <span
                     style={{
-                      background: "#f5f5f5",
+                      background: "#f7f2ec",
                       padding: "6px 10px",
                       borderRadius: 20,
                       fontSize: 12,
                     }}
                   >
-                    {categoria(p.categoria)}
+                    {grupo(p.categoria)}
                   </span>
 
                   <span
                     style={{
-                      background: "#f5f5f5",
+                      background: "#f7f2ec",
                       padding: "6px 10px",
                       borderRadius: 20,
                       fontSize: 12,
@@ -326,10 +370,9 @@ export default async function Home() {
 
                 <h3
                   style={{
-                    fontSize: 22,
-                    lineHeight: 1.25,
-                    minHeight: 65,
-                    marginBottom: 14,
+                    fontSize: 18,
+                    minHeight: 70,
+                    lineHeight: 1.3,
                   }}
                 >
                   {p.nome}
@@ -338,8 +381,8 @@ export default async function Home() {
                 <div
                   style={{
                     fontSize: 34,
+                    margin: "12px 0 18px",
                     fontWeight: "bold",
-                    marginBottom: 18,
                   }}
                 >
                   {moeda(p.preco_venda)}
@@ -353,10 +396,10 @@ export default async function Home() {
                   style={{
                     display: "block",
                     textAlign: "center",
-                    background: "#111",
-                    color: "#fff",
-                    padding: "15px",
+                    padding: 14,
                     borderRadius: 12,
+                    background: "#8c735f",
+                    color: "#fff",
                     textDecoration: "none",
                     fontWeight: "bold",
                   }}
@@ -369,7 +412,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* PAGINACAO VISUAL */}
+      {/* PAGINACAO */}
       <section
         style={{
           display: "flex",
@@ -379,18 +422,24 @@ export default async function Home() {
           flexWrap: "wrap",
         }}
       >
-        {[1, 2, 3, 4, 5].map((n) => (
+        {Array.from(
+          { length: totalPaginas },
+          (_, i) => i + 1
+        ).map((n) => (
           <button
             key={n}
+            onClick={() => setPagina(n)}
             style={{
               width: 42,
               height: 42,
               borderRadius: 10,
-              border: "1px solid #ddd",
-              background: n === 1 ? "#111" : "#fff",
-              color: n === 1 ? "#fff" : "#111",
-              fontWeight: "bold",
+              border: "1px solid #d9c9bb",
+              background:
+                pagina === n ? "#8c735f" : "#fff",
+              color:
+                pagina === n ? "#fff" : "#6b5746",
               cursor: "pointer",
+              fontWeight: "bold",
             }}
           >
             {n}
