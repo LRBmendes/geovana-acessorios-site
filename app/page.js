@@ -240,84 +240,88 @@ export default function Home() {
         background: "#f8f5f1",
       }}
     >
-      {/* HEADER */}
-      <header
+     {/* HEADER */}
+<header
+  style={{
+    position: "sticky",
+    top: 0,
+    zIndex: 50,
+    background: "rgba(255,255,255,.95)",
+    backdropFilter: "blur(10px)",
+    borderBottom: "1px solid #eee",
+    padding: "14px 24px",
+  }}
+>
+  <div
+    style={{
+      maxWidth: 1320,
+      margin: "0 auto",
+      display: "grid",
+      gridTemplateColumns: "1fr auto",
+      alignItems: "center",
+      gap: 18,
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+        minWidth: 0,
+      }}
+    >
+      <img
+        src="/logo.jpeg"
         style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          background: "rgba(255,255,255,.95)",
-          backdropFilter: "blur(10px)",
-          borderBottom: "1px solid #eee",
-          padding: "18px 24px",
+          width: 54,
+          height: 54,
+          borderRadius: 16,
+          objectFit: "cover",
+          flexShrink: 0,
         }}
-      >
+      />
+
+      <div>
         <div
           style={{
-            maxWidth: 1450,
-            margin: "0 auto",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 20,
-            flexWrap: "wrap",
+            fontSize: 32,
+            fontWeight: "bold",
+            color: "#5a4333",
+            lineHeight: 1,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 14,
-            }}
-          >
-            <img
-              src="/logo.jpeg"
-              style={{
-                width: 58,
-                height: 58,
-                borderRadius: 16,
-                objectFit: "cover",
-              }}
-            />
-
-            <div>
-              <div
-                style={{
-                  fontSize: 34,
-                  fontWeight: "bold",
-                  color: "#5a4333",
-                }}
-              >
-                Geovana Acessórios
-              </div>
-
-              <div
-                style={{
-                  fontSize: 13,
-                  color: "#9a7e69",
-                }}
-              >
-                Luxo acessível para todos os momentos
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => setDrawer(true)}
-            style={{
-              border: "none",
-              background: "#8f735d",
-              color: "#fff",
-              padding: "14px 22px",
-              borderRadius: 30,
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            💎 Minha Seleção ({selecao.length})
-          </button>
+          Geovana Acessórios
         </div>
-      </header>
+
+        <div
+          style={{
+            fontSize: 13,
+            color: "#9a7e69",
+            marginTop: 4,
+          }}
+        >
+          Luxo acessível para todos os momentos
+        </div>
+      </div>
+    </div>
+
+    <button
+      onClick={() => setDrawer(true)}
+      style={{
+        border: "none",
+        background: "#8f735d",
+        color: "#fff",
+        padding: "14px 22px",
+        borderRadius: 30,
+        fontWeight: "bold",
+        cursor: "pointer",
+        whiteSpace: "nowrap",
+      }}
+    >
+      💎 Minha Seleção ({selecao.length})
+    </button>
+  </div>
+</header>
 
       {/* HERO PREMIUM */}
       <section
