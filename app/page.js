@@ -1,10 +1,12 @@
 // app/page.js
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 
-const WHATSAPP = "55679999481768";
+const WHATSAPP = "5567999481768";
 const POR_PAGINA = 16;
+const SITE_VERSION = "2.0.1";
 
 // =====================================================
 // API
@@ -39,9 +41,7 @@ function normalizar(txt = "") {
 }
 
 function textoCompleto(produto) {
-  return normalizar(
-    `${produto.nome || ""} ${produto.categoria || ""}`
-  );
+  return normalizar(`${produto.nome || ""} ${produto.categoria || ""}`);
 }
 
 function moeda(v) {
@@ -50,17 +50,11 @@ function moeda(v) {
 }
 
 // =====================================================
-// COLEÇÕES
+// FILTROS
 // =====================================================
 function ehPrata(produto) {
   const txt = textoCompleto(produto);
-
-  return (
-    txt.includes("prata") ||
-    txt.includes("925") ||
-    txt.includes("inox") ||
-    txt.includes("aco inox")
-  );
+  return txt.includes("prata") || txt.includes("925");
 }
 
 function ehSemijoia(produto) {
@@ -71,14 +65,10 @@ function ehSemijoia(produto) {
     txt.includes("semi joia") ||
     txt.includes("semi-joia") ||
     txt.includes("dourado") ||
-    txt.includes("rodio") ||
-    txt.includes("zirc")
+    txt.includes("rodio")
   );
 }
 
-// =====================================================
-// SUBTIPOS
-// =====================================================
 function ehBrinco(produto) {
   return textoCompleto(produto).includes("brinco");
 }
@@ -89,8 +79,7 @@ function ehColar(produto) {
   return (
     txt.includes("colar") ||
     txt.includes("corrente") ||
-    txt.includes("choker") ||
-    txt.includes("gargantilha")
+    txt.includes("choker")
   );
 }
 
@@ -99,9 +88,7 @@ function ehPulseira(produto) {
 
   return (
     txt.includes("pulseira") ||
-    txt.includes("bracelete") ||
-    txt.includes("pandora") ||
-    txt.includes("elo")
+    txt.includes("bracelete")
   );
 }
 
@@ -110,28 +97,24 @@ function ehAnel(produto) {
 
   return (
     txt.includes("anel") ||
-    txt.includes("alianca") ||
-    txt.includes("aliança") ||
-    txt.includes("solitario")
+    txt.includes("alianca")
   );
 }
 
 // =====================================================
-// PAGE
+// COMPONENTE
 // =====================================================
 export default function Home() {
   const [produtos, setProdutos] = useState([]);
-
+  const [busca, setBusca] = useState("");
   const [colecao, setColecao] = useState("Todos");
   const [tipo, setTipo] = useState("Todos");
-  const [busca, setBusca] = useState("");
-
   const [pagina, setPagina] = useState(1);
-
-  const [zoom, setZoom] = useState(null);
 
   const [drawer, setDrawer] = useState(false);
   const [selecao, setSelecao] = useState([]);
+
+  const [zoom, setZoom] = useState(null);
 
   useEffect(() => {
     getProdutos().then(setProdutos);
@@ -139,10 +122,10 @@ export default function Home() {
 
   useEffect(() => {
     setPagina(1);
-  }, [colecao, tipo, busca]);
+  }, [busca, colecao, tipo]);
 
   // =====================================================
-  // FILTRO MASTER
+  // FILTRAGEM
   // =====================================================
   const filtrados = useMemo(() => {
     return produtos.filter((p) => {
@@ -167,7 +150,7 @@ export default function Home() {
 
       return okBusca && okColecao && okTipo;
     });
-  }, [produtos, colecao, tipo, busca]);
+  }, [produtos, busca, colecao, tipo]);
 
   // =====================================================
   // PAGINAÇÃO
@@ -184,25 +167,11 @@ export default function Home() {
     return filtrados.slice(inicio, fim);
   }, [filtrados, pagina]);
 
-  function paginasVisiveis() {
-    let ini = Math.max(1, pagina - 2);
-    let fim = Math.min(totalPaginas, pagina + 2);
-
-    let arr = [];
-
-    for (let i = ini; i <= fim; i++) {
-      arr.push(i);
-    }
-
-    return arr;
-  }
-
   // =====================================================
   // SELEÇÃO
   // =====================================================
   function adicionar(item) {
-    const existe = selecao.find((x) => x.id === item.id);
-    if (existe) return;
+    if (selecao.find((x) => x.id === item.id)) return;
 
     setSelecao([...selecao, item]);
     setDrawer(true);
@@ -234,10 +203,8 @@ export default function Home() {
   return (
     <main
       style={{
-        background: "#faf8f5",
         minHeight: "100vh",
-        color: "#4d3d31",
-        fontFamily: "Georgia, serif",
+        background: "#f8f5f1",
       }}
     >
       {/* HEADER */}
@@ -246,14 +213,15 @@ export default function Home() {
           position: "sticky",
           top: 0,
           zIndex: 50,
-          background: "#ffffffee",
-          borderBottom: "1px solid #ece6de",
-          padding: "16px 24px",
+          background: "rgba(255,255,255,.92)",
+          backdropFilter: "blur(10px)",
+          borderBottom: "1px solid #eee",
+          padding: "18px 24px",
         }}
       >
         <div
           style={{
-            maxWidth: 1500,
+            maxWidth: 1400,
             margin: "0 auto",
             display: "flex",
             justifyContent: "space-between",
@@ -265,31 +233,49 @@ export default function Home() {
           <div
             style={{
               display: "flex",
-              gap: 14,
               alignItems: "center",
+              gap: 14,
             }}
           >
             <img
               src="/logo.jpeg"
               style={{
-                width: 56,
-                height: 56,
-                borderRadius: 14,
+                width: 58,
+                height: 58,
+                borderRadius: 16,
+                objectFit: "cover",
               }}
             />
 
-            <strong style={{ fontSize: 30 }}>
-              Geovana Acessórios
-            </strong>
+            <div>
+              <div
+                style={{
+                  fontSize: 34,
+                  fontWeight: "bold",
+                  color: "#5a4333",
+                }}
+              >
+                Geovana Acessórios
+              </div>
+
+              <div
+                style={{
+                  fontSize: 13,
+                  color: "#9a7e69",
+                }}
+              >
+                Luxo acessível para todos os momentos
+              </div>
+            </div>
           </div>
 
           <button
             onClick={() => setDrawer(true)}
             style={{
+              border: "none",
               background: "#8f735d",
               color: "#fff",
-              border: "none",
-              padding: "12px 18px",
+              padding: "14px 22px",
               borderRadius: 30,
               fontWeight: "bold",
               cursor: "pointer",
@@ -303,28 +289,37 @@ export default function Home() {
       {/* HERO */}
       <section
         style={{
+          maxWidth: 1200,
+          margin: "0 auto",
           textAlign: "center",
-          padding: "45px 20px 25px",
+          padding: "70px 20px 50px",
         }}
       >
-        <h1 style={{ fontSize: 58 }}>
+        <h1
+          style={{
+            fontSize: "clamp(38px,6vw,74px)",
+            margin: 0,
+            color: "#503a2f",
+          }}
+        >
           Elegância que encanta.
         </h1>
 
         <p
           style={{
+            marginTop: 18,
             fontSize: 20,
-            color: "#7e6d60",
+            color: "#8b7565",
           }}
         >
-          Versão V5.2 Correção Final
+          Descubra acessórios femininos delicados e sofisticados.
         </p>
       </section>
 
       {/* BUSCA */}
       <section
         style={{
-          maxWidth: 900,
+          maxWidth: 850,
           margin: "0 auto",
           padding: "0 20px",
         }}
@@ -332,25 +327,25 @@ export default function Home() {
         <input
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar produtos..."
+          placeholder="Buscar brincos, anéis, colares..."
           style={{
             width: "100%",
             padding: 18,
-            borderRadius: 14,
+            borderRadius: 16,
             border: "1px solid #ddd",
             fontSize: 16,
           }}
         />
       </section>
 
-      {/* LINHA 1 */}
+      {/* FILTROS */}
       <section
         style={{
+          padding: "28px 20px 8px",
           display: "flex",
           justifyContent: "center",
           gap: 10,
           flexWrap: "wrap",
-          padding: "30px 20px 14px",
         }}
       >
         {["Todos", "Prata", "Semijoias"].map((item) => (
@@ -358,15 +353,19 @@ export default function Home() {
             key={item}
             onClick={() => setColecao(item)}
             style={{
+              border: "1px solid #ddd",
               padding: "12px 20px",
               borderRadius: 30,
-              border: "1px solid #ddd",
               cursor: "pointer",
-              background:
-                colecao === item ? "#8f735d" : "#fff",
-              color:
-                colecao === item ? "#fff" : "#6f5d4f",
               fontWeight: "bold",
+              background:
+                colecao === item
+                  ? "#8f735d"
+                  : "#fff",
+              color:
+                colecao === item
+                  ? "#fff"
+                  : "#6d5848",
             }}
           >
             {item}
@@ -374,14 +373,13 @@ export default function Home() {
         ))}
       </section>
 
-      {/* LINHA 2 */}
       <section
         style={{
+          padding: "0 20px 45px",
           display: "flex",
           justifyContent: "center",
           gap: 10,
           flexWrap: "wrap",
-          padding: "0 20px 40px",
         }}
       >
         {[
@@ -395,14 +393,16 @@ export default function Home() {
             key={item}
             onClick={() => setTipo(item)}
             style={{
+              border: "1px solid #ddd",
               padding: "10px 16px",
               borderRadius: 30,
-              border: "1px solid #ddd",
               cursor: "pointer",
-              background:
-                tipo === item ? "#d7c4b0" : "#fff",
-              color: "#6f5d4f",
               fontWeight: "bold",
+              background:
+                tipo === item
+                  ? "#e6d8cb"
+                  : "#fff",
+              color: "#6d5848",
             }}
           >
             {item}
@@ -413,7 +413,7 @@ export default function Home() {
       {/* GRID */}
       <section
         style={{
-          maxWidth: 1500,
+          maxWidth: 1450,
           margin: "0 auto",
           padding: "0 20px 60px",
         }}
@@ -431,20 +431,20 @@ export default function Home() {
               key={p.id}
               style={{
                 background: "#fff",
-                borderRadius: 18,
+                borderRadius: 22,
                 overflow: "hidden",
                 boxShadow:
-                  "0 8px 28px rgba(0,0,0,.05)",
+                  "0 14px 34px rgba(0,0,0,.06)",
               }}
             >
               <div
+                onClick={() =>
+                  setZoom(p.imagem_url)
+                }
                 style={{
                   height: 290,
                   cursor: "zoom-in",
                 }}
-                onClick={() =>
-                  setZoom(p.imagem_url)
-                }
               >
                 <img
                   src={p.imagem_url}
@@ -459,9 +459,11 @@ export default function Home() {
               <div style={{ padding: 18 }}>
                 <h3
                   style={{
-                    minHeight: 78,
+                    minHeight: 72,
                     fontSize: 18,
-                    lineHeight: 1.3,
+                    lineHeight: 1.35,
+                    marginTop: 0,
+                    color: "#4e3d31",
                   }}
                 >
                   {p.nome}
@@ -469,9 +471,10 @@ export default function Home() {
 
                 <div
                   style={{
-                    fontSize: 34,
+                    fontSize: 32,
                     fontWeight: "bold",
-                    margin: "12px 0 16px",
+                    color: "#8f735d",
+                    marginBottom: 16,
                   }}
                 >
                   {moeda(p.preco_venda)}
@@ -483,13 +486,13 @@ export default function Home() {
                   }
                   style={{
                     width: "100%",
-                    padding: 13,
+                    padding: 14,
                     border: "none",
-                    borderRadius: 12,
+                    borderRadius: 14,
+                    cursor: "pointer",
                     background: "#8f735d",
                     color: "#fff",
                     fontWeight: "bold",
-                    cursor: "pointer",
                   }}
                 >
                   💎 Adicionar à Seleção
@@ -508,28 +511,23 @@ export default function Home() {
             justifyContent: "center",
             gap: 8,
             flexWrap: "wrap",
-            paddingBottom: 80,
+            paddingBottom: 60,
           }}
         >
-          {pagina > 1 && (
-            <button
-              onClick={() =>
-                setPagina(pagina - 1)
-              }
-            >
-              {"<"}
-            </button>
-          )}
-
-          {paginasVisiveis().map((n) => (
+          {Array.from(
+            { length: totalPaginas },
+            (_, i) => i + 1
+          ).map((n) => (
             <button
               key={n}
               onClick={() => setPagina(n)}
               style={{
                 width: 42,
                 height: 42,
-                borderRadius: 10,
+                borderRadius: 12,
                 border: "1px solid #ddd",
+                cursor: "pointer",
+                fontWeight: "bold",
                 background:
                   pagina === n
                     ? "#8f735d"
@@ -537,25 +535,27 @@ export default function Home() {
                 color:
                   pagina === n
                     ? "#fff"
-                    : "#6f5d4f",
-                fontWeight: "bold",
+                    : "#6d5848",
               }}
             >
               {n}
             </button>
           ))}
-
-          {pagina < totalPaginas && (
-            <button
-              onClick={() =>
-                setPagina(pagina + 1)
-              }
-            >
-              {">"}
-            </button>
-          )}
         </section>
       )}
+
+      {/* FOOTER */}
+      <footer
+        style={{
+          textAlign: "center",
+          padding: "30px 20px 40px",
+          color: "#8c7768",
+          fontSize: 13,
+          borderTop: "1px solid #ece6de",
+        }}
+      >
+        © {new Date().getFullYear()} Geovana Acessórios • Versão {SITE_VERSION}
+      </footer>
 
       {/* DRAWER */}
       {drawer && (
@@ -574,18 +574,20 @@ export default function Home() {
           <div
             style={{
               position: "fixed",
-              right: 0,
               top: 0,
+              right: 0,
               width: 390,
               maxWidth: "100%",
               height: "100vh",
               background: "#fff",
               zIndex: 101,
-              padding: 20,
+              padding: 22,
               overflowY: "auto",
             }}
           >
-            <h2>💎 Minha Seleção</h2>
+            <h2 style={{ marginTop: 0 }}>
+              💎 Minha Seleção
+            </h2>
 
             {selecao.length === 0 && (
               <p>Nenhum item selecionado.</p>
@@ -597,10 +599,10 @@ export default function Home() {
                 style={{
                   display: "flex",
                   gap: 12,
-                  marginTop: 14,
                   borderBottom:
                     "1px solid #eee",
                   paddingBottom: 12,
+                  marginBottom: 14,
                 }}
               >
                 <img
@@ -608,7 +610,7 @@ export default function Home() {
                   style={{
                     width: 70,
                     height: 70,
-                    borderRadius: 10,
+                    borderRadius: 12,
                     objectFit: "cover",
                   }}
                 />
@@ -617,6 +619,7 @@ export default function Home() {
                   <div
                     style={{
                       fontSize: 14,
+                      marginBottom: 6,
                     }}
                   >
                     {item.nome}
@@ -633,6 +636,12 @@ export default function Home() {
                   onClick={() =>
                     remover(item.id)
                   }
+                  style={{
+                    border: "none",
+                    background:
+                      "transparent",
+                    cursor: "pointer",
+                  }}
                 >
                   🗑
                 </button>
@@ -645,24 +654,28 @@ export default function Home() {
                   onClick={reservar}
                   style={{
                     width: "100%",
-                    marginTop: 20,
                     padding: 14,
                     border: "none",
-                    borderRadius: 12,
+                    borderRadius: 14,
                     background: "#8f735d",
                     color: "#fff",
                     fontWeight: "bold",
+                    cursor: "pointer",
                   }}
                 >
-                  ✨ Reservar Peças
+                  ✨ Reservar no WhatsApp
                 </button>
 
                 <button
                   onClick={limpar}
                   style={{
                     width: "100%",
-                    marginTop: 10,
                     padding: 12,
+                    marginTop: 10,
+                    borderRadius: 14,
+                    border: "1px solid #ddd",
+                    background: "#fff",
+                    cursor: "pointer",
                   }}
                 >
                   Limpar Seleção
@@ -681,18 +694,19 @@ export default function Home() {
             position: "fixed",
             inset: 0,
             background:
-              "rgba(0,0,0,.75)",
+              "rgba(0,0,0,.82)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             zIndex: 999,
+            padding: 20,
           }}
         >
           <img
             src={zoom}
             style={{
-              maxWidth: "90%",
-              maxHeight: "90%",
+              maxWidth: "92%",
+              maxHeight: "92%",
               borderRadius: 18,
             }}
           />
