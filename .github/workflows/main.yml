@@ -1,110 +1,94 @@
-name: Atualizar Catalogo
+import requests,re,json,time
+from bs4 import BeautifulSoup
 
-on:
-  workflow_dispatch:
+SUPABASE_URL = "https://kcydlzerrhezpcxkqonx.supabase.co"
+SUPABASE_KEY = "${{ secrets.SUPABASE_KEY }}"
 
-jobs:
-  update:
-    runs-on: ubuntu-latest
+headers = {
+    "apikey": SUPABASE_KEY,
+    "Authorization": "Bearer " + SUPABASE_KEY,
+    "Content-Type":"application/json"
+}
 
-    steps:
-      - uses: actions/checkout@v4
+base = "https://catalogo.innosystem.com.br/atacadoaj_g2"
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+enviados = 0
 
-      - run: pip install requests beautifulsoup4
+for pagina in range(1,19):
 
-      - name: Capturar 100 produtos reais
-        env:
-          SUPABASE_URL: https://kcydlzerrhezpcxkqonx.supabase.co
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+    url = f"{base}?pagina={pagina}"
 
-        run: |
-          python <<EOF
-          import requests,re,json
-          from bs4 import BeautifulSoup
+    print("LENDO:", url)
 
-          SUPABASE_URL = "${{ secrets.SUPABASE_URL }}" if False else "https://kcydlzerrhezpcxkqonx.supabase.co"
-          SUPABASE_KEY = "${{ secrets.SUPABASE_KEY }}"
+    html = requests.get(url,timeout=30).text
+    soup = BeautifulSoup(html,"html.parser")
 
-          url = "https://catalogo.innosystem.com.br/atacadoaj_g2"
-          html = requests.get(url,timeout=30).text
-          soup = BeautifulSoup(html,"html.parser")
+    cards = soup.select("div.margem")
 
-          cards = soup.select("div.margem")
-          print("CARDS ENCONTRADOS:", len(cards))
+    print("Produtos página:", len(cards))
 
-          headers = {
-            "apikey": SUPABASE_KEY,
-            "Authorization": "Bearer " + SUPABASE_KEY,
-            "Content-Type":"application/json"
-          }
+    for card in cards:
 
-          enviados = 0
+        nome = ""
+        preco = 0
+        categoria = ""
+        codigo = ""
+        imagem = ""
 
-          for card in cards[:100]:
+        n = card.select_one(".tnom")
+        if n:
+            nome = n.get_text(" ",strip=True)
 
-              nome = ""
-              preco = 0
-              categoria = ""
-              codigo = ""
-              imagem = ""
+        p = card.select_one(".tprc")
+        if p:
+            txt = p.get_text(" ",strip=True)
+            txt = re.sub(r'[^0-9,\.]', '', txt)
+            txt = txt.replace('.','').replace(',','.')
+            try:
+                preco = float(txt)
+            except:
+                preco = 0
 
-              n = card.select_one(".tnom")
-              if n:
-                  nome = n.get_text(" ",strip=True)
+        c = card.select_one(".tcat")
+        if c:
+            categoria = c.get_text(" ",strip=True)
 
-              p = card.select_one(".tprc")
-              if p:
-                  txt = p.get_text(" ",strip=True)
-                  txt = re.sub(r'[^0-9,\.]', '', txt)
-                  txt = txt.replace('.','').replace(',','.')
-                  try:
-                      preco = float(txt)
-                  except:
-                      preco = 0
+        m = re.search(r'c[oó]d\.?\s*(\d+)', card.get_text(" ",strip=True).lower())
+        if m:
+            codigo = m.group(1)
 
-              c = card.select_one(".tcat")
-              if c:
-                  categoria = c.get_text(" ",strip=True)
+        img = card.select_one("img")
+        if img:
+            imagem = img.get("src","")
+            if imagem.startswith("/"):
+                imagem = "https://catalogo.innosystem.com.br" + imagem
 
-              m = re.search(r'c[oó]d\.?\s*(\d+)', card.get_text(" ",strip=True).lower())
-              if m:
-                  codigo = m.group(1)
+        if nome == "":
+            continue
 
-              img = card.select_one("img")
-              if img:
-                  imagem = img.get("src","")
-                  if imagem.startswith("/"):
-                      imagem = "https://catalogo.innosystem.com.br" + imagem
+        payload = {
+            "nome": nome,
+            "codigo": codigo,
+            "categoria": categoria,
+            "preco_custo": preco,
+            "preco_venda": round(preco * 2.2,2),
+            "imagem_url": imagem,
+            "produto_url": url,
+            "ativo": True
+        }
 
-              if nome == "":
-                  continue
+        r = requests.post(
+            SUPABASE_URL + "/rest/v1/produtos",
+            headers=headers,
+            data=json.dumps(payload),
+            timeout=30
+        )
 
-              payload = {
-                "nome": nome,
-                "codigo": codigo,
-                "categoria": categoria,
-                "preco_custo": preco,
-                "preco_venda": round(preco * 2.2,2),
-                "imagem_url": imagem,
-                "produto_url": url,
-                "ativo": True
-              }
+        print(nome[:50], r.status_code)
 
-              r = requests.post(
-                SUPABASE_URL + "/rest/v1/produtos",
-                headers=headers,
-                data=json.dumps(payload),
-                timeout=30
-              )
+        if r.status_code in [200,201]:
+            enviados += 1
 
-              print(nome[:60], "->", r.status_code)
+    time.sleep(1)
 
-              if r.status_code in [200,201]:
-                  enviados += 1
-
-          print("TOTAL ENVIADOS:", enviados)
-          EOF
+print("TOTAL:", enviados)
