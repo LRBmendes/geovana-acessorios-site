@@ -5,8 +5,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
-const POR_PAGINA = 15;
-const SITE_VERSION = "2.1.1";
+const POR_PAGINA = 16;
+const SITE_VERSION = "3.0.0";
 
 // =====================================================
 // API
@@ -234,7 +234,7 @@ export default function Home() {
           position: "sticky",
           top: 0,
           zIndex: 50,
-          background: "rgba(255,255,255,.92)",
+          background: "rgba(255,255,255,.95)",
           backdropFilter: "blur(10px)",
           borderBottom: "1px solid #eee",
           padding: "18px 24px",
@@ -264,6 +264,7 @@ export default function Home() {
                 width: 58,
                 height: 58,
                 borderRadius: 16,
+                objectFit: "cover",
               }}
             />
 
@@ -379,13 +380,9 @@ export default function Home() {
               cursor: "pointer",
               fontWeight: "bold",
               background:
-                colecao === item
-                  ? "#8f735d"
-                  : "#fff",
+                colecao === item ? "#8f735d" : "#fff",
               color:
-                colecao === item
-                  ? "#fff"
-                  : "#6d5848",
+                colecao === item ? "#fff" : "#6d5848",
             }}
           >
             {item}
@@ -419,9 +416,7 @@ export default function Home() {
               cursor: "pointer",
               fontWeight: "bold",
               background:
-                tipo === item
-                  ? "#e6d8cb"
-                  : "#fff",
+                tipo === item ? "#e6d8cb" : "#fff",
               color: "#6d5848",
             }}
           >
@@ -442,8 +437,8 @@ export default function Home() {
           style={{
             display: "grid",
             gridTemplateColumns:
-              "repeat(auto-fit,minmax(260px,1fr))",
-            gap: 26,
+              "repeat(auto-fit,minmax(270px,1fr))",
+            gap: 28,
           }}
         >
           {lista.map((p) => (
@@ -451,18 +446,18 @@ export default function Home() {
               key={p.id}
               style={{
                 background: "#fff",
-                borderRadius: 22,
+                borderRadius: 24,
                 overflow: "hidden",
                 boxShadow:
                   "0 14px 34px rgba(0,0,0,.06)",
+                transition: ".2s",
               }}
             >
+              {/* FOTO */}
               <div
-                onClick={() =>
-                  setZoom(p.imagem_url)
-                }
+                onClick={() => setZoom(p.imagem_url)}
                 style={{
-                  height: 290,
+                  height: 310,
                   cursor: "zoom-in",
                 }}
               >
@@ -476,38 +471,28 @@ export default function Home() {
                 />
               </div>
 
-              <div style={{ padding: 20 }}>
+              {/* CONTEÚDO */}
+              <div style={{ padding: 22 }}>
                 <h3
                   style={{
-                    minHeight: 60,
-                    fontSize: 20,
-                    lineHeight: 1.35,
+                    minHeight: 62,
                     margin: 0,
+                    fontSize: 22,
+                    lineHeight: 1.35,
                     color: "#4e3d31",
+                    textAlign: "center",
                   }}
                 >
                   {nomeBonito(p.nome).slice(0, 42)}
                 </h3>
 
-                {/* PREÇO REPOSICIONADO */}
                 <div
                   style={{
-                    marginTop: 20,
-                    marginBottom: 22,
+                    marginTop: 18,
+                    marginBottom: 20,
                     textAlign: "center",
                   }}
                 >
-                  <div
-                    style={{
-                      fontSize: 14,
-                      color: "#9a7e69",
-                      marginBottom: 4,
-                      letterSpacing: 1,
-                    }}
-                  >
-                    VALOR
-                  </div>
-
                   <div
                     style={{
                       fontSize: 34,
@@ -518,24 +503,34 @@ export default function Home() {
                   >
                     {moeda(p.preco_venda)}
                   </div>
+
+                  <div
+                    style={{
+                      marginTop: 6,
+                      fontSize: 12,
+                      color: "#a38a77",
+                      letterSpacing: 1,
+                    }}
+                  >
+                    PEÇA EXCLUSIVA
+                  </div>
                 </div>
 
                 <button
-                  onClick={() =>
-                    adicionar(p)
-                  }
+                  onClick={() => adicionar(p)}
                   style={{
                     width: "100%",
-                    padding: 14,
+                    padding: 15,
                     border: "none",
-                    borderRadius: 14,
+                    borderRadius: 16,
                     cursor: "pointer",
                     background: "#8f735d",
                     color: "#fff",
                     fontWeight: "bold",
+                    fontSize: 15,
                   }}
                 >
-                  💎 Adicionar à Seleção
+                  ✨ Quero Este
                 </button>
               </div>
             </div>
@@ -600,6 +595,160 @@ export default function Home() {
       >
         © {new Date().getFullYear()} Geovana Acessórios • Versão {SITE_VERSION}
       </footer>
+
+      {/* DRAWER */}
+      {drawer && (
+        <>
+          <div
+            onClick={() => setDrawer(false)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background:
+                "rgba(0,0,0,.35)",
+              zIndex: 100,
+            }}
+          />
+
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              right: 0,
+              width: 390,
+              maxWidth: "100%",
+              height: "100vh",
+              background: "#fff",
+              zIndex: 101,
+              padding: 22,
+              overflowY: "auto",
+            }}
+          >
+            <h2 style={{ marginTop: 0 }}>
+              💎 Minha Seleção
+            </h2>
+
+            {selecao.length === 0 && (
+              <p>Nenhum item selecionado.</p>
+            )}
+
+            {selecao.map((item) => (
+              <div
+                key={item.id}
+                style={{
+                  display: "flex",
+                  gap: 12,
+                  borderBottom:
+                    "1px solid #eee",
+                  paddingBottom: 12,
+                  marginBottom: 14,
+                }}
+              >
+                <img
+                  src={item.imagem_url}
+                  style={{
+                    width: 70,
+                    height: 70,
+                    borderRadius: 12,
+                    objectFit: "cover",
+                  }}
+                />
+
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: 14,
+                      marginBottom: 6,
+                    }}
+                  >
+                    {nomeBonito(item.nome)}
+                  </div>
+
+                  <strong>
+                    {moeda(item.preco_venda)}
+                  </strong>
+                </div>
+
+                <button
+                  onClick={() =>
+                    remover(item.id)
+                  }
+                  style={{
+                    border: "none",
+                    background:
+                      "transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  🗑
+                </button>
+              </div>
+            ))}
+
+            {selecao.length > 0 && (
+              <>
+                <button
+                  onClick={reservar}
+                  style={{
+                    width: "100%",
+                    padding: 14,
+                    border: "none",
+                    borderRadius: 14,
+                    background: "#8f735d",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✨ Reservar no WhatsApp
+                </button>
+
+                <button
+                  onClick={limpar}
+                  style={{
+                    width: "100%",
+                    padding: 12,
+                    marginTop: 10,
+                    borderRadius: 14,
+                    border: "1px solid #ddd",
+                    background: "#fff",
+                    cursor: "pointer",
+                  }}
+                >
+                  Limpar Seleção
+                </button>
+              </>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* ZOOM */}
+      {zoom && (
+        <div
+          onClick={() => setZoom(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background:
+              "rgba(0,0,0,.82)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+            padding: 20,
+          }}
+        >
+          <img
+            src={zoom}
+            style={{
+              maxWidth: "92%",
+              maxHeight: "92%",
+              borderRadius: 18,
+            }}
+          />
+        </div>
+      )}
     </main>
   );
 }
