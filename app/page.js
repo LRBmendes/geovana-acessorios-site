@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 15;
-const SITE_VERSION = "3.0.4";
+const SITE_VERSION = "4.1.0";
 
 // =====================================================
 // API
@@ -53,15 +53,13 @@ function nomeBonito(nome = "") {
   return nome
     .toLowerCase()
     .split(" ")
-    .map((p) =>
-      p ? p.charAt(0).toUpperCase() + p.slice(1) : ""
-    )
+    .map((p) => (p ? p.charAt(0).toUpperCase() + p.slice(1) : ""))
     .join(" ")
     .trim();
 }
 
 // =====================================================
-// FILTROS (CORRIGIDOS SEM ALTERAR RESTANTE)
+// FILTROS
 // =====================================================
 function ehPrata(produto) {
   const txt = textoCompleto(produto);
@@ -112,10 +110,7 @@ function ehColar(produto) {
 function ehPulseira(produto) {
   const txt = textoCompleto(produto);
 
-  return (
-    txt.includes("pulseira") ||
-    txt.includes("bracelete")
-  );
+  return txt.includes("pulseira") || txt.includes("bracelete");
 }
 
 function ehAnel(produto) {
@@ -233,7 +228,7 @@ export default function Home() {
       .map((p) => `• ${nomeBonito(p.nome)}`)
       .join("%0A");
 
-    const url = `https://wa.me/${WHATSAPP}?text=Olá! Gostaria de reservar:%0A%0A${texto}`;
+    const url = `https://wa.me/${WHATSAPP}?text=Olá! Separei algumas peças da Geovana Acessórios e gostaria de atendimento especial 💎%0A%0A${texto}`;
 
     window.open(url, "_blank");
   }
@@ -324,23 +319,24 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO */}
+      {/* HERO PREMIUM */}
       <section
         style={{
           maxWidth: 1200,
           margin: "0 auto",
           textAlign: "center",
-          padding: "70px 20px 45px",
+          padding: "70px 20px 30px",
         }}
       >
         <h1
           style={{
-            fontSize: "clamp(38px,6vw,74px)",
+            fontSize: "clamp(38px,6vw,72px)",
             margin: 0,
             color: "#503a2f",
+            lineHeight: 1.1,
           }}
         >
-          Elegância que encanta.
+          Acessórios que elevam sua beleza.
         </h1>
 
         <p
@@ -348,10 +344,44 @@ export default function Home() {
             marginTop: 18,
             fontSize: 20,
             color: "#8b7565",
+            maxWidth: 760,
+            marginInline: "auto",
+            lineHeight: 1.5,
           }}
         >
-          Descubra acessórios femininos delicados e sofisticados.
+          Peças delicadas, elegantes e selecionadas para mulheres
+          que gostam de se destacar em todos os momentos.
         </p>
+      </section>
+
+      {/* BARRA CONFIANÇA */}
+      <section
+        style={{
+          maxWidth: 1100,
+          margin: "0 auto",
+          padding: "0 20px 30px",
+        }}
+      >
+        <div
+          style={{
+            background: "#fff",
+            border: "1px solid #eee",
+            borderRadius: 18,
+            padding: "14px 20px",
+            display: "flex",
+            justifyContent: "center",
+            gap: 18,
+            flexWrap: "wrap",
+            color: "#7b6556",
+            fontSize: 14,
+            fontWeight: "bold",
+          }}
+        >
+          <span>✓ Atendimento rápido</span>
+          <span>✓ Produtos selecionados</span>
+          <span>✓ Pedido fácil no WhatsApp</span>
+          <span>✓ Qualidade garantida</span>
+        </div>
       </section>
 
       {/* BUSCA */}
@@ -372,6 +402,7 @@ export default function Home() {
             borderRadius: 16,
             border: "1px solid #ddd",
             fontSize: 16,
+            background: "#fff",
           }}
         />
       </section>
@@ -682,9 +713,7 @@ export default function Home() {
                 </div>
 
                 <button
-                  onClick={() =>
-                    remover(item.id)
-                  }
+                  onClick={() => remover(item.id)}
                   style={{
                     border: "none",
                     background: "transparent",
