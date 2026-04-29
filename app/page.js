@@ -69,7 +69,7 @@ export default async function Home() {
   const produtos = await getProdutos();
   const config = await getConfiguracoes();
 
-  const markup = config.markup_padrao || 2.7;
+ const markup = Number(config.markup_padrao) || 2.7;
 
   return (
     <main
