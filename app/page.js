@@ -1,6 +1,6 @@
 export const revalidate = 60;
 
-const VERSAO = "v1.0.7";
+const VERSAO = "v1.0.8";
 
 const SUPABASE_URL = "https://kcydlzerrhezpcxkqonx.supabase.co";
 
@@ -20,14 +20,10 @@ async function getProdutos() {
       }
     );
 
-    if (!res.ok) {
-      console.error("Erro ao buscar produtos:", res.status);
-      return [];
-    }
+    if (!res.ok) return [];
 
     return await res.json();
   } catch (error) {
-    console.error("Erro produtos:", error);
     return [];
   }
 }
@@ -48,10 +44,7 @@ async function getConfiguracoes() {
       }
     );
 
-    if (!res.ok) {
-      console.error("Erro config:", res.status);
-      return {};
-    }
+    if (!res.ok) return {};
 
     const data = await res.json();
 
@@ -63,7 +56,6 @@ async function getConfiguracoes() {
 
     return config;
   } catch (error) {
-    console.error("Erro configurações:", error);
     return {};
   }
 }
@@ -75,7 +67,7 @@ export default async function Home() {
   const produtos = await getProdutos();
   const config = await getConfiguracoes();
 
-  const markup = Number(config.markup_padrao) || 2.7;
+  const markup = Number(config.markup_padrao) || 2.2;
   const frete = Number(config.frete_medio) || 0;
   const taxa = Number(config.taxa_extra) || 0;
   const arredondamento = Number(config.arredondamento) || 0.9;
@@ -176,7 +168,7 @@ export default async function Home() {
         >
           {produtos.length > 0 ? (
             produtos.map((item) => {
-              const precoBase = Number(item.preco_venda) || 0;
+              const precoBase = Number(item.preco_custo) || 0;
 
               let precoFinal =
                 precoBase * markup + frete + taxa;
