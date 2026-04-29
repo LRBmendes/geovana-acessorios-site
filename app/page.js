@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.4";
+const SITE_VERSION = "4.1.5";
 
 // =====================================================
 // API
@@ -260,15 +260,19 @@ typeof navigator !== "undefined" &&
       maxWidth: 1320,
       margin: "0 auto",
       display: "grid",
-      gridTemplateColumns:  mobile ? "1fr" : "1fr auto",
-      alignItems: "center",
+      gridTemplateColumns: "1fr",
+      justifyContent: "center",
+flexWrap: "wrap",
+textAlign: "center",
       gap: 18,
     }}
   >
     <div
       style={{
         display: "flex",
-        alignItems: "center",
+        justifyContent: "center",
+flexWrap: "wrap",
+textAlign: "center",
         gap: 14,
         minWidth: 0,
       }}
@@ -600,7 +604,9 @@ marginTop:
           style={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
+            justifyContent: "center",
+flexWrap: "wrap",
+textAlign: "center",
             gap: 8,
             flexWrap: "wrap",
             paddingBottom: 60,
@@ -784,7 +790,9 @@ marginTop:
             background: "rgba(0,0,0,.82)",
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
+            justifyContent: "center",
+flexWrap: "wrap",
+textAlign: "center",
             zIndex: 999,
             padding: 20,
           }}
