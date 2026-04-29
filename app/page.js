@@ -15,7 +15,7 @@ async function getProdutos() {
     );
 
     if (!res.ok) {
-      console.error("Erro ao buscar produtos:", res.status);
+      console.error("Erro ao buscar produtos:", res.status, await res.text());
       return [];
     }
 
