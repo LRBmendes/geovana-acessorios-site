@@ -4,11 +4,11 @@
 import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "55679999481768";
-const POR_PAGINA = 16;
+const POR_PAGINA = 15;
 
-// ===============================
+// ==================================================
 // API
-// ===============================
+// ==================================================
 async function getProdutos() {
   try {
     const res = await fetch(
@@ -27,37 +27,82 @@ async function getProdutos() {
   }
 }
 
-// ===============================
+// ==================================================
 // HELPERS
-// ===============================
+// ==================================================
+function normalizar(txt = "") {
+  return String(txt).toLowerCase();
+}
+
+function textoCompleto(produto) {
+  return normalizar(
+    `${produto.nome || ""} ${produto.categoria || ""}`
+  );
+}
+
 function moeda(v) {
   const n = Math.floor(Number(v || 0));
   return `R$ ${n},90`;
 }
 
-function categoriaPrincipal(nome = "", categoria = "") {
-  const txt = `${nome} ${categoria}`.toLowerCase();
+// -------------------------
+// FILTRO PRINCIPAL
+// -------------------------
+function ehPrata(produto) {
+  const txt = textoCompleto(produto);
 
-  if (txt.includes("prata")) return "Prata";
-  if (txt.includes("semi")) return "Semijoias";
-
-  return "Todos";
+  return (
+    txt.includes("prata") ||
+    txt.includes("925") ||
+    txt.includes("banho de prata")
+  );
 }
 
-function tipoProduto(nome = "") {
-  const txt = nome.toLowerCase();
+function ehSemijoia(produto) {
+  const txt = textoCompleto(produto);
 
-  if (txt.includes("brinco")) return "Brincos";
-  if (txt.includes("colar")) return "Colares";
-  if (txt.includes("pulseira")) return "Pulseiras";
-  if (txt.includes("anel")) return "Anéis";
-
-  return "Outros";
+  return (
+    txt.includes("semijoia") ||
+    txt.includes("semi joia") ||
+    txt.includes("semi-joia") ||
+    txt.includes("banho de ouro") ||
+    txt.includes("dourado")
+  );
 }
 
-// ===============================
+// -------------------------
+// SUBTIPO
+// -------------------------
+function ehBrinco(produto) {
+  return textoCompleto(produto).includes("brinco");
+}
+
+function ehColar(produto) {
+  const txt = textoCompleto(produto);
+
+  return (
+    txt.includes("colar") ||
+    txt.includes("corrente")
+  );
+}
+
+function ehPulseira(produto) {
+  const txt = textoCompleto(produto);
+
+  return (
+    txt.includes("pulseira") ||
+    txt.includes("bracelete") ||
+    txt.includes("elo")
+  );
+}
+
+function ehAnel(produto) {
+  return textoCompleto(produto).includes("anel");
+}
+
+// ==================================================
 // PAGE
-// ===============================
+// ==================================================
 export default function Home() {
   const [produtos, setProdutos] = useState([]);
 
@@ -81,39 +126,50 @@ export default function Home() {
     setPagina(1);
   }, [colecao, tipo, busca]);
 
-  // ===============================
-  // FILTRADOS
-  // ===============================
+  // ==================================================
+  // FILTRAGEM PROFISSIONAL
+  // ==================================================
   const filtrados = useMemo(() => {
     return produtos.filter((p) => {
-      const nome = p.nome || "";
-      const categoria = p.categoria || "";
+      const txt = textoCompleto(p);
 
-      const principal = categoriaPrincipal(
-        nome,
-        categoria
-      );
-
-      const sub = tipoProduto(nome);
-
+      // busca
       const okBusca =
         busca.trim() === ""
           ? true
-          : nome
-              .toLowerCase()
-              .includes(
-                busca.toLowerCase()
-              );
+          : txt.includes(
+              busca.toLowerCase()
+            );
 
-      const okColecao =
-        colecao === "Todos"
-          ? true
-          : principal === colecao;
+      // linha 1
+      let okColecao = true;
 
-      const okTipo =
-        tipo === "Todos"
-          ? true
-          : sub === tipo;
+      if (colecao === "Prata") {
+        okColecao = ehPrata(p);
+      }
+
+      if (colecao === "Semijoias") {
+        okColecao = ehSemijoia(p);
+      }
+
+      // linha 2
+      let okTipo = true;
+
+      if (tipo === "Brincos") {
+        okTipo = ehBrinco(p);
+      }
+
+      if (tipo === "Colares") {
+        okTipo = ehColar(p);
+      }
+
+      if (tipo === "Pulseiras") {
+        okTipo = ehPulseira(p);
+      }
+
+      if (tipo === "Anéis") {
+        okTipo = ehAnel(p);
+      }
 
       return (
         okBusca &&
@@ -156,7 +212,7 @@ export default function Home() {
       pagina + 2
     );
 
-    let arr = [];
+    const arr = [];
 
     for (
       let i = ini;
@@ -169,9 +225,9 @@ export default function Home() {
     return arr;
   }
 
-  // ===============================
+  // ==================================================
   // SELECAO
-  // ===============================
+  // ==================================================
   function adicionar(item) {
     const existe =
       selecao.find(
@@ -353,9 +409,9 @@ export default function Home() {
               "#7e6d60",
           }}
         >
-          Versão V5.0
-          Catálogo
-          Profissional
+          Versão V5.1
+          Filtros
+          Inteligentes
         </p>
       </section>
 
@@ -392,7 +448,7 @@ export default function Home() {
         />
       </section>
 
-      {/* FILTRO NIVEL 1 */}
+      {/* LINHA 1 */}
       <section
         style={{
           display:
@@ -449,7 +505,7 @@ export default function Home() {
         )}
       </section>
 
-      {/* FILTRO NIVEL 2 */}
+      {/* LINHA 2 */}
       <section
         style={{
           display:
