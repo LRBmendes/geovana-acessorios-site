@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 16;
-const SITE_VERSION = "2.0.1";
+const SITE_VERSION = "2.1.0";
 
 // =====================================================
 // API
@@ -47,6 +47,17 @@ function textoCompleto(produto) {
 function moeda(v) {
   const n = Math.floor(Number(v || 0));
   return `R$ ${n},90`;
+}
+
+function nomeBonito(nome = "") {
+  return nome
+    .toLowerCase()
+    .split(" ")
+    .map((p) =>
+      p ? p.charAt(0).toUpperCase() + p.slice(1) : ""
+    )
+    .join(" ")
+    .trim();
 }
 
 // =====================================================
@@ -167,6 +178,19 @@ export default function Home() {
     return filtrados.slice(inicio, fim);
   }, [filtrados, pagina]);
 
+  function paginasVisiveis() {
+    const arr = [];
+
+    const inicio = Math.max(1, pagina - 2);
+    const fim = Math.min(totalPaginas, pagina + 2);
+
+    for (let i = inicio; i <= fim; i++) {
+      arr.push(i);
+    }
+
+    return arr;
+  }
+
   // =====================================================
   // SELEÇÃO
   // =====================================================
@@ -189,7 +213,7 @@ export default function Home() {
     if (selecao.length === 0) return;
 
     const texto = selecao
-      .map((p) => `• ${p.nome}`)
+      .map((p) => `• ${nomeBonito(p.nome)}`)
       .join("%0A");
 
     const url = `https://wa.me/${WHATSAPP}?text=Olá! Gostaria de reservar:%0A%0A${texto}`;
@@ -221,7 +245,7 @@ export default function Home() {
       >
         <div
           style={{
-            maxWidth: 1400,
+            maxWidth: 1450,
             margin: "0 auto",
             display: "flex",
             justifyContent: "space-between",
@@ -243,7 +267,6 @@ export default function Home() {
                 width: 58,
                 height: 58,
                 borderRadius: 16,
-                objectFit: "cover",
               }}
             />
 
@@ -292,7 +315,7 @@ export default function Home() {
           maxWidth: 1200,
           margin: "0 auto",
           textAlign: "center",
-          padding: "70px 20px 50px",
+          padding: "70px 20px 45px",
         }}
       >
         <h1
@@ -423,7 +446,7 @@ export default function Home() {
             display: "grid",
             gridTemplateColumns:
               "repeat(auto-fit,minmax(260px,1fr))",
-            gap: 24,
+            gap: 26,
           }}
         >
           {lista.map((p) => (
@@ -435,6 +458,7 @@ export default function Home() {
                 overflow: "hidden",
                 boxShadow:
                   "0 14px 34px rgba(0,0,0,.06)",
+                transition: ".2s",
               }}
             >
               <div
@@ -459,22 +483,24 @@ export default function Home() {
               <div style={{ padding: 18 }}>
                 <h3
                   style={{
-                    minHeight: 72,
-                    fontSize: 18,
+                    minHeight: 58,
+                    fontSize: 20,
                     lineHeight: 1.35,
                     marginTop: 0,
+                    marginBottom: 12,
                     color: "#4e3d31",
                   }}
                 >
-                  {p.nome}
+                  {nomeBonito(p.nome).slice(0, 42)}
                 </h3>
 
                 <div
                   style={{
-                    fontSize: 32,
+                    fontSize: 36,
                     fontWeight: "bold",
                     color: "#8f735d",
                     marginBottom: 16,
+                    letterSpacing: "-1px",
                   }}
                 >
                   {moeda(p.preco_venda)}
@@ -503,21 +529,53 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PAGINAÇÃO */}
+      {/* PAGINAÇÃO PREMIUM */}
       {totalPaginas > 1 && (
         <section
           style={{
             display: "flex",
             justifyContent: "center",
+            alignItems: "center",
             gap: 8,
             flexWrap: "wrap",
             paddingBottom: 60,
           }}
         >
-          {Array.from(
-            { length: totalPaginas },
-            (_, i) => i + 1
-          ).map((n) => (
+          {pagina > 1 && (
+            <button
+              onClick={() =>
+                setPagina(pagina - 1)
+              }
+              style={{
+                padding: "10px 16px",
+                borderRadius: 12,
+                border: "1px solid #ddd",
+                cursor: "pointer",
+              }}
+            >
+              ←
+            </button>
+          )}
+
+          {pagina > 3 && (
+            <>
+              <button
+                onClick={() => setPagina(1)}
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 12,
+                  border: "1px solid #ddd",
+                }}
+              >
+                1
+              </button>
+
+              <span>...</span>
+            </>
+          )}
+
+          {paginasVisiveis().map((n) => (
             <button
               key={n}
               onClick={() => setPagina(n)}
@@ -541,6 +599,42 @@ export default function Home() {
               {n}
             </button>
           ))}
+
+          {pagina < totalPaginas - 2 && (
+            <>
+              <span>...</span>
+
+              <button
+                onClick={() =>
+                  setPagina(totalPaginas)
+                }
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 12,
+                  border: "1px solid #ddd",
+                }}
+              >
+                {totalPaginas}
+              </button>
+            </>
+          )}
+
+          {pagina < totalPaginas && (
+            <button
+              onClick={() =>
+                setPagina(pagina + 1)
+              }
+              style={{
+                padding: "10px 16px",
+                borderRadius: 12,
+                border: "1px solid #ddd",
+                cursor: "pointer",
+              }}
+            >
+              →
+            </button>
+          )}
         </section>
       )}
 
@@ -548,7 +642,7 @@ export default function Home() {
       <footer
         style={{
           textAlign: "center",
-          padding: "30px 20px 40px",
+          padding: "26px 20px 40px",
           color: "#8c7768",
           fontSize: 13,
           borderTop: "1px solid #ece6de",
@@ -622,7 +716,7 @@ export default function Home() {
                       marginBottom: 6,
                     }}
                   >
-                    {item.nome}
+                    {nomeBonito(item.nome)}
                   </div>
 
                   <strong>
