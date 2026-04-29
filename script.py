@@ -51,7 +51,7 @@ def preco_psicologico(valor):
 
 
 def calcular_venda(custo):
-    return preco_psicologico(custo * 2.2)
+    return preco_psicologico(custo * 2.33)
 
 
 def pegar_hidden(soup, nome):
