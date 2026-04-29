@@ -1,251 +1,294 @@
-export const revalidate = 60;
+import Image from "next/image";
 
-const VERSAO = "v1.0.9";
+// ==========================================
+// CONFIG
+// ==========================================
+const WHATSAPP = "55679999481768"; // atualizado
 
-const SUPABASE_URL = "https://kcydlzerrhezpcxkqonx.supabase.co";
-
-// ==========================
-// BUSCAR PRODUTOS (TODOS)
-// ==========================
+// ==========================================
+// SUPABASE
+// ==========================================
 async function getProdutos() {
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc`,
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc`,
       {
         headers: {
           apikey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
         },
-        next: { revalidate: 60 },
+        cache: "no-store",
       }
     );
 
-    if (!res.ok) return [];
-
     return await res.json();
-  } catch (error) {
+  } catch {
     return [];
   }
 }
 
-// ==========================
-// BUSCAR CONFIGURAÇÕES
-// ==========================
-async function getConfiguracoes() {
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/configuracoes?select=*`,
-      {
-        headers: {
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
-        },
-        next: { revalidate: 60 },
-      }
-    );
-
-    if (!res.ok) return {};
-
-    const data = await res.json();
-
-    const config = {};
-
-    data.forEach((item) => {
-      config[item.chave] = item.valor;
-    });
-
-    return config;
-  } catch (error) {
-    return {};
-  }
+// ==========================================
+// HELPERS
+// ==========================================
+function moeda(v) {
+  return Number(v).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 }
 
-// ==========================
-// HOME
-// ==========================
+function categoriaPrincipal(txt = "") {
+  txt = txt.toLowerCase();
+
+  if (txt.includes("prata")) return "Prata";
+  if (txt.includes("semijoia")) return "Semijoia";
+  return "Outros";
+}
+
+function tipoProduto(txt = "") {
+  txt = txt.toLowerCase();
+
+  if (txt.includes("brinco")) return "Brincos";
+  if (txt.includes("colar")) return "Colares";
+  if (txt.includes("pulseira")) return "Pulseiras";
+  if (txt.includes("anel")) return "Anéis";
+  if (txt.includes("corrente")) return "Correntes";
+
+  return "Diversos";
+}
+
+// ==========================================
+// PAGE
+// ==========================================
 export default async function Home() {
   const produtos = await getProdutos();
-  const config = await getConfiguracoes();
 
-  const markup = Number(config.markup_padrao) || 2.2;
-  const frete = Number(config.frete_medio) || 0;
-  const taxa = Number(config.taxa_extra) || 0;
-  const arredondamento = Number(config.arredondamento) || 0.9;
+  const destaque = produtos.slice(0, 16);
 
   return (
     <main
       style={{
+        background: "#f3eee6",
         minHeight: "100vh",
-        background: "#f7f1e8",
         fontFamily: "Georgia, serif",
-        color: "#5f5347",
+        color: "#5b4a3e",
       }}
     >
+      {/* TOPO */}
       <header
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "20px",
-          background: "#fff",
+          padding: "20px 30px",
+          borderBottom: "1px solid #e3dbd0",
+          background: "#f8f4ed",
+          position: "sticky",
+          top: 0,
+          zIndex: 10,
         }}
       >
-        <img
-          src="/logo.jpeg"
-          alt="Logo"
+        <div
           style={{
-            width: "90px",
-            borderRadius: "8px",
-          }}
-        />
-
-        <a
-          href="https://wa.me/5567999481768"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            background: "#b79d7b",
-            color: "#fff",
-            padding: "12px 20px",
-            borderRadius: "30px",
-            textDecoration: "none",
+            maxWidth: 1400,
+            margin: "0 auto",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          WhatsApp
-        </a>
+          <h2 style={{ margin: 0, fontSize: 28 }}>Geovana Acessórios</h2>
+
+          <nav style={{ display: "flex", gap: 20, fontSize: 15 }}>
+            <span>Início</span>
+            <span>Prata</span>
+            <span>Semijoia</span>
+            <span>Novidades</span>
+          </nav>
+        </div>
       </header>
 
+      {/* HERO */}
       <section
         style={{
-          padding: "50px 20px",
           textAlign: "center",
+          padding: "70px 20px 40px",
         }}
       >
         <h1
           style={{
-            fontSize: "52px",
-            marginBottom: "10px",
+            fontSize: 64,
+            marginBottom: 15,
           }}
         >
-          Geovana Acessórios
+          Elegância que Encanta
         </h1>
 
-        <p>Peças modernas e elegantes</p>
+        <p style={{ fontSize: 22, opacity: 0.8 }}>
+          Peças modernas, femininas e sofisticadas
+        </p>
 
-        <p
-          style={{
-            marginTop: "15px",
-            fontSize: "14px",
-            opacity: 0.7,
-          }}
-        >
-          Versão do site: {VERSAO}
+        <p style={{ marginTop: 15, fontSize: 14, opacity: 0.6 }}>
+          Versão Premium V2.1
         </p>
       </section>
 
-      <section style={{ padding: "20px" }}>
+      {/* FILTROS */}
+      <section
+        style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          display: "flex",
+          gap: 15,
+          justifyContent: "center",
+          flexWrap: "wrap",
+          padding: "10px 20px 50px",
+        }}
+      >
+        {[
+          "Todos",
+          "Prata",
+          "Semijoia",
+          "Brincos",
+          "Colares",
+          "Pulseiras",
+        ].map((item) => (
+          <button
+            key={item}
+            style={{
+              padding: "12px 22px",
+              borderRadius: 30,
+              border: "none",
+              background: "#6b5a4e",
+              color: "#fff",
+              cursor: "pointer",
+              fontSize: 14,
+            }}
+          >
+            {item}
+          </button>
+        ))}
+      </section>
+
+      {/* PRODUTOS */}
+      <section
+        style={{
+          maxWidth: 1400,
+          margin: "0 auto",
+          padding: "0 20px 80px",
+        }}
+      >
         <h2
           style={{
             textAlign: "center",
-            marginBottom: "30px",
-            fontSize: "38px",
+            fontSize: 54,
+            marginBottom: 50,
           }}
         >
-          Novidades
+          Catálogo Premium
         </h2>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))",
-            gap: "20px",
-            maxWidth: "1400px",
-            margin: "0 auto",
+            gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
+            gap: 28,
           }}
         >
-          {produtos.length > 0 ? (
-            produtos.map((item) => {
-              const precoBase = Number(item.preco_custo) || 0;
+          {destaque.map((p) => {
+            const cat1 = categoriaPrincipal(p.categoria);
+            const cat2 = tipoProduto(p.nome);
 
-              let precoFinal =
-                precoBase * markup + frete + taxa;
-
-              precoFinal =
-                Math.floor(precoFinal) + arredondamento;
-
-              return (
-                <div
-                  key={item.id}
-                  style={{
-                    background: "#fff",
-                    borderRadius: "18px",
-                    padding: "15px",
-                    boxShadow: "0 10px 25px rgba(0,0,0,.05)",
-                  }}
-                >
-                  <img
-                    src={item.imagem_url}
-                    alt={item.nome}
-                    style={{
-                      width: "100%",
-                      height: "230px",
-                      objectFit: "cover",
-                      borderRadius: "12px",
-                    }}
+            return (
+              <div
+                key={p.id}
+                style={{
+                  background: "#fff",
+                  borderRadius: 22,
+                  overflow: "hidden",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+                }}
+              >
+                <div style={{ position: "relative", height: 280 }}>
+                  <Image
+                    src={p.imagem_url}
+                    alt={p.nome}
+                    fill
+                    style={{ objectFit: "cover" }}
                   />
+                </div>
+
+                <div style={{ padding: 18 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      marginBottom: 12,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <span
+                      style={{
+                        background: "#efe8dd",
+                        padding: "5px 10px",
+                        borderRadius: 20,
+                        fontSize: 12,
+                      }}
+                    >
+                      {cat1}
+                    </span>
+
+                    <span
+                      style={{
+                        background: "#efe8dd",
+                        padding: "5px 10px",
+                        borderRadius: 20,
+                        fontSize: 12,
+                      }}
+                    >
+                      {cat2}
+                    </span>
+                  </div>
 
                   <h3
                     style={{
-                      fontSize: "16px",
-                      minHeight: "55px",
-                      marginTop: "10px",
+                      fontSize: 24,
+                      lineHeight: 1.2,
+                      minHeight: 68,
                     }}
                   >
-                    {item.nome}
+                    {p.nome}
                   </h3>
 
                   <p
                     style={{
+                      fontSize: 34,
+                      margin: "10px 0 20px",
                       fontWeight: "bold",
-                      fontSize: "18px",
-                      marginBottom: "15px",
                     }}
                   >
-                    R$ {precoFinal.toFixed(2).replace(".", ",")}
+                    {moeda(p.preco_venda)}
                   </p>
 
                   <a
-                    href={`https://wa.me/5567999481768?text=Olá,%20tenho%20interesse%20em:%20${encodeURIComponent(
-                      item.nome
+                    href={`https://wa.me/${WHATSAPP}?text=Olá! Tenho interesse em: ${encodeURIComponent(
+                      p.nome
                     )}`}
                     target="_blank"
-                    rel="noopener noreferrer"
                     style={{
                       display: "block",
-                      background: "#5f5347",
-                      color: "#fff",
-                      padding: "12px",
-                      borderRadius: "12px",
-                      textDecoration: "none",
                       textAlign: "center",
+                      background: "#6b5a4e",
+                      color: "#fff",
+                      padding: "14px",
+                      borderRadius: 14,
+                      textDecoration: "none",
+                      fontWeight: "bold",
                     }}
                   >
                     Comprar no WhatsApp
                   </a>
                 </div>
-              );
-            })
-          ) : (
-            <p
-              style={{
-                textAlign: "center",
-                gridColumn: "1 / -1",
-                fontSize: "18px",
-              }}
-            >
-              Nenhum produto disponível no momento.
-            </p>
-          )}
+              </div>
+            );
+          })}
         </div>
       </section>
     </main>
