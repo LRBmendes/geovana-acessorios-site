@@ -6,9 +6,9 @@ import { useEffect, useMemo, useState } from "react";
 const WHATSAPP = "55679999481768";
 const POR_PAGINA = 16;
 
-// =========================
-// BUSCA
-// =========================
+// ============================
+// API
+// ============================
 async function getProdutos() {
   try {
     const res = await fetch(
@@ -27,9 +27,9 @@ async function getProdutos() {
   }
 }
 
-// =========================
+// ============================
 // HELPERS
-// =========================
+// ============================
 function moeda(v) {
   const n = Math.floor(Number(v || 0));
   return `R$ ${n},90`;
@@ -54,20 +54,24 @@ function tipo(txt = "") {
   return "Diversos";
 }
 
-// =========================
+// ============================
 // PAGE
-// =========================
+// ============================
 export default function Home() {
   const [produtos, setProdutos] = useState([]);
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState("Todos");
   const [pagina, setPagina] = useState(1);
   const [zoom, setZoom] = useState(null);
+  const [selecao, setSelecao] = useState([]);
 
   useEffect(() => {
     getProdutos().then(setProdutos);
   }, []);
 
+  // ============================
+  // FILTROS
+  // ============================
   const filtrados = useMemo(() => {
     return produtos.filter((p) => {
       const nome = (p.nome || "").toLowerCase();
@@ -77,28 +81,80 @@ export default function Home() {
 
       let okFiltro = true;
 
-      if (filtro === "Prata") okFiltro = grupo(categoria) === "Prata";
+      if (filtro === "Prata")
+        okFiltro = grupo(categoria) === "Prata";
+
       if (filtro === "Semijoia")
         okFiltro = grupo(categoria) === "Semijoia";
+
       if (
         ["Brincos", "Colares", "Pulseiras", "Anéis"].includes(filtro)
-      )
+      ) {
         okFiltro = tipo(nome) === filtro;
+      }
 
       return okBusca && okFiltro;
     });
   }, [produtos, busca, filtro]);
 
-  const total = Math.ceil(filtrados.length / POR_PAGINA);
+  // Reset pagina ao mudar filtro
+  useEffect(() => {
+    setPagina(1);
+  }, [busca, filtro]);
+
+  const totalPaginas = Math.ceil(
+    filtrados.length / POR_PAGINA
+  );
 
   const lista = filtrados.slice(
     (pagina - 1) * POR_PAGINA,
     pagina * POR_PAGINA
   );
 
-  useEffect(() => {
-    setPagina(1);
-  }, [busca, filtro]);
+  // ============================
+  // SELECAO
+  // ============================
+  function adicionar(item) {
+    const existe = selecao.find(
+      (x) => x.id === item.id
+    );
+
+    if (existe) return;
+
+    setSelecao([...selecao, item]);
+  }
+
+  function remover(id) {
+    setSelecao(
+      selecao.filter((x) => x.id !== id)
+    );
+  }
+
+  function enviarWhats() {
+    const texto = selecao
+      .map((p) => `• ${p.nome}`)
+      .join("%0A");
+
+    const url = `https://wa.me/${WHATSAPP}?text=Olá! Tenho interesse nestas peças:%0A%0A${texto}`;
+
+    window.open(url, "_blank");
+  }
+
+  // ============================
+  // PAGINACAO INTELIGENTE
+  // ============================
+  function paginasVisiveis() {
+    let ini = Math.max(1, pagina - 2);
+    let fim = Math.min(totalPaginas, pagina + 2);
+
+    const arr = [];
+
+    for (let i = ini; i <= fim; i++) {
+      arr.push(i);
+    }
+
+    return arr;
+  }
 
   return (
     <main
@@ -113,37 +169,36 @@ export default function Home() {
       <header
         style={{
           background: "#ffffffee",
-          backdropFilter: "blur(8px)",
+          borderBottom: "1px solid #ece6de",
           position: "sticky",
           top: 0,
           zIndex: 99,
-          borderBottom: "1px solid #ece6de",
         }}
       >
         <div
           style={{
             maxWidth: 1450,
             margin: "0 auto",
-            padding: "18px 24px",
+            padding: "16px 24px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            flexWrap: "wrap",
             gap: 20,
+            flexWrap: "wrap",
           }}
         >
           <div
             style={{
               display: "flex",
-              alignItems: "center",
               gap: 14,
+              alignItems: "center",
             }}
           >
             <img
               src="/logo.jpeg"
               style={{
-                width: 58,
-                height: 58,
+                width: 56,
+                height: 56,
                 borderRadius: 14,
               }}
             />
@@ -153,33 +208,20 @@ export default function Home() {
             </strong>
           </div>
 
-          <div
+          <button
+            onClick={enviarWhats}
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 18,
-              flexWrap: "wrap",
+              background: "#8f735d",
+              color: "#fff",
+              border: "none",
+              padding: "12px 18px",
+              borderRadius: 30,
+              fontWeight: "bold",
+              cursor: "pointer",
             }}
           >
-            <span>Início</span>
-            <span>Prata</span>
-            <span>Semijoia</span>
-
-            <a
-              href={`https://wa.me/${WHATSAPP}`}
-              target="_blank"
-              style={{
-                background: "#8f735d",
-                color: "#fff",
-                padding: "10px 18px",
-                borderRadius: 30,
-                textDecoration: "none",
-                fontWeight: "bold",
-              }}
-            >
-              WhatsApp
-            </a>
-          </div>
+            💎 Minha Seleção ({selecao.length})
+          </button>
         </div>
       </header>
 
@@ -187,39 +229,20 @@ export default function Home() {
       <section
         style={{
           textAlign: "center",
-          padding: "60px 20px 30px",
+          padding: "55px 20px 30px",
         }}
       >
-        <h1
-          style={{
-            fontSize: 58,
-            marginBottom: 15,
-          }}
-        >
+        <h1 style={{ fontSize: 58 }}>
           Elegância que encanta.
         </h1>
 
         <p
           style={{
-            maxWidth: 700,
-            margin: "0 auto",
             fontSize: 22,
             color: "#7e6d60",
-            lineHeight: 1.5,
           }}
         >
-          Acessórios sofisticados para mulheres que gostam de
-          presença.
-        </p>
-
-        <p
-          style={{
-            marginTop: 14,
-            color: "#b39c89",
-            fontSize: 14,
-          }}
-        >
-          Versão V4.1 Luxury Refined
+          Versão V4.2 Conversão Comercial
         </p>
       </section>
 
@@ -233,7 +256,9 @@ export default function Home() {
       >
         <input
           value={busca}
-          onChange={(e) => setBusca(e.target.value)}
+          onChange={(e) =>
+            setBusca(e.target.value)
+          }
           placeholder="Buscar produtos..."
           style={{
             width: "100%",
@@ -241,7 +266,6 @@ export default function Home() {
             borderRadius: 14,
             border: "1px solid #ddd",
             fontSize: 16,
-            background: "#fff",
           }}
         />
       </section>
@@ -251,9 +275,9 @@ export default function Home() {
         style={{
           display: "flex",
           justifyContent: "center",
+          gap: 10,
           flexWrap: "wrap",
-          gap: 12,
-          padding: "30px 20px 50px",
+          padding: "28px 20px 50px",
         }}
       >
         {[
@@ -266,37 +290,28 @@ export default function Home() {
         ].map((item) => (
           <button
             key={item}
-            onClick={() => setFiltro(item)}
+            onClick={() =>
+              setFiltro(item)
+            }
             style={{
               padding: "10px 18px",
               borderRadius: 30,
-              border:
-                filtro === item
-                  ? "1px solid #8f735d"
-                  : "1px solid #ddd",
+              border: "1px solid #ddd",
               background:
-                filtro === item ? "#8f735d" : "#fff",
+                filtro === item
+                  ? "#8f735d"
+                  : "#fff",
               color:
-                filtro === item ? "#fff" : "#6f5d4f",
-              cursor: "pointer",
+                filtro === item
+                  ? "#fff"
+                  : "#6f5d4f",
               fontWeight: "bold",
+              cursor: "pointer",
             }}
           >
             {item}
           </button>
         ))}
-      </section>
-
-      {/* TITULO */}
-      <section
-        style={{
-          textAlign: "center",
-          marginBottom: 35,
-        }}
-      >
-        <h2 style={{ fontSize: 52 }}>
-          Catálogo Premium
-        </h2>
       </section>
 
       {/* PRODUTOS */}
@@ -327,16 +342,16 @@ export default function Home() {
               }}
             >
               <div
-                onClick={() => setZoom(p.imagem_url)}
+                onClick={() =>
+                  setZoom(p.imagem_url)
+                }
                 style={{
                   height: 290,
                   cursor: "zoom-in",
-                  overflow: "hidden",
                 }}
               >
                 <img
                   src={p.imagem_url}
-                  alt={p.nome}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -356,8 +371,10 @@ export default function Home() {
                 >
                   <span
                     style={{
-                      background: "#f8f3ed",
-                      padding: "6px 10px",
+                      background:
+                        "#f8f3ed",
+                      padding:
+                        "6px 10px",
                       borderRadius: 20,
                       fontSize: 12,
                     }}
@@ -367,8 +384,10 @@ export default function Home() {
 
                   <span
                     style={{
-                      background: "#f8f3ed",
-                      padding: "6px 10px",
+                      background:
+                        "#f8f3ed",
+                      padding:
+                        "6px 10px",
                       borderRadius: 20,
                       fontSize: 12,
                     }}
@@ -379,9 +398,9 @@ export default function Home() {
 
                 <h3
                   style={{
-                    minHeight: 72,
-                    lineHeight: 1.3,
+                    minHeight: 70,
                     fontSize: 18,
+                    lineHeight: 1.3,
                   }}
                 >
                   {p.nome}
@@ -390,31 +409,36 @@ export default function Home() {
                 <div
                   style={{
                     fontSize: 34,
-                    fontWeight: "bold",
-                    margin: "12px 0 18px",
+                    fontWeight:
+                      "bold",
+                    margin:
+                      "12px 0 16px",
                   }}
                 >
-                  {moeda(p.preco_venda)}
+                  {moeda(
+                    p.preco_venda
+                  )}
                 </div>
 
-                <a
-                  href={`https://wa.me/${WHATSAPP}?text=Olá! Tenho interesse em: ${encodeURIComponent(
-                    p.nome
-                  )}`}
-                  target="_blank"
+                <button
+                  onClick={() =>
+                    adicionar(p)
+                  }
                   style={{
-                    display: "block",
-                    textAlign: "center",
-                    background: "#8f735d",
-                    color: "#fff",
-                    padding: 14,
+                    width: "100%",
+                    padding: 12,
+                    border: "none",
                     borderRadius: 12,
-                    textDecoration: "none",
-                    fontWeight: "bold",
+                    background:
+                      "#8f735d",
+                    color: "#fff",
+                    fontWeight:
+                      "bold",
+                    cursor: "pointer",
                   }}
                 >
-                  Comprar no WhatsApp
-                </a>
+                  💎 Adicionar à Seleção
+                </button>
               </div>
             </div>
           ))}
@@ -433,50 +457,53 @@ export default function Home() {
       >
         {pagina > 1 && (
           <button
-            onClick={() => setPagina(pagina - 1)}
-            style={{
-              padding: "10px 14px",
-              borderRadius: 10,
-            }}
+            onClick={() =>
+              setPagina(
+                pagina - 1
+              )
+            }
           >
             {"<"}
           </button>
         )}
 
-        {Array.from(
-          { length: Math.min(total, 5) },
-          (_, i) => i + 1
-        ).map((n) => (
-          <button
-            key={n}
-            onClick={() => setPagina(n)}
-            style={{
-              width: 42,
-              height: 42,
-              borderRadius: 10,
-              border: "1px solid #ddd",
-              background:
-                pagina === n ? "#8f735d" : "#fff",
-              color:
-                pagina === n ? "#fff" : "#6f5d4f",
-              fontWeight: "bold",
-            }}
-          >
-            {n}
-          </button>
-        ))}
-
-        {total > 5 && (
-          <span style={{ padding: 10 }}>...</span>
+        {paginasVisiveis().map(
+          (n) => (
+            <button
+              key={n}
+              onClick={() =>
+                setPagina(n)
+              }
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: 10,
+                border:
+                  "1px solid #ddd",
+                background:
+                  pagina === n
+                    ? "#8f735d"
+                    : "#fff",
+                color:
+                  pagina === n
+                    ? "#fff"
+                    : "#6f5d4f",
+                fontWeight:
+                  "bold",
+              }}
+            >
+              {n}
+            </button>
+          )
         )}
 
-        {pagina < total && (
+        {pagina < totalPaginas && (
           <button
-            onClick={() => setPagina(pagina + 1)}
-            style={{
-              padding: "10px 14px",
-              borderRadius: 10,
-            }}
+            onClick={() =>
+              setPagina(
+                pagina + 1
+              )
+            }
           >
             {">"}
           </button>
@@ -486,16 +513,20 @@ export default function Home() {
       {/* ZOOM */}
       {zoom && (
         <div
-          onClick={() => setZoom(null)}
+          onClick={() =>
+            setZoom(null)
+          }
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.75)",
+            background:
+              "rgba(0,0,0,0.75)",
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent:
+              "center",
+            alignItems:
+              "center",
             zIndex: 999,
-            padding: 20,
           }}
         >
           <img
