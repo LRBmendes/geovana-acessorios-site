@@ -5,8 +5,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
-const POR_PAGINA = 15;
-const SITE_VERSION = "4.1.0";
+const POR_PAGINA = 16;
+const SITE_VERSION = "4.1.1";
 
 // =====================================================
 // API
