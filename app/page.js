@@ -128,7 +128,7 @@ function ehAnel(produto) {
 // COMPONENTE
 // =====================================================
 export default function Home() {
-  const mobile = typeof window !== "undefined" && window.innerWidth <= 768;
+  const mobile = false;
   const [produtos, setProdutos] = useState([]);
   const [busca, setBusca] = useState("");
   const [colecao, setColecao] = useState("Todos");
