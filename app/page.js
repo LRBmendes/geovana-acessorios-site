@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 15;
-const SITE_VERSION = "3.0.0";
+const SITE_VERSION = "3.0.1";
 
 // =====================================================
 // API
@@ -53,19 +53,25 @@ function nomeBonito(nome = "") {
   return nome
     .toLowerCase()
     .split(" ")
-    .map((p) =>
-      p ? p.charAt(0).toUpperCase() + p.slice(1) : ""
-    )
+    .map((p) => (p ? p.charAt(0).toUpperCase() + p.slice(1) : ""))
     .join(" ")
     .trim();
 }
 
 // =====================================================
-// FILTROS
+// FILTROS (AJUSTADOS SEM MEXER NO RESTO)
 // =====================================================
 function ehPrata(produto) {
   const txt = textoCompleto(produto);
-  return txt.includes("prata") || txt.includes("925");
+
+  return (
+    txt.includes("prata") ||
+    txt.includes("925") ||
+    txt.includes("rodio branco") ||
+    txt.includes("ródio branco") ||
+    txt.includes("inox") ||
+    txt.includes("aco inox")
+  );
 }
 
 function ehSemijoia(produto) {
@@ -76,7 +82,10 @@ function ehSemijoia(produto) {
     txt.includes("semi joia") ||
     txt.includes("semi-joia") ||
     txt.includes("dourado") ||
-    txt.includes("rodio")
+    txt.includes("banhado") ||
+    txt.includes("folheado") ||
+    txt.includes("rodio") ||
+    txt.includes("zirc")
   );
 }
 
@@ -108,7 +117,9 @@ function ehAnel(produto) {
 
   return (
     txt.includes("anel") ||
-    txt.includes("alianca")
+    txt.includes("alianca") ||
+    txt.includes("aliança") ||
+    txt.includes("solitario")
   );
 }
 
@@ -450,10 +461,8 @@ export default function Home() {
                 overflow: "hidden",
                 boxShadow:
                   "0 14px 34px rgba(0,0,0,.06)",
-                transition: ".2s",
               }}
             >
-              {/* FOTO */}
               <div
                 onClick={() => setZoom(p.imagem_url)}
                 style={{
@@ -471,7 +480,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* CONTEÚDO */}
               <div style={{ padding: 22 }}>
                 <h3
                   style={{
@@ -604,8 +612,7 @@ export default function Home() {
             style={{
               position: "fixed",
               inset: 0,
-              background:
-                "rgba(0,0,0,.35)",
+              background: "rgba(0,0,0,.35)",
               zIndex: 100,
             }}
           />
@@ -638,8 +645,7 @@ export default function Home() {
                 style={{
                   display: "flex",
                   gap: 12,
-                  borderBottom:
-                    "1px solid #eee",
+                  borderBottom: "1px solid #eee",
                   paddingBottom: 12,
                   marginBottom: 14,
                 }}
@@ -675,8 +681,7 @@ export default function Home() {
                   }
                   style={{
                     border: "none",
-                    background:
-                      "transparent",
+                    background: "transparent",
                     cursor: "pointer",
                   }}
                 >
@@ -730,8 +735,7 @@ export default function Home() {
           style={{
             position: "fixed",
             inset: 0,
-            background:
-              "rgba(0,0,0,.82)",
+            background: "rgba(0,0,0,.82)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
