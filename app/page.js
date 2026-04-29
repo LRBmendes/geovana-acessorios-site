@@ -1,16 +1,16 @@
 export const revalidate = 60;
 
-const VERSAO = "v1.0.8";
+const VERSAO = "v1.0.9";
 
 const SUPABASE_URL = "https://kcydlzerrhezpcxkqonx.supabase.co";
 
 // ==========================
-// BUSCAR PRODUTOS
+// BUSCAR PRODUTOS (TODOS)
 // ==========================
 async function getProdutos() {
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc&limit=8`,
+      `${SUPABASE_URL}/rest/v1/produtos?select=*&ativo=eq.true&order=id.desc`,
       {
         headers: {
           apikey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
@@ -81,7 +81,6 @@ export default async function Home() {
         color: "#5f5347",
       }}
     >
-      {/* HEADER */}
       <header
         style={{
           display: "flex",
@@ -116,7 +115,6 @@ export default async function Home() {
         </a>
       </header>
 
-      {/* HERO */}
       <section
         style={{
           padding: "50px 20px",
@@ -145,7 +143,6 @@ export default async function Home() {
         </p>
       </section>
 
-      {/* PRODUTOS */}
       <section style={{ padding: "20px" }}>
         <h2
           style={{
@@ -162,7 +159,7 @@ export default async function Home() {
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))",
             gap: "20px",
-            maxWidth: "1200px",
+            maxWidth: "1400px",
             margin: "0 auto",
           }}
         >
@@ -200,7 +197,7 @@ export default async function Home() {
                   <h3
                     style={{
                       fontSize: "16px",
-                      minHeight: "50px",
+                      minHeight: "55px",
                       marginTop: "10px",
                     }}
                   >
