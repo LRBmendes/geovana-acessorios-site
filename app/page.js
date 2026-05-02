@@ -212,10 +212,16 @@ typeof navigator !== "undefined" &&
   function adicionar(item) {
     if (selecao.find((x) => x.id === item.id)) return;
 
-    setSelecao([...selecao, item]);
-    setDrawer(true);
-  }
+   setSelecao((prev) => [...prev, item]);
 
+if (!mobile) {
+  setDrawer(true);
+}
+
+if (mobile) {
+  setTimeout(() => setDrawer(false), 200);
+}
+    }
   function remover(id) {
     setSelecao(selecao.filter((x) => x.id !== id));
   }
@@ -686,7 +692,23 @@ textAlign: "center",
             <h2 style={{ marginTop: 0 }}>
               💎 Minha Seleção
             </h2>
-
+{mobile && (
+  <button
+    onClick={() => setDrawer(false)}
+    style={{
+      width: "100%",
+      padding: 12,
+      marginBottom: 14,
+      borderRadius: 12,
+      border: "1px solid #ddd",
+      background: "#f5f5f5",
+      cursor: "pointer",
+      fontWeight: "bold"
+    }}
+  >
+    ← Continuar escolhendo
+  </button>
+)}
             {selecao.length === 0 && (
               <p>Nenhum item selecionado.</p>
             )}
