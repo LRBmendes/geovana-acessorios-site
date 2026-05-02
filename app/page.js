@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.7";
+const SITE_VERSION = "4.1.8";
 
 // =====================================================
 // API
@@ -803,7 +803,32 @@ textAlign: "center",
           </div>
         </>
       )}
-
+{mobile && (
+  <button
+    onClick={() => setDrawer(true)}
+    style={{
+      position: "fixed",
+      bottom: 20,
+      left: 20,
+      right: 20,
+      zIndex: 200,
+      padding: 16,
+      borderRadius: 16,
+      border: "none",
+      background: "#8f735d",
+      color: "#fff",
+      fontWeight: "bold",
+      fontSize: 16,
+      boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 8,
+    }}
+  >
+    💎 Minha Seleção ({selecao.length})
+  </button>
+)}
       {/* ZOOM */}
       {zoom && (
         <div
