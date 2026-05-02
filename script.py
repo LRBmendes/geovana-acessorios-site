@@ -94,6 +94,7 @@ def extrair_produtos(html, pagina):
             codigo = ""
             imagem = ""
 
+            # NOME
             n = card.select_one(".tnom")
             if n:
                 nome = n.get_text(" ", strip=True)
@@ -101,20 +102,7 @@ def extrair_produtos(html, pagina):
             if not nome:
                 continue
 
-            p = card.select_one(".tprc")
-            if p:
-               texto_preco = p.get_text(" ", strip=True)
-               print("BRUTO:", texto_preco)
-               preco = limpar_preco(texto_preco)
-               print("LIMPO:", preco)
-            if preco < 5:
-                print("IGNORADO (preço baixo):", nome)
-                continue
-
-            c = card.select_one(".tcat")
-            if c:
-                categoria = c.get_text(" ", strip=True)
-
+            # CODIGO
             texto_total = card.get_text(" ", strip=True).lower()
 
             m = re.search(r'c[oó]d\.?\s*(\d+)', texto_total)
@@ -124,12 +112,40 @@ def extrair_produtos(html, pagina):
             if not codigo:
                 continue
 
+            # PREÇO
+            p = card.select_one(".tprc")
+            if p:
+                texto_preco = p.get_text(" ", strip=True)
+                print("BRUTO:", texto_preco)
+
+                preco = limpar_preco(texto_preco)
+                print("LIMPO:", preco)
+
+            # FILTRO
+            if preco < 5:
+                print("DESATIVANDO (preço baixo):", nome)
+
+                payload = {
+                    "codigo": codigo,
+                    "ativo": False
+                }
+
+                salvar_produto(payload)
+                continue
+
+            # CATEGORIA
+            c = card.select_one(".tcat")
+            if c:
+                categoria = c.get_text(" ", strip=True)
+
+            # IMAGEM
             img = card.select_one("img")
             if img:
                 imagem = img.get("src", "")
                 if imagem.startswith("/"):
                     imagem = "https://catalogo.innosystem.com.br" + imagem
 
+            # SALVAR PRODUTO
             payload = {
                 "nome": nome,
                 "codigo": codigo,
