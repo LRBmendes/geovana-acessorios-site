@@ -103,7 +103,10 @@ def extrair_produtos(html, pagina):
 
             p = card.select_one(".tprc")
             if p:
-                preco = limpar_preco(p.get_text(" ", strip=True))
+               texto_preco = p.get_text(" ", strip=True)
+               print("BRUTO:", texto_preco)
+               preco = limpar_preco(texto_preco)
+               print("LIMPO:", preco)
             if preco < 5:
                 print("IGNORADO (preço baixo):", nome)
                 continue
