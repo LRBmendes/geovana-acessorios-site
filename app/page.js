@@ -223,7 +223,7 @@ if (mobile) {
 
   setTimeout(() => {
     setDrawer(false);
-  }, 800);
+  }, 1200);
 }
 }
   function remover(id) {
