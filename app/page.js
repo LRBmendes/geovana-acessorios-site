@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567999481768";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.6";
+const SITE_VERSION = "4.1.7";
 
 // =====================================================
 // API
@@ -219,9 +219,13 @@ if (!mobile) {
 }
 
 if (mobile) {
-  setTimeout(() => setDrawer(false), 200);
+  setDrawer(true);
+
+  setTimeout(() => {
+    setDrawer(false);
+  }, 800);
 }
-    }
+}
   function remover(id) {
     setSelecao(selecao.filter((x) => x.id !== id));
   }
