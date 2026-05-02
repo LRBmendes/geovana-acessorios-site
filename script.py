@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 
 # =====================================================
 # GEOVANA ACESSÓRIOS - ROBÔ V5 FINAL
-# PAGINAÇÃO REAL ASP.NET WEBFORMS
 # =====================================================
 
 SUPABASE_URL = "https://kcydlzerrhezpcxkqonx.supabase.co"
@@ -30,6 +29,9 @@ HEADERS_SITE = {
 
 TOTAL_OK = 0
 TOTAL_ERRO = 0
+
+# 🔥 CONTROLE DE EXECUÇÃO (SEGURANÇA)
+RUN_ID = int(time.time())
 
 
 # =====================================================
@@ -104,8 +106,8 @@ def extrair_produtos(html, pagina):
 
             # CODIGO
             texto_total = card.get_text(" ", strip=True).lower()
-
             m = re.search(r'c[oó]d\.?\s*(\d+)', texto_total)
+
             if m:
                 codigo = m.group(1)
 
@@ -121,13 +123,14 @@ def extrair_produtos(html, pagina):
                 preco = limpar_preco(texto_preco)
                 print("LIMPO:", preco)
 
-            # FILTRO
+            # 🔥 FILTRO PREÇO BAIXO
             if preco < 5:
                 print("DESATIVANDO (preço baixo):", nome)
 
                 payload = {
                     "codigo": codigo,
-                    "ativo": False
+                    "ativo": False,
+                    "run_id": RUN_ID
                 }
 
                 salvar_produto(payload)
@@ -154,7 +157,8 @@ def extrair_produtos(html, pagina):
                 "preco_venda": calcular_venda(preco),
                 "imagem_url": imagem,
                 "produto_url": BASE_URL,
-                "ativo": True
+                "ativo": True,
+                "run_id": RUN_ID
             }
 
             salvar_produto(payload)
@@ -165,24 +169,23 @@ def extrair_produtos(html, pagina):
 
 
 # =====================================================
-# PÁGINA 1
+# EXECUÇÃO
 # =====================================================
 
 print("===================================")
 print("ROBÔ V5 INICIADO")
+print("RUN_ID:", RUN_ID)
 print("===================================")
 
 sessao = requests.Session()
 
+# PÁGINA 1
 r = sessao.get(BASE_URL, headers=HEADERS_SITE, timeout=30)
 html = r.text
 
 extrair_produtos(html, 1)
 
-# =====================================================
 # PÁGINAS 2 até 18
-# =====================================================
-
 for pagina in range(2, TOTAL_PAGINAS + 1):
 
     print("\n----------------------------")
@@ -219,6 +222,25 @@ for pagina in range(2, TOTAL_PAGINAS + 1):
     extrair_produtos(html, pagina)
 
     time.sleep(1)
+
+
+# =====================================================
+# LIMPEZA FINAL SEGURA
+# =====================================================
+
+print("\nINICIANDO LIMPEZA FINAL...")
+
+url = f"{SUPABASE_URL}/rest/v1/produtos?run_id=neq.{RUN_ID}"
+
+response = requests.patch(
+    url,
+    headers=HEADERS_SUPABASE,
+    data=json.dumps({"ativo": False}),
+    timeout=30
+)
+
+print("LIMPEZA STATUS:", response.status_code)
+
 
 # =====================================================
 # FINAL
