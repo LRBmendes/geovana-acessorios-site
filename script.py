@@ -177,8 +177,6 @@ print("ROBÔ V5 INICIADO")
 print("RUN_ID:", RUN_ID)
 print("===================================")
 
-raise Exception("teste alerta")
-
 sessao = requests.Session()
 
 # PÁGINA 1
