@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.19";
+const SITE_VERSION = "4.1.20";
 
 // =====================================================
 // API
@@ -135,6 +135,7 @@ typeof navigator !== "undefined" &&
   const [busca, setBusca] = useState("");
   const [colecao, setColecao] = useState("Todos");
   const [tipo, setTipo] = useState("Todos");
+  const [ordenacao, setOrdenacao] = useState("padrao");
   const [pagina, setPagina] = useState(1);
 
   const [drawer, setDrawer] = useState(false);
@@ -147,8 +148,8 @@ typeof navigator !== "undefined" &&
   }, []);
 
   useEffect(() => {
-    setPagina(1);
-  }, [busca, colecao, tipo]);
+  setPagina(1);
+}, [busca, colecao, tipo, ordenacao]);
 
   // =====================================================
   // FILTRAGEM
@@ -187,12 +188,22 @@ typeof navigator !== "undefined" &&
   );
 
   
-    const lista = useMemo(() => {
+  const lista = useMemo(() => {
+  let dados = [...filtrados];
+
+  if (ordenacao === "menor") {
+  dados.sort((a, b) => Number(a.preco_venda || 0) - Number(b.preco_venda || 0));
+}
+
+if (ordenacao === "maior") {
+  dados.sort((a, b) => Number(b.preco_venda || 0) - Number(a.preco_venda || 0));
+}
+
   const inicio = (pagina - 1) * POR_PAGINA;
   const fim = inicio + POR_PAGINA;
 
-  return filtrados.slice(inicio, fim);
-}, [filtrados, pagina]);
+  return dados.slice(inicio, fim);
+}, [filtrados, pagina, ordenacao]);
   function paginasVisiveis() {
     const arr = [];
 
@@ -442,6 +453,42 @@ textAlign: "center",
           }}
         />
       </section> 
+<section
+  style={{
+    maxWidth: 850,
+    margin: "0 auto",
+    padding: "6px 16px 0",
+    display: "flex",
+    justifyContent: "center",
+    gap: 10,
+    flexWrap: "wrap",
+  }}
+>
+  {[
+    { label: "Padrão", value: "padrao" },
+    { label: "Menor preço", value: "menor" },
+    { label: "Maior preço", value: "maior" },
+  ].map((item) => (
+    <button
+      key={item.value}
+      onClick={() => setOrdenacao(item.value)}
+      style={{
+        border: "1px solid #ddd",
+        padding: "8px 14px",
+        borderRadius: 20,
+        cursor: "pointer",
+        fontWeight: "bold",
+        background:
+          ordenacao === item.value ? "#8f735d" : "#fff",
+        color:
+          ordenacao === item.value ? "#fff" : "#6d5848",
+        fontSize: 13,
+      }}
+    >
+      {item.label}
+    </button>
+  ))}
+</section>
 
       {/* FILTROS */}
       <section
