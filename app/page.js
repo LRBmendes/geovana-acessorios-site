@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.10";
+const SITE_VERSION = "4.1.11";
 
 // =====================================================
 // API
@@ -868,14 +868,17 @@ textAlign: "center",
             padding: 20,
           }}
         >
-          <img
-            src={zoom}
-            style={{
-              maxWidth: "92%",
-              maxHeight: "92%",
-              borderRadius: 18,
-            }}
-          />
+         <img
+          src={zoom}
+          style={{
+           maxWidth: "92%",
+           maxHeight: "92%",
+           width: "auto",
+           height: "auto",
+           objectFit: "contain",
+           borderRadius: 18,,
+  }}
+/>
         </div>
       )}
     </main>
