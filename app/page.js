@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.9";
+const SITE_VERSION = "4.1.10";
 
 // =====================================================
 // API
@@ -321,24 +321,24 @@ textAlign: "center",
     </div>
 
     <button
-      onClick={() => setDrawer(true)}
-      style={{
-        border: "none",
-        background: "#8f735d",
-        color: "#fff",
-        padding: "14px 22px",
-        borderRadius: 30,
-        fontWeight: "bold",
-        cursor: "pointer",
-        whiteSpace: "nowrap",
-        width:
-  mobile ? "100%" : "auto",
-marginTop:
-  mobile ? 12 : 0,
-      }}
-    >
-      💎 Minha Seleção ({selecao.length})
-    </button>
+  onClick={() => setDrawer(true)}
+  style={{
+    border: "none",
+    background: "#8f735d",
+    color: "#fff",
+    padding: "12px 18px",
+    borderRadius: 30,
+    fontWeight: "bold",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+
+    width: "fit-content",
+    justifySelf: "center",
+    marginTop: mobile ? 12 : 0,
+  }}
+>
+  💎 Minha Seleção ({selecao.length})
+</button>
   </div>
 </header>
 
@@ -523,22 +523,26 @@ marginTop:
                   "0 14px 34px rgba(0,0,0,.06)",
               }}
             >
-              <div
-                onClick={() => setZoom(p.imagem_url)}
-                style={{
-                  height: 310,
-                  cursor: "zoom-in",
-                }}
-              >
-                <img
-                  src={p.imagem_url}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
+             <div
+      onClick={() => setZoom(p.imagem_url)}
+        style={{
+    width: "100%",
+    aspectRatio: "4 / 5",
+    cursor: "zoom-in",
+    overflow: "hidden",
+  }}
+>
+  <img
+  src={p.imagem_url}
+  loading="lazy"
+  style={{
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    display: "block",
+  }}
+/>
+</div>
 
               <div style={{ padding: 22 }}>
                 <h3
@@ -572,17 +576,31 @@ marginTop:
                     {moeda(p.preco_venda)}
                   </div>
 
-                  <div
-                    style={{
-                      marginTop: 6,
-                      fontSize: 12,
-                      color: "#a38a77",
-                      letterSpacing: 1,
-                    }}
-                  >
-                    PEÇA EXCLUSIVA
-                  </div>
-                </div>
+                 <div
+                        style={{
+                          marginTop: 6,
+                          fontSize: 12,
+                          color: "#a38a77",
+                          letterSpacing: 1,
+                        }}
+                      >
+                        PEÇA EXCLUSIVA
+                      </div>
+                      
+                      <div
+                        style={{
+                          marginTop: 6,
+                          fontSize: 12,
+                          color: "#7a8b6f",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {ehPrata(p)
+                          ? "✓ Garantia vitalícia"
+                          : ehSemijoia(p)
+                          ? "✓ Garantia de 1 ano"
+                          : ""}
+                      </div>
 
                 <button
                   onClick={() => adicionar(p)}
@@ -611,7 +629,6 @@ marginTop:
         <section
           style={{
             display: "flex",
-            justifyContent: "center",
             justifyContent: "center",
 flexWrap: "wrap",
 textAlign: "center",
@@ -663,7 +680,12 @@ textAlign: "center",
           borderTop: "1px solid #ece6de",
         }}
       >
-        © {new Date().getFullYear()} Geovana Acessórios • Versão {SITE_VERSION}
+       <>
+  © {new Date().getFullYear()} Geovana Acessórios • Versão {SITE_VERSION}
+  <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7 }}>
+    Desenvolvido por Luís Mendes
+  </div>
+</>
       </footer>
 
       {/* DRAWER */}
@@ -838,7 +860,6 @@ textAlign: "center",
             inset: 0,
             background: "rgba(0,0,0,.82)",
             display: "flex",
-            justifyContent: "center",
             justifyContent: "center",
 flexWrap: "wrap",
 textAlign: "center",
