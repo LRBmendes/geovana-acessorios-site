@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.17";
+const SITE_VERSION = "4.1.19";
 
 // =====================================================
 // API
@@ -262,7 +262,7 @@ const totalPix = total * 0.95;
     zIndex: 1,
     background: "#fff",
     borderBottom: "1px solid #eee",
-    padding: "14px 24px",
+    padding: "8px 16px",
   }}
 >
   <div
@@ -274,7 +274,7 @@ const totalPix = total * 0.95;
       justifyContent: "center",
 flexWrap: "wrap",
 textAlign: "center",
-      gap: 18,
+      gap: 10,
     }}
   >
     <div
@@ -283,15 +283,15 @@ textAlign: "center",
         justifyContent: "center",
 flexWrap: "wrap",
 textAlign: "center",
-        gap: 14,
+        gap: 10,
         minWidth: 0,
       }}
     >
       <img
         src="/logo.jpeg"
         style={{
-          width: 54,
-          height: 54,
+          width: 44,
+          height: 44,
           borderRadius: 16,
           objectFit: "cover",
           flexShrink: 0,
@@ -301,7 +301,7 @@ textAlign: "center",
       <div>
         <div
           style={{
-            fontSize: mobile ? 24 : 32,
+            fontSize: mobile ? 20 : 26,
             fontWeight: "bold",
             color: "#5a4333",
             lineHeight: 1,
@@ -314,7 +314,7 @@ textAlign: "center",
           style={{
             fontSize: 13,
             color: "#9a7e69",
-            marginTop: 10,
+            marginTop: 4,
           }}
         >
           Luxo acessível para todos os momentos
@@ -336,7 +336,7 @@ textAlign: "center",
 
     width: "fit-content",
     justifySelf: "center",
-    marginTop: mobile ? 12 : 0,
+    marginTop: mobile ? 8 : 0,
   }}
 >
   💎 Minha Seleção ({selecao.length})
@@ -350,24 +350,24 @@ textAlign: "center",
           maxWidth: 1200,
           margin: "0 auto",
           textAlign: "center",
-          padding: "32px 20px 18px",
+          padding: "18px 16px 10px",
         }}
       >
         <h1
           style={{
-            fontSize: "clamp(34px,5vw,58px)",
+            fontSize: "clamp(24px,4vw,34px)",
             margin: 0,
             color: "#503a2f",
             lineHeight: 1.1,
           }}
         >
-          Acessórios que elevam sua beleza.
+          Acessórios elegantes para todos os momentos.
         </h1>
 
              <p
           style={{
-            marginTop: 18,
-            fontSize: 20,
+            marginTop: 10,
+            fontSize: 15,
             color: "#8b7565",
             maxWidth: 760,
             marginInline: "auto",
@@ -380,8 +380,8 @@ textAlign: "center",
         
         <div
           style={{
-            marginTop: 12,
-            fontSize: 14,
+            marginTop: 6,
+            fontSize: 12,
             color: "#7a8b6f",
             fontWeight: "bold",
           }}
@@ -391,11 +391,11 @@ textAlign: "center",
       </section>
 
       {/* BARRA CONFIANÇA */}
-      <section
+      {/* <section
         style={{
           maxWidth: 1100,
           margin: "0 auto",
-          padding: "0 20px 30px",
+          padding: "0 16px 12px",
         }}
       >
         <div
@@ -403,13 +403,13 @@ textAlign: "center",
             background: "#fff",
             border: "1px solid #eee",
             borderRadius: 18,
-            padding: "14px 20px",
+            padding: "10px 12px",
             display: "flex",
             justifyContent: "center",
             gap: 18,
             flexWrap: "wrap",
             color: "#7b6556",
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: "bold",
           }}
         >
@@ -418,14 +418,14 @@ textAlign: "center",
           <span>✓ Pedido fácil no WhatsApp</span>
           <span>✓ Qualidade garantida</span>
         </div>
-      </section>
+      </section>*/}
 
-      {/* BUSCA */}
-      <section
+     {/* BUSCA */}
+     <section
         style={{
           maxWidth: 850,
           margin: "0 auto",
-          padding: "0 20px",
+          padding: "0 16px 6px",
         }}
       >
         <input
@@ -434,14 +434,14 @@ textAlign: "center",
           placeholder="Buscar brincos, anéis, colares..."
           style={{
             width: "100%",
-            padding: 18,
+            padding: 14,
             borderRadius: 16,
             border: "1px solid #ddd",
             fontSize: 16,
             background: "#fff",
           }}
         />
-      </section>
+      </section> 
 
       {/* FILTROS */}
       <section
