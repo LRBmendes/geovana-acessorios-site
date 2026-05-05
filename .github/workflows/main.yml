@@ -2,7 +2,7 @@ name: Atualizar Catalogo
 
 on:
   schedule:
-    - cron: '0 12,15,19,23 * * *'  # horários específicos (Brasil ajustado)
+    - cron: '0 12,15,19,23 * * *'
   workflow_dispatch:
 
 jobs:
@@ -26,3 +26,14 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python script.py
         continue-on-error: false
+
+      - name: Enviar alerta WhatsApp
+        if: failure()
+        run: |
+          curl -X POST ${{ secrets.MAKE_WEBHOOK_URL }} \
+          -H "Content-Type: application/json" \
+          -d '{
+            "mensagem": "⚠️ ERRO NO ROBÔ DE CATÁLOGO",
+            "repositorio": "${{ github.repository }}",
+            "execucao": "${{ github.run_number }}"
+          }'
