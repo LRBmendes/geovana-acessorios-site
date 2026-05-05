@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.14";
+const SITE_VERSION = "4.1.15";
 
 // =====================================================
 // API
@@ -772,7 +772,6 @@ textAlign: "center",
             <h2 style={{ marginTop: 0 }}>
               💎 Minha Seleção
             </h2>
-{mobile && (
   <button
     onClick={() => setDrawer(false)}
     style={{
@@ -786,9 +785,8 @@ textAlign: "center",
       fontWeight: "bold"
     }}
   >
-    ← Continuar escolhendo
+    ← Ver mais produtos
   </button>
-)}
             {selecao.length === 0 && (
               <p>Nenhum item selecionado.</p>
             )}
@@ -857,7 +855,7 @@ textAlign: "center",
                     cursor: "pointer",
                   }}
                 >
-                  ✨ Reservar no WhatsApp
+                  💬 Finalizar pelo WhatsApp
                 </button>
 
                 <button
