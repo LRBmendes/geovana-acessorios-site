@@ -876,7 +876,7 @@ textAlign: "center",
            width: "auto",
            height: "auto",
            objectFit: "contain",
-           borderRadius: 18,,
+           borderRadius: 18,
   }}
 />
         </div>
