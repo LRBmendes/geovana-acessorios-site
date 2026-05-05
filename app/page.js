@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.15";
+const SITE_VERSION = "4.1.16";
 
 // =====================================================
 // API
@@ -186,13 +186,13 @@ typeof navigator !== "undefined" &&
     Math.ceil(filtrados.length / POR_PAGINA)
   );
 
-  const lista = useMemo(() => {
-    const inicio = (pagina - 1) * POR_PAGINA;
-    const fim = inicio + POR_PAGINA;
+  
+    const lista = useMemo(() => {
+  const inicio = (pagina - 1) * POR_PAGINA;
+  const fim = inicio + POR_PAGINA;
 
-    return filtrados.slice(inicio, fim);
-  }, [filtrados, pagina]);
-
+  return filtrados.slice(inicio, fim);
+}, [filtrados, pagina]);
   function paginasVisiveis() {
     const arr = [];
 
@@ -233,10 +233,10 @@ if (mobile) {
   function limpar() {
     setSelecao([]);
   }
-
+const total = selecao.reduce((acc, item) => {
+  return acc + Number(item.preco_venda || 0);
+}, 0);
   function reservar() {
-    if (selecao.length === 0) return;
-
     const texto = selecao
       .map((p) => `• ${nomeBonito(p.nome)}`)
       .join("%0A");
@@ -773,20 +773,31 @@ textAlign: "center",
               💎 Minha Seleção
             </h2>
   <button
-    onClick={() => setDrawer(false)}
-    style={{
-      width: "100%",
-      padding: 12,
-      marginBottom: 14,
-      borderRadius: 12,
-      border: "1px solid #ddd",
-      background: "#f5f5f5",
-      cursor: "pointer",
-      fontWeight: "bold"
-    }}
-  >
-    ← Ver mais produtos
-  </button>
+  onClick={() => setDrawer(false)}
+
+  onMouseEnter={(e) => {
+    e.currentTarget.style.background = "#f3e8df";
+  }}
+
+  onMouseLeave={(e) => {
+    e.currentTarget.style.background = "#fffaf6";
+  }}
+
+  style={{
+    width: "100%",
+    padding: 12,
+    marginBottom: 14,
+    borderRadius: 12,
+    border: "1px solid #e6d8cb",
+    background: "#fffaf6",
+    color: "#8f735d",
+    cursor: "pointer",
+    fontWeight: "bold",
+    transition: "all 0.2s ease",
+  }}
+>
+  ← Ver mais produtos
+</button>
             {selecao.length === 0 && (
               <p>Nenhum item selecionado.</p>
             )}
@@ -842,6 +853,24 @@ textAlign: "center",
 
             {selecao.length > 0 && (
               <>
+  <div
+  style={{
+    marginTop: 10,
+    marginBottom: 14,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#5a4333",
+    textAlign: "center",
+    background: "#f3e8df",
+    padding: "10px 14px",
+    borderRadius: 12,
+    display: "block",
+    maxWidth: 220,
+    margin: "10px auto 14px",
+  }}
+>
+  Total: {moeda(total)}
+</div>
                 <button
                   onClick={reservar}
                   style={{
