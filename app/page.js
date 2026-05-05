@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.13";
+const SITE_VERSION = "4.1.14";
 
 // =====================================================
 // API
@@ -630,22 +630,48 @@ textAlign: "center",
 </div>
   </div> 
 
-  <button
-    onClick={() => adicionar(p)}
-    style={{
-      width: "100%",
-      padding: 15,
-      border: "none",
-      borderRadius: 16,
-      cursor: "pointer",
-      background: "#8f735d",
-      color: "#fff",
-      fontWeight: "bold",
-      fontSize: 15,
-    }}
-  >
-    💬 Reservar no WhatsApp
-  </button>
+  {/* BOTÃO PRINCIPAL */}
+<button
+  onClick={() => adicionar(p)}
+  style={{
+    width: "100%",
+    padding: 14,
+    border: "none",
+    borderRadius: 16,
+    cursor: "pointer",
+    background: "#8f735d",
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 15,
+  }}
+>
+  🛍️ Adicionar à seleção
+</button>
+
+{/* BOTÃO SECUNDÁRIO */}
+<button
+  onClick={() => {
+    const texto = `Olá! Tenho interesse nesta peça: ${nomeBonito(p.nome)}`;
+    window.open(
+      `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(texto)}`,
+      "_blank"
+    );
+  }}
+  style={{
+    width: "100%",
+    marginTop: 8,
+    padding: 10,
+    borderRadius: 12,
+    border: "1px solid #ddd",
+    background: "#fff",
+    color: "#6d5848",
+    fontWeight: "bold",
+    fontSize: 13,
+    cursor: "pointer",
+  }}
+>
+  ⚡ Comprar agora
+</button>
 </div>
             </div>
           ))}
