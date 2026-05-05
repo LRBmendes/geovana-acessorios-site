@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.16";
+const SITE_VERSION = "4.1.17";
 
 // =====================================================
 // API
@@ -236,6 +236,8 @@ if (mobile) {
 const total = selecao.reduce((acc, item) => {
   return acc + Number(item.preco_venda || 0);
 }, 0);
+
+const totalPix = total * 0.95;
   function reservar() {
     const texto = selecao
       .map((p) => `• ${nomeBonito(p.nome)}`)
@@ -623,9 +625,9 @@ textAlign: "center",
   }}
 >
         {ehPrata(p)
-          ? "VITALÍCIO"
+          ? "✨GARANTIA VITALÍCIA"
           : ehSemijoia(p)
-          ? "1 ANO DE GARANTIA"
+          ? "✨1 ANO DE GARANTIA"
           : ""}
 </div>
   </div> 
@@ -853,10 +855,8 @@ textAlign: "center",
 
             {selecao.length > 0 && (
               <>
-  <div
+<div
   style={{
-    marginTop: 10,
-    marginBottom: 14,
     fontSize: 18,
     fontWeight: "bold",
     color: "#5a4333",
@@ -869,8 +869,27 @@ textAlign: "center",
     margin: "10px auto 14px",
   }}
 >
-  Total: {moeda(total)}
+  <div
+    style={{
+      fontSize: 14,
+      color: "#a38a77",
+      textDecoration: "line-through",
+    }}
+  >
+    De: {moeda(total)}
+  </div>
+
+  <div
+    style={{
+      fontSize: 20,
+      fontWeight: "bold",
+      color: "#2e7d32",
+    }}
+  >
+    Por: {moeda(totalPix)} no PIX
+  </div>
 </div>
+
                 <button
                   onClick={reservar}
                   style={{
@@ -984,6 +1003,7 @@ textAlign: "center",
     />
   </div>
 )}
+ 
     </main>
   );
 }
