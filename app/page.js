@@ -896,6 +896,16 @@ textAlign: "center",
   >
     no PIX
   </div>
+      <div
+  style={{
+    fontSize: 11,
+    color: "#9a7e69",
+    marginTop: 4,
+    opacity: 0.8,
+  }}
+>
+  💰 5% de desconto
+</div>
 </div>
 
                 <button
