@@ -857,23 +857,21 @@ textAlign: "center",
               <>
 <div
   style={{
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#5a4333",
     textAlign: "center",
-    background: "#f3e8df",
-    padding: "10px 14px",
-    borderRadius: 12,
-    display: "block",
-    maxWidth: 220,
-    margin: "10px auto 14px",
+    margin: "14px auto 18px",
+    padding: "12px 16px",
+    borderRadius: 14,
+    border: "1px solid #e6d8cb",
+    background: "#fff",
+    maxWidth: 240,
   }}
 >
   <div
     style={{
-      fontSize: 14,
+      fontSize: 13,
       color: "#a38a77",
       textDecoration: "line-through",
+      marginBottom: 4,
     }}
   >
     De: {moeda(total)}
@@ -881,12 +879,22 @@ textAlign: "center",
 
   <div
     style={{
-      fontSize: 20,
+      fontSize: 22,
       fontWeight: "bold",
-      color: "#2e7d32",
+      color: "#8f735d",
     }}
   >
-    Por: {moeda(totalPix)} no PIX
+    {moeda(totalPix)}
+  </div>
+
+  <div
+    style={{
+      fontSize: 12,
+      color: "#9a7e69",
+      marginTop: 2,
+    }}
+  >
+    no PIX
   </div>
 </div>
 
