@@ -544,81 +544,82 @@ textAlign: "center",
 />
 </div>
 
-              <div style={{ padding: 22 }}>
-                <h3
-                  style={{
-                    minHeight: 62,
-                    margin: 0,
-                    fontSize: 22,
-                    lineHeight: 1.35,
-                    color: "#4e3d31",
-                    textAlign: "center",
-                  }}
-                >
-                  {nomeBonito(p.nome).slice(0, 42)}
-                </h3>
+             <div style={{ padding: 22 }}>
+  <h3
+    style={{
+      minHeight: 62,
+      margin: 0,
+      fontSize: 22,
+      lineHeight: 1.35,
+      color: "#4e3d31",
+      textAlign: "center",
+    }}
+  >
+    {nomeBonito(p.nome).slice(0, 42)}
+  </h3>
 
-                <div
-                  style={{
-                    marginTop: 18,
-                    marginBottom: 20,
-                    textAlign: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 34,
-                      fontWeight: "bold",
-                      color: "#8f735d",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {moeda(p.preco_venda)}
-                  </div>
+  <div
+    style={{
+      marginTop: 18,
+      marginBottom: 20,
+      textAlign: "center",
+    }}
+  >
+    <div
+      style={{
+        fontSize: 34,
+        fontWeight: "bold",
+        color: "#8f735d",
+        lineHeight: 1,
+      }}
+    >
+      {moeda(p.preco_venda)}
+    </div>
 
-                 <div
-                        style={{
-                          marginTop: 6,
-                          fontSize: 12,
-                          color: "#a38a77",
-                          letterSpacing: 1,
-                        }}
-                      >
-                        PEÇA EXCLUSIVA
-                      </div>
-                      
-                      <div
-                        style={{
-                          marginTop: 6,
-                          fontSize: 12,
-                          color: "#7a8b6f",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {ehPrata(p)
-                          ? "✓ Garantia vitalícia"
-                          : ehSemijoia(p)
-                          ? "✓ Garantia de 1 ano"
-                          : ""}
-                      </div>
+    <div
+      style={{
+        marginTop: 6,
+        fontSize: 12,
+        color: "#a38a77",
+        letterSpacing: 1,
+      }}
+    >
+      PEÇA EXCLUSIVA
+    </div>
 
-                <button
-                  onClick={() => adicionar(p)}
-                  style={{
-                    width: "100%",
-                    padding: 15,
-                    border: "none",
-                    borderRadius: 16,
-                    cursor: "pointer",
-                    background: "#8f735d",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    fontSize: 15,
-                  }}
-                >
-                  ✨ Quero Este
-                </button>
-              </div>
+    <div
+      style={{
+        marginTop: 6,
+        fontSize: 12,
+        color: "#7a8b6f",
+        fontWeight: "bold",
+      }}
+    >
+      {ehPrata(p)
+        ? "✓ Garantia vitalícia"
+        : ehSemijoia(p)
+        ? "✓ Garantia de 1 ano"
+        : ""}
+    </div>
+  </div> {/* 👈 ESSA LINHA FALTAVA */}
+
+  <button
+    onClick={() => adicionar(p)}
+    style={{
+      width: "100%",
+      padding: 15,
+      border: "none",
+      borderRadius: 16,
+      cursor: "pointer",
+      background: "#8f735d",
+      color: "#fff",
+      fontWeight: "bold",
+      fontSize: 15,
+    }}
+  >
+    ✨ Quero Este
+  </button>
+</div>
             </div>
           ))}
         </div>
