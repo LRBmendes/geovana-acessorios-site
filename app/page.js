@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.12";
+const SITE_VERSION = "4.1.13";
 
 // =====================================================
 // API
@@ -362,7 +362,7 @@ textAlign: "center",
           Acessórios que elevam sua beleza.
         </h1>
 
-        <p
+             <p
           style={{
             marginTop: 18,
             fontSize: 20,
@@ -375,6 +375,17 @@ textAlign: "center",
           Peças delicadas, elegantes e selecionadas para mulheres
           que gostam de se destacar em todos os momentos.
         </p>
+        
+        <div
+          style={{
+            marginTop: 12,
+            fontSize: 14,
+            color: "#7a8b6f",
+            fontWeight: "bold",
+          }}
+        >
+          ✨ Mais de 300 clientes satisfeitas
+        </div>
       </section>
 
       {/* BARRA CONFIANÇA */}
@@ -512,6 +523,11 @@ textAlign: "center",
             gap: 28,
           }}
         >
+      {produtos.length === 0 && (
+        <div style={{ textAlign: "center", padding: 40 }}>
+    Carregando produtos...
+  </div>
+)}
           {lista.map((p) => (
             <div
               key={p.id}
@@ -524,7 +540,13 @@ textAlign: "center",
               }}
             >
              <div
-      onClick={() => setZoom(p.imagem_url)}
+  onClick={() => setZoom(p.imagem_url)}
+  onMouseEnter={(e) =>
+    e.currentTarget.querySelector("img").style.transform = "scale(1.05)"
+  }
+  onMouseLeave={(e) =>
+    e.currentTarget.querySelector("img").style.transform = "scale(1)"
+  }
         style={{
     width: "100%",
     aspectRatio: "4 / 5",
@@ -540,6 +562,7 @@ textAlign: "center",
     height: "100%",
     objectFit: "cover",
     display: "block",
+    transition: "transform 0.3s ease", 
   }}
 />
 </div>
@@ -589,19 +612,23 @@ textAlign: "center",
 
     <div
       style={{
-        marginTop: 6,
-        fontSize: 12,
-        color: "#7a8b6f",
+        marginTop: 8,
+        display: "inline-block",
+        background: ehPrata(p) ? "#e8f5e9" : "#fff8e1",
+        color: ehPrata(p) ? "#2e7d32" : "#b28704",
+        padding: "5px 12px",
+        borderRadius: 20,
+        fontSize: 11,
         fontWeight: "bold",
-      }}
-    >
-      {ehPrata(p)
-        ? "✓ Garantia vitalícia"
-        : ehSemijoia(p)
-        ? "✓ Garantia de 1 ano"
-        : ""}
-    </div>
-  </div> {/* 👈 ESSA LINHA FALTAVA */}
+  }}
+>
+        {ehPrata(p)
+          ? "VITALÍCIO"
+          : ehSemijoia(p)
+          ? "1 ANO DE GARANTIA"
+          : ""}
+</div>
+  </div> 
 
   <button
     onClick={() => adicionar(p)}
@@ -617,7 +644,7 @@ textAlign: "center",
       fontSize: 15,
     }}
   >
-    ✨ Quero Este
+    💬 Reservar no WhatsApp
   </button>
 </div>
             </div>
