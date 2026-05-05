@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.11";
+const SITE_VERSION = "4.1.12";
 
 // =====================================================
 // API
@@ -854,33 +854,56 @@ textAlign: "center",
 )}
       {/* ZOOM */}
       {zoom && (
-        <div
-          onClick={() => setZoom(null)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,.82)",
-            display: "flex",
-            justifyContent: "center",
-flexWrap: "wrap",
-textAlign: "center",
-            zIndex: 999,
-            padding: 20,
-          }}
-        >
-         <img
-          src={zoom}
-          style={{
-           maxWidth: "92%",
-           maxHeight: "92%",
-           width: "auto",
-           height: "auto",
-           objectFit: "contain",
-           borderRadius: 18,
-  }}
-/>
-        </div>
-      )}
+  <div
+    onClick={() => setZoom(null)}
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,.82)",
+      display: "flex",
+      justifyContent: "center",
+      zIndex: 999,
+      padding: 20,
+    }}
+  >
+    {/* BOTÃO FECHAR */}
+    <button
+      onClick={(e) => {
+        e.stopPropagation(); // 👈 importante
+        setZoom(null);
+      }}
+      style={{
+        position: "absolute",
+        top: 20,
+        right: 20,
+        background: "#fff",
+        color: "#000",
+        border: "none",
+        borderRadius: "50%",
+        width: 40,
+        height: 40,
+        fontSize: 20,
+        cursor: "pointer",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+      }}
+    >
+      ✕
+    </button>
+
+    <img
+      src={zoom}
+      style={{
+        maxWidth: "92%",
+        maxHeight: "92%",
+        width: "auto",
+        height: "auto",
+        objectFit: "contain",
+        borderRadius: 18,
+        
+      }}
+    />
+  </div>
+)}
     </main>
   );
 }
