@@ -665,7 +665,7 @@ justifyContent: lista.length <= 3 ? "center" : "start",
   >
     {nomeBonito(p.nome).slice(0, 42)}
   </h3>
-<div
+  {/*<div
   style={{
     display: "inline-block",
     background: "#fff3e8",
@@ -678,7 +678,7 @@ justifyContent: lista.length <= 3 ? "center" : "start",
   }}
 >
   🔥 Peça em alta
-</div>
+</div>*/}
   <div
     style={{
       marginTop: 18,
