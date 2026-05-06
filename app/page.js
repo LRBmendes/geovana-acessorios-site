@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.20";
+const SITE_VERSION = "4.1.21";
 
 // =====================================================
 // API
@@ -568,7 +568,8 @@ textAlign: "center",
           style={{
             display: "grid",
             gridTemplateColumns:
-              "repeat(auto-fit,minmax(270px,1fr))",
+  "repeat(auto-fit,minmax(270px,320px))",
+justifyContent: "start",
             gap: 28,
           }}
         >
