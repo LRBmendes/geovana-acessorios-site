@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.21";
+const SITE_VERSION = "4.1.22";
 
 // =====================================================
 // API
@@ -263,7 +263,8 @@ const totalPix = total * 0.95;
     <main
       style={{
         minHeight: "100vh",
-        background: "#f8f5f1",
+        background:
+  "linear-gradient(to bottom,#f8f5f1,#f5efe8)",
       }}
     >
      {/* HEADER */}
@@ -328,7 +329,7 @@ textAlign: "center",
             marginTop: 4,
           }}
         >
-          Luxo acessível para todos os momentos
+          Peças sofisticadas para mulheres elegantes ✨
         </div>
       </div>
     </div>
@@ -361,7 +362,12 @@ textAlign: "center",
           maxWidth: 1200,
           margin: "0 auto",
           textAlign: "center",
-          padding: "18px 16px 10px",
+          padding: "48px 16px 28px",
+          position: "relative",
+         overflow: "hidden",
+          borderRadius: 32,
+          background:
+  "linear-gradient(135deg,#fff,#f7efe7)",
         }}
       >
         <h1
@@ -398,6 +404,16 @@ textAlign: "center",
           }}
         >
           ✨ Mais de 300 clientes satisfeitas
+            <div
+  style={{
+    marginTop: 10,
+    fontSize: 13,
+    color: "#b66a2c",
+    fontWeight: "bold",
+  }}
+>
+  🔥 Modelos com estoque limitado
+</div>
         </div>
       </section>
 
@@ -424,10 +440,10 @@ textAlign: "center",
             fontWeight: "bold",
           }}
         >
-          <span>✓ Atendimento rápido</span>
-          <span>✓ Produtos selecionados</span>
-          <span>✓ Pedido fácil no WhatsApp</span>
-          <span>✓ Qualidade garantida</span>
+          <span>✨ Garantia nas peças</span>
+          <span>🚚 Envio rápido</span>
+          <span>💬 Atendimento rápido</span>
+          <span>⭐ Clientes satisfeitas</span>
         </div>
       </section>*/}
 
@@ -569,7 +585,7 @@ textAlign: "center",
             display: "grid",
             gridTemplateColumns:
   "repeat(auto-fit,minmax(270px,320px))",
-justifyContent: "start",
+justifyContent: lista.length <= 3 ? "center" : "start",
             gap: 28,
           }}
         >
@@ -580,15 +596,33 @@ justifyContent: "start",
 )}
           {lista.map((p) => (
             <div
-              key={p.id}
-              style={{
-                background: "#fff",
-                borderRadius: 24,
-                overflow: "hidden",
-                boxShadow:
-                  "0 14px 34px rgba(0,0,0,.06)",
-              }}
-            >
+  key={p.id}
+
+  onMouseEnter={(e) => {
+    if (!mobile) {
+      e.currentTarget.style.transform = "translateY(-6px)";
+      e.currentTarget.style.boxShadow =
+        "0 24px 48px rgba(0,0,0,.12)";
+    }
+  }}
+
+  onMouseLeave={(e) => {
+    if (!mobile) {
+      e.currentTarget.style.transform = "translateY(0)";
+      e.currentTarget.style.boxShadow =
+        "0 14px 34px rgba(0,0,0,.06)";
+    }
+  }}
+
+  style={{
+    background: "#fff",
+    borderRadius: 24,
+    overflow: "hidden",
+    boxShadow:
+      "0 14px 34px rgba(0,0,0,.06)",
+    transition: "all .25s ease",
+  }}
+>
              <div
   onClick={() => setZoom(p.imagem_url)}
   onMouseEnter={(e) =>
@@ -619,10 +653,11 @@ justifyContent: "start",
 
              <div style={{ padding: 22 }}>
   <h3
-    style={{
-      minHeight: 62,
-      margin: 0,
-      fontSize: 22,
+  style={{
+    minHeight: 62,
+    margin: 0,
+    fontSize: 18,
+    fontWeight: 600,
       lineHeight: 1.35,
       color: "#4e3d31",
       textAlign: "center",
@@ -630,7 +665,20 @@ justifyContent: "start",
   >
     {nomeBonito(p.nome).slice(0, 42)}
   </h3>
-
+<div
+  style={{
+    display: "inline-block",
+    background: "#fff3e8",
+    color: "#b66a2c",
+    padding: "6px 12px",
+    borderRadius: 30,
+    fontSize: 11,
+    fontWeight: "bold",
+    marginBottom: 12,
+  }}
+>
+  🔥 Peça em alta
+</div>
   <div
     style={{
       marginTop: 18,
@@ -640,7 +688,8 @@ justifyContent: "start",
   >
     <div
       style={{
-        fontSize: 34,
+        fontSize: 38,
+        letterSpacing: -1,
         fontWeight: "bold",
         color: "#8f735d",
         lineHeight: 1,
@@ -657,13 +706,15 @@ justifyContent: "start",
         letterSpacing: 1,
       }}
     >
-      PEÇA EXCLUSIVA
+      ✨ Edição selecionada
     </div>
 
     <div
       style={{
         marginTop: 8,
-        display: "inline-block",
+        margin: "0 auto 12px",
+        display: "block",
+        width: "fit-content",
         background: ehPrata(p) ? "#e8f5e9" : "#fff8e1",
         color: ehPrata(p) ? "#2e7d32" : "#b28704",
         padding: "5px 12px",
@@ -683,13 +734,29 @@ justifyContent: "start",
   {/* BOTÃO PRINCIPAL */}
 <button
   onClick={() => adicionar(p)}
+
+  onMouseEnter={(e)=>{
+    if(!mobile){
+      e.currentTarget.style.transform="scale(1.02)"
+    }
+  }}
+
+  onMouseLeave={(e)=>{
+    if(!mobile){
+      e.currentTarget.style.transform="scale(1)"
+    }
+  }}
   style={{
     width: "100%",
     padding: 14,
     border: "none",
     borderRadius: 16,
     cursor: "pointer",
-    background: "#8f735d",
+    background:
+      "linear-gradient(135deg,#8f735d,#6f5745)",
+    boxShadow:
+      "0 8px 20px rgba(143,115,93,.25)",
+    transition: "all .2s ease",
     color: "#fff",
     fontWeight: "bold",
     fontSize: 15,
