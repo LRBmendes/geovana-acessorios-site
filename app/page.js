@@ -58,6 +58,21 @@ function nomeBonito(nome = "") {
     .trim();
 }
 
+function ehNovidade(produto) {
+  const data =
+    produto.imported_at ||
+    produto.created_at ||
+    produto.data_importacao;
+
+  if (!data) return false;
+
+  const dias =
+    (Date.now() - new Date(data).getTime()) /
+    (1000 * 60 * 60 * 24);
+
+  return dias <= 30;
+}
+
 // =====================================================
 // FILTROS
 // =====================================================
@@ -135,6 +150,7 @@ typeof navigator !== "undefined" &&
   const [busca, setBusca] = useState("");
   const [colecao, setColecao] = useState("Todos");
   const [tipo, setTipo] = useState("Todos");
+  const [somenteNovidades, setSomenteNovidades] = useState(false);
   const [ordenacao, setOrdenacao] = useState("padrao");
   const [pagina, setPagina] = useState(1);
 
@@ -168,16 +184,24 @@ typeof navigator !== "undefined" &&
       if (colecao === "Prata") okColecao = ehPrata(p);
       if (colecao === "Semijoias") okColecao = ehSemijoia(p);
 
-      let okTipo = true;
+     let okTipo = true;
 
       if (tipo === "Brincos") okTipo = ehBrinco(p);
       if (tipo === "Colares") okTipo = ehColar(p);
       if (tipo === "Pulseiras") okTipo = ehPulseira(p);
       if (tipo === "Anéis") okTipo = ehAnel(p);
-
-      return okBusca && okColecao && okTipo;
+      
+      const okNovidade =
+        somenteNovidades ? ehNovidade(p) : true;
+      
+      return (
+        okBusca &&
+        okColecao &&
+        okTipo &&
+        okNovidade
+);
     });
-  }, [produtos, busca, colecao, tipo]);
+  }, [produtos, busca, colecao, tipo, somenteNovidades]);
 
   // =====================================================
   // PAGINAÇÃO
@@ -507,7 +531,40 @@ textAlign: "center",
 </section>
 
       {/* FILTROS */}
-      <section
+<section
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    padding: "10px 20px 0",
+  }}
+>
+  <button
+    onClick={() =>
+      setSomenteNovidades(!somenteNovidades)
+    }
+    style={{
+      border: "1px solid #f0d7b8",
+      background: somenteNovidades
+        ? "#b66a2c"
+        : "#fff7ef",
+      color: somenteNovidades
+        ? "#fff"
+        : "#b66a2c",
+      padding: "10px 18px",
+      borderRadius: 30,
+      cursor: "pointer",
+      fontWeight: "bold",
+      fontSize: 13,
+      boxShadow:
+        somenteNovidades
+          ? "0 8px 20px rgba(182,106,44,.2)"
+          : "none",
+    }}
+  >
+    ✨ Ver novidades
+  </button>
+</section>      
+<section
         style={{
           padding: "28px 20px 8px",
           display: "flex",
@@ -623,8 +680,35 @@ justifyContent: lista.length <= 3 ? "center" : "start",
     transition: "all .25s ease",
   }}
 >
-             <div
-  onClick={() => setZoom(p.imagem_url)}
+           <div
+  style={{
+    position: "relative",
+  }}
+>
+  {ehNovidade(p) && (
+    <div
+      style={{
+        position: "absolute",
+        top: 14,
+        left: 14,
+        zIndex: 2,
+        background:
+          "linear-gradient(135deg,#ffcc80,#ff9800)",
+        color: "#fff",
+        padding: "6px 12px",
+        borderRadius: 30,
+        fontSize: 11,
+        fontWeight: "bold",
+        boxShadow:
+          "0 6px 16px rgba(255,152,0,.25)",
+      }}
+    >
+      ✨ NOVIDADE
+    </div>
+  )}
+
+  <div
+    onClick={() => setZoom(p.imagem_url)}
   onMouseEnter={(e) =>
     e.currentTarget.querySelector("img").style.transform = "scale(1.05)"
   }
@@ -649,6 +733,7 @@ justifyContent: lista.length <= 3 ? "center" : "start",
     transition: "transform 0.3s ease", 
   }}
 />
+</div>
 </div>
 
              <div style={{ padding: 22 }}>
