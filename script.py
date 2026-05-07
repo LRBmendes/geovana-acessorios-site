@@ -62,6 +62,19 @@ def pegar_hidden(soup, nome):
         return campo.get("value", "")
     return ""
 
+def produto_existe(codigo):
+    r = requests.get(
+        f"{SUPABASE_URL}/rest/v1/produtos?codigo=eq.{codigo}&select=id",
+        headers=HEADERS_SUPABASE,
+        timeout=20
+    )
+
+    if r.status_code == 200:
+        dados = r.json()
+        return len(dados) > 0
+
+    return False
+
 
 def salvar_produto(payload):
     global TOTAL_OK, TOTAL_ERRO
@@ -149,6 +162,8 @@ def extrair_produtos(html, pagina):
                     imagem = "https://catalogo.innosystem.com.br" + imagem
 
             # SALVAR PRODUTO
+            novo_produto = not produto_existe(codigo)
+
             payload = {
                 "nome": nome,
                 "codigo": codigo,
@@ -161,6 +176,12 @@ def extrair_produtos(html, pagina):
                 "run_id": RUN_ID
             }
 
+            if novo_produto:
+                payload["created_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+                payload["imported_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+
+                print("✨ NOVO PRODUTO:", nome)
+  
             salvar_produto(payload)
             print("OK:", codigo, "-", nome[:50])
 
