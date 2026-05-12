@@ -6,36 +6,12 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.2.0";
+const SITE_VERSION = "4.2.1";
 
 const beneficios = [
   "Garantia nas peças",
-  "Atendimento humanizado",
   "Peças selecionadas",
-  "Qualidade premium",
-  "Envio seguro",
-  "Atendimento rápido",
-];
-
-const depoimentos = [
-  {
-    nome: "Cliente Geovana",
-    texto: "Atendimento impecável, peça linda e chegou muito bem embalada.",
-  },
-  {
-    nome: "Compra pelo WhatsApp",
-    texto: "Amei a curadoria. Me ajudaram a escolher uma peça delicada para presente.",
-  },
-  {
-    nome: "Experiência premium",
-    texto: "As peças são ainda mais bonitas pessoalmente. Voltarei a comprar.",
-  },
-];
-
-const momentosInstagram = [
-  "Looks delicados para o dia a dia",
-  "Presentes com brilho e carinho",
-  "Novidades escolhidas uma a uma",
+  "Atendimento personalizado",
 ];
 
 // =====================================================
@@ -314,7 +290,6 @@ const total = selecao.reduce((acc, item) => {
   return acc + Number(item.preco_venda || 0);
 }, 0);
 
-const totalPix = total * 0.95;
   function reservar() {
     const texto = selecao
       .map((p) => `• ${nomeBonito(p.nome)} - ${moeda(p.preco_venda)}`)
@@ -439,20 +414,20 @@ textAlign: "center",
       {/* HERO PREMIUM */}
       <section
         style={{
-          maxWidth: 1200,
+          maxWidth: 1040,
           margin: "0 auto",
           textAlign: "center",
-          padding: mobile ? "38px 18px 26px" : "56px 28px 34px",
+          padding: mobile ? "28px 18px 18px" : "38px 28px 24px",
           position: "relative",
          overflow: "hidden",
-          borderRadius: 32,
+          borderRadius: mobile ? 0 : 28,
           background:
   "linear-gradient(135deg,#fff,#f7efe7)",
         }}
       >
         <h1
           style={{
-            fontSize: "clamp(24px,4vw,34px)",
+            fontSize: "clamp(25px,3vw,34px)",
             margin: 0,
             color: "#503a2f",
             lineHeight: 1.1,
@@ -471,14 +446,12 @@ textAlign: "center",
             lineHeight: 1.5,
           }}
         >
-          Peças delicadas e selecionadas para realçar sua beleza com sutileza,
-          confiança e presença. Escolha sua favorita e receba um atendimento
-          feito com calma, carinho e olhar de curadoria.
+          Peças selecionadas para realçar sua beleza com sutileza e presença.
         </p>
 
         <div
           style={{
-            marginTop: 22,
+            marginTop: 18,
             display: "flex",
             justifyContent: "center",
             gap: 12,
@@ -518,56 +491,32 @@ textAlign: "center",
             Atendimento via WhatsApp
           </button>
         </div>
-        
-        <div
-          style={{
-            marginTop: 18,
-            fontSize: 12,
-            color: "#7a8b6f",
-            fontWeight: "bold",
-          }}
-        >
-          Mais de 300 clientes satisfeitas
-            <div
-  style={{
-    marginTop: 10,
-    fontSize: 13,
-    color: "#b66a2c",
-    fontWeight: "bold",
-  }}
->
-  Lançamentos com estoque limitado e 5% de desconto no PIX
-</div>
-        </div>
       </section>
 
       <section
         style={{
-          maxWidth: 1120,
-          margin: "16px auto 0",
+          maxWidth: 760,
+          margin: "10px auto 0",
           padding: "0 16px",
         }}
       >
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: mobile ? "repeat(2, minmax(0, 1fr))" : "repeat(6, minmax(0, 1fr))",
-            gap: 10,
+            display: "flex",
+            justifyContent: "center",
+            gap: mobile ? 8 : 18,
+            flexWrap: "wrap",
           }}
         >
           {beneficios.map((beneficio) => (
             <div
               key={beneficio}
               style={{
-                background: "#fff",
-                border: "1px solid #eee4dc",
-                borderRadius: 18,
-                padding: mobile ? "12px 10px" : "14px 10px",
+                borderBottom: "1px solid #d8c7b9",
+                padding: "0 2px 4px",
                 textAlign: "center",
-                color: "#6d5848",
-                fontSize: mobile ? 12 : 13,
-                fontWeight: "bold",
-                boxShadow: "0 10px 24px rgba(80,58,47,.05)",
+                color: "#8b7565",
+                fontSize: 12,
               }}
             >
               {beneficio}
@@ -576,42 +525,12 @@ textAlign: "center",
         </div>
       </section>
 
-      {/* BARRA CONFIANÇA */}
-      {/* <section
-        style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-          padding: "0 16px 12px",
-        }}
-      >
-        <div
-          style={{
-            background: "#fff",
-            border: "1px solid #eee",
-            borderRadius: 18,
-            padding: "10px 12px",
-            display: "flex",
-            justifyContent: "center",
-            gap: 18,
-            flexWrap: "wrap",
-            color: "#7b6556",
-            fontSize: 12,
-            fontWeight: "bold",
-          }}
-        >
-          <span>✨ Garantia nas peças</span>
-          <span>🚚 Envio rápido</span>
-          <span>💬 Atendimento rápido</span>
-          <span>⭐ Clientes satisfeitas</span>
-        </div>
-      </section>*/}
-
      {/* BUSCA */}
      <section
         style={{
           maxWidth: 850,
           margin: "0 auto",
-          padding: "0 16px 6px",
+          padding: mobile ? "18px 16px 6px" : "24px 16px 6px",
         }}
       >
         <input
@@ -940,7 +859,7 @@ justifyContent: lista.length <= 3 ? "center" : "start",
         color: "#a38a77",
       }}
     >
-      Edição selecionada · 5% OFF no PIX
+      Edição selecionada
     </div>
 
     <div
@@ -1026,148 +945,6 @@ justifyContent: lista.length <= 3 ? "center" : "start",
 </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section
-        style={{
-          maxWidth: 1180,
-          margin: "0 auto",
-          padding: "0 20px 54px",
-        }}
-      >
-        <div
-          style={{
-            textAlign: "center",
-            marginBottom: 22,
-          }}
-        >
-          <h2
-            style={{
-              margin: 0,
-              color: "#503a2f",
-              fontSize: mobile ? 24 : 30,
-              lineHeight: 1.2,
-            }}
-          >
-            Quem compra sente a diferença no atendimento.
-          </h2>
-          <p
-            style={{
-              margin: "8px auto 0",
-              maxWidth: 640,
-              color: "#8b7565",
-              fontSize: 14,
-              lineHeight: 1.5,
-            }}
-          >
-            A Geovana acompanha sua escolha pelo WhatsApp, tira dúvidas e ajuda você a encontrar a peça certa para o momento.
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: mobile ? "1fr" : "repeat(3, minmax(0, 1fr))",
-            gap: 16,
-          }}
-        >
-          {depoimentos.map((depoimento) => (
-            <article
-              key={depoimento.nome}
-              style={{
-                background: "#fff",
-                border: "1px solid #eee4dc",
-                borderRadius: 22,
-                padding: 20,
-                color: "#6d5848",
-                boxShadow: "0 12px 28px rgba(80,58,47,.06)",
-              }}
-            >
-              <div style={{ color: "#b28704", fontSize: 15, marginBottom: 10 }}>★★★★★</div>
-              <p style={{ margin: 0, lineHeight: 1.5, fontSize: 14 }}>{depoimento.texto}</p>
-              <strong style={{ display: "block", marginTop: 14, color: "#503a2f", fontSize: 13 }}>
-                {depoimento.nome}
-              </strong>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section
-        style={{
-          maxWidth: 1180,
-          margin: "0 auto",
-          padding: "0 20px 64px",
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: mobile ? "1fr" : "1.1fr .9fr",
-            gap: 18,
-            alignItems: "stretch",
-          }}
-        >
-          <div
-            style={{
-              background: "#fffaf6",
-              border: "1px solid #eadfd5",
-              borderRadius: 24,
-              padding: mobile ? 22 : 28,
-            }}
-          >
-            <h2 style={{ margin: 0, color: "#503a2f", fontSize: mobile ? 24 : 30 }}>
-              Vida real, brilho real.
-            </h2>
-            <p style={{ color: "#7b6556", lineHeight: 1.6, fontSize: 14 }}>
-              Acompanhe combinações, novidades e bastidores no Instagram para ver como as peças ficam em momentos reais.
-            </p>
-            <button
-              onClick={falarComAtendimento}
-              style={{
-                border: "none",
-                background: "#8f735d",
-                color: "#fff",
-                padding: "13px 18px",
-                borderRadius: 18,
-                fontWeight: "bold",
-                cursor: "pointer",
-                width: mobile ? "100%" : "auto",
-              }}
-            >
-              Receber sugestões pelo WhatsApp
-            </button>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-              gap: 10,
-            }}
-          >
-            {momentosInstagram.map((momento) => (
-              <div
-                key={momento}
-                style={{
-                  minHeight: mobile ? 120 : 170,
-                  borderRadius: 22,
-                  background: "linear-gradient(135deg,#f2e7dd,#fff,#e8d9cc)",
-                  border: "1px solid #eadfd5",
-                  display: "flex",
-                  alignItems: "end",
-                  padding: 12,
-                  color: "#5a4333",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  lineHeight: 1.35,
-                }}
-              >
-                {momento}
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -1351,7 +1128,7 @@ textAlign: "center",
   style={{
     textAlign: "center",
     margin: "14px auto 18px",
-    padding: "12px 16px",
+    padding: "14px 16px",
     borderRadius: 14,
     border: "1px solid #e6d8cb",
     background: "#fff",
@@ -1360,13 +1137,12 @@ textAlign: "center",
 >
   <div
     style={{
-      fontSize: 13,
-      color: "#a38a77",
-      textDecoration: "line-through",
-      marginBottom: 4,
+      fontSize: 12,
+      color: "#9a7e69",
+      marginBottom: 6,
     }}
   >
-    De: {moeda(total)}
+    Total da seleção
   </div>
 
   <div
@@ -1376,28 +1152,8 @@ textAlign: "center",
       color: "#8f735d",
     }}
   >
-    {moeda(totalPix)}
+    {moeda(total)}
   </div>
-
-  <div
-    style={{
-      fontSize: 12,
-      color: "#9a7e69",
-      marginTop: 2,
-    }}
-  >
-    no PIX
-  </div>
-      <div
-  style={{
-    fontSize: 11,
-    color: "#9a7e69",
-    marginTop: 4,
-    opacity: 0.8,
-  }}
->
-  💰 5% de desconto
-</div>
 </div>
 
                 <button
