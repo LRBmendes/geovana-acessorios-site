@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "Geovana Acessórios | Elegância que encanta",
+  title: "Geovana Acessórios | Semijoias e peças femininas premium",
   description:
-    "Loja online de acessórios femininos premium. Prata, semijoias e peças selecionadas com atendimento via WhatsApp.",
+    "Loja online de acessórios femininos, prata e semijoias premium com peças selecionadas, garantia e atendimento personalizado pelo WhatsApp.",
 };
 
 export default function RootLayout({ children }) {

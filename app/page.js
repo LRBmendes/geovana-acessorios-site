@@ -6,7 +6,37 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.1.22";
+const SITE_VERSION = "4.2.0";
+
+const beneficios = [
+  "Garantia nas peças",
+  "Atendimento humanizado",
+  "Peças selecionadas",
+  "Qualidade premium",
+  "Envio seguro",
+  "Atendimento rápido",
+];
+
+const depoimentos = [
+  {
+    nome: "Cliente Geovana",
+    texto: "Atendimento impecável, peça linda e chegou muito bem embalada.",
+  },
+  {
+    nome: "Compra pelo WhatsApp",
+    texto: "Amei a curadoria. Me ajudaram a escolher uma peça delicada para presente.",
+  },
+  {
+    nome: "Experiência premium",
+    texto: "As peças são ainda mais bonitas pessoalmente. Voltarei a comprar.",
+  },
+];
+
+const momentosInstagram = [
+  "Looks delicados para o dia a dia",
+  "Presentes com brilho e carinho",
+  "Novidades escolhidas uma a uma",
+];
 
 // =====================================================
 // API
@@ -56,6 +86,10 @@ function nomeBonito(nome = "") {
     .map((p) => (p ? p.charAt(0).toUpperCase() + p.slice(1) : ""))
     .join(" ")
     .trim();
+}
+
+function whatsappUrl(mensagem) {
+  return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
 }
 
 function ehNovidade(produto) {
@@ -143,9 +177,7 @@ function ehAnel(produto) {
 // COMPONENTE
 // =====================================================
 export default function Home() {
-  const mobile =
-typeof navigator !== "undefined" &&
-/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  const [mobile, setMobile] = useState(false);
   const [produtos, setProdutos] = useState([]);
   const [busca, setBusca] = useState("");
   const [colecao, setColecao] = useState("Todos");
@@ -164,8 +196,18 @@ typeof navigator !== "undefined" &&
   }, []);
 
   useEffect(() => {
+    function atualizarMobile() {
+      setMobile(window.innerWidth <= 760);
+    }
+
+    atualizarMobile();
+    window.addEventListener("resize", atualizarMobile);
+    return () => window.removeEventListener("resize", atualizarMobile);
+  }, []);
+
+  useEffect(() => {
   setPagina(1);
-}, [busca, colecao, tipo, ordenacao]);
+}, [busca, colecao, tipo, ordenacao, somenteNovidades]);
 
   // =====================================================
   // FILTRAGEM
@@ -275,12 +317,25 @@ const total = selecao.reduce((acc, item) => {
 const totalPix = total * 0.95;
   function reservar() {
     const texto = selecao
-      .map((p) => `• ${nomeBonito(p.nome)}`)
-      .join("%0A");
+      .map((p) => `• ${nomeBonito(p.nome)} - ${moeda(p.preco_venda)}`)
+      .join("\n");
 
-    const url = `https://wa.me/${WHATSAPP}?text=Olá! Separei algumas peças da Geovana Acessórios e gostaria de atendimento especial 💎%0A%0A${texto}`;
+    const mensagem = `Olá, Geovana Acessórios! Quero reservar essas peças e receber atendimento personalizado:\n\n${texto}\n\nPode me ajudar a finalizar?`;
 
-    window.open(url, "_blank");
+    window.open(whatsappUrl(mensagem), "_blank");
+  }
+
+  function falarComAtendimento() {
+    window.open(
+      whatsappUrl(
+        "Olá, Geovana Acessórios! Quero atendimento personalizado para escolher uma peça elegante. Pode me ajudar?"
+      ),
+      "_blank"
+    );
+  }
+
+  function verColecao() {
+    document.getElementById("colecao")?.scrollIntoView({ behavior: "smooth" });
   }
 
   return (
@@ -325,6 +380,7 @@ textAlign: "center",
     >
       <img
         src="/logo.jpeg"
+        alt="Geovana Acessórios"
         style={{
           width: 44,
           height: 44,
@@ -375,7 +431,7 @@ textAlign: "center",
     marginTop: mobile ? 8 : 0,
   }}
 >
-  💎 Minha Seleção ({selecao.length})
+  Minha seleção ({selecao.length})
 </button>
   </div>
 </header>
@@ -386,7 +442,7 @@ textAlign: "center",
           maxWidth: 1200,
           margin: "0 auto",
           textAlign: "center",
-          padding: "48px 16px 28px",
+          padding: mobile ? "38px 18px 26px" : "56px 28px 34px",
           position: "relative",
          overflow: "hidden",
           borderRadius: 32,
@@ -402,7 +458,7 @@ textAlign: "center",
             lineHeight: 1.1,
           }}
         >
-          Acessórios elegantes para todos os momentos.
+          Elegância que acompanha seus momentos especiais.
         </h1>
 
              <p
@@ -415,19 +471,63 @@ textAlign: "center",
             lineHeight: 1.5,
           }}
         >
-          Peças delicadas, elegantes e selecionadas para mulheres
-          que gostam de se destacar em todos os momentos.
+          Peças delicadas e selecionadas para realçar sua beleza com sutileza,
+          confiança e presença. Escolha sua favorita e receba um atendimento
+          feito com calma, carinho e olhar de curadoria.
         </p>
+
+        <div
+          style={{
+            marginTop: 22,
+            display: "flex",
+            justifyContent: "center",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            onClick={verColecao}
+            style={{
+              border: "none",
+              background: "#8f735d",
+              color: "#fff",
+              padding: "14px 22px",
+              borderRadius: 30,
+              fontWeight: "bold",
+              cursor: "pointer",
+              minWidth: mobile ? "100%" : 150,
+              boxShadow: "0 10px 22px rgba(143,115,93,.22)",
+            }}
+          >
+            Ver coleção
+          </button>
+
+          <button
+            onClick={falarComAtendimento}
+            style={{
+              border: "1px solid #d8c7b9",
+              background: "#fff",
+              color: "#6d5848",
+              padding: "14px 22px",
+              borderRadius: 30,
+              fontWeight: "bold",
+              cursor: "pointer",
+              minWidth: mobile ? "100%" : 220,
+            }}
+          >
+            Atendimento via WhatsApp
+          </button>
+        </div>
         
         <div
           style={{
-            marginTop: 6,
+            marginTop: 18,
             fontSize: 12,
             color: "#7a8b6f",
             fontWeight: "bold",
           }}
         >
-          ✨ Mais de 300 clientes satisfeitas
+          Mais de 300 clientes satisfeitas
             <div
   style={{
     marginTop: 10,
@@ -436,8 +536,43 @@ textAlign: "center",
     fontWeight: "bold",
   }}
 >
-  🔥 Modelos com estoque limitado
+  Lançamentos com estoque limitado e 5% de desconto no PIX
 </div>
+        </div>
+      </section>
+
+      <section
+        style={{
+          maxWidth: 1120,
+          margin: "16px auto 0",
+          padding: "0 16px",
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: mobile ? "repeat(2, minmax(0, 1fr))" : "repeat(6, minmax(0, 1fr))",
+            gap: 10,
+          }}
+        >
+          {beneficios.map((beneficio) => (
+            <div
+              key={beneficio}
+              style={{
+                background: "#fff",
+                border: "1px solid #eee4dc",
+                borderRadius: 18,
+                padding: mobile ? "12px 10px" : "14px 10px",
+                textAlign: "center",
+                color: "#6d5848",
+                fontSize: mobile ? 12 : 13,
+                fontWeight: "bold",
+                boxShadow: "0 10px 24px rgba(80,58,47,.05)",
+              }}
+            >
+              {beneficio}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -631,12 +766,26 @@ textAlign: "center",
 
       {/* GRID */}
       <section
+        id="colecao"
         style={{
           maxWidth: 1450,
           margin: "0 auto",
           padding: "0 20px 60px",
         }}
       >
+        <div
+          style={{
+            maxWidth: 980,
+            margin: "0 auto 24px",
+            textAlign: "center",
+            color: "#7b6556",
+            fontSize: 14,
+            lineHeight: 1.5,
+          }}
+        >
+          <strong style={{ color: "#503a2f" }}>{filtrados.length}</strong> peças selecionadas para você.
+          Escolha suas favoritas e fale com a Geovana para reservar antes que saiam do estoque.
+        </div>
         <div
           style={{
             display: "grid",
@@ -724,6 +873,7 @@ justifyContent: lista.length <= 3 ? "center" : "start",
 >
   <img
   src={p.imagem_url}
+  alt={nomeBonito(p.nome)}
   loading="lazy"
   style={{
     width: "100%",
@@ -788,10 +938,9 @@ justifyContent: lista.length <= 3 ? "center" : "start",
         marginTop: 6,
         fontSize: 12,
         color: "#a38a77",
-        letterSpacing: 1,
       }}
     >
-      ✨ Edição selecionada
+      Edição selecionada · 5% OFF no PIX
     </div>
 
     <div
@@ -847,15 +996,15 @@ justifyContent: lista.length <= 3 ? "center" : "start",
     fontSize: 15,
   }}
 >
-  🛍️ Adicionar à seleção
+  Quero reservar essa peça
 </button>
 
 {/* BOTÃO SECUNDÁRIO */}
 <button
   onClick={() => {
-    const texto = `Olá! Tenho interesse nesta peça: ${nomeBonito(p.nome)}`;
+    const texto = `Olá, Geovana Acessórios! Quero garantir essa peça: ${nomeBonito(p.nome)}. Pode me atender pelo WhatsApp?`;
     window.open(
-      `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(texto)}`,
+      whatsappUrl(texto),
       "_blank"
     );
   }}
@@ -872,11 +1021,153 @@ justifyContent: lista.length <= 3 ? "center" : "start",
     cursor: "pointer",
   }}
 >
-  ⚡ Comprar agora
+  Falar com atendimento
 </button>
 </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section
+        style={{
+          maxWidth: 1180,
+          margin: "0 auto",
+          padding: "0 20px 54px",
+        }}
+      >
+        <div
+          style={{
+            textAlign: "center",
+            marginBottom: 22,
+          }}
+        >
+          <h2
+            style={{
+              margin: 0,
+              color: "#503a2f",
+              fontSize: mobile ? 24 : 30,
+              lineHeight: 1.2,
+            }}
+          >
+            Quem compra sente a diferença no atendimento.
+          </h2>
+          <p
+            style={{
+              margin: "8px auto 0",
+              maxWidth: 640,
+              color: "#8b7565",
+              fontSize: 14,
+              lineHeight: 1.5,
+            }}
+          >
+            A Geovana acompanha sua escolha pelo WhatsApp, tira dúvidas e ajuda você a encontrar a peça certa para o momento.
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: mobile ? "1fr" : "repeat(3, minmax(0, 1fr))",
+            gap: 16,
+          }}
+        >
+          {depoimentos.map((depoimento) => (
+            <article
+              key={depoimento.nome}
+              style={{
+                background: "#fff",
+                border: "1px solid #eee4dc",
+                borderRadius: 22,
+                padding: 20,
+                color: "#6d5848",
+                boxShadow: "0 12px 28px rgba(80,58,47,.06)",
+              }}
+            >
+              <div style={{ color: "#b28704", fontSize: 15, marginBottom: 10 }}>★★★★★</div>
+              <p style={{ margin: 0, lineHeight: 1.5, fontSize: 14 }}>{depoimento.texto}</p>
+              <strong style={{ display: "block", marginTop: 14, color: "#503a2f", fontSize: 13 }}>
+                {depoimento.nome}
+              </strong>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section
+        style={{
+          maxWidth: 1180,
+          margin: "0 auto",
+          padding: "0 20px 64px",
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: mobile ? "1fr" : "1.1fr .9fr",
+            gap: 18,
+            alignItems: "stretch",
+          }}
+        >
+          <div
+            style={{
+              background: "#fffaf6",
+              border: "1px solid #eadfd5",
+              borderRadius: 24,
+              padding: mobile ? 22 : 28,
+            }}
+          >
+            <h2 style={{ margin: 0, color: "#503a2f", fontSize: mobile ? 24 : 30 }}>
+              Vida real, brilho real.
+            </h2>
+            <p style={{ color: "#7b6556", lineHeight: 1.6, fontSize: 14 }}>
+              Acompanhe combinações, novidades e bastidores no Instagram para ver como as peças ficam em momentos reais.
+            </p>
+            <button
+              onClick={falarComAtendimento}
+              style={{
+                border: "none",
+                background: "#8f735d",
+                color: "#fff",
+                padding: "13px 18px",
+                borderRadius: 18,
+                fontWeight: "bold",
+                cursor: "pointer",
+                width: mobile ? "100%" : "auto",
+              }}
+            >
+              Receber sugestões pelo WhatsApp
+            </button>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+              gap: 10,
+            }}
+          >
+            {momentosInstagram.map((momento) => (
+              <div
+                key={momento}
+                style={{
+                  minHeight: mobile ? 120 : 170,
+                  borderRadius: 22,
+                  background: "linear-gradient(135deg,#f2e7dd,#fff,#e8d9cc)",
+                  border: "1px solid #eadfd5",
+                  display: "flex",
+                  alignItems: "end",
+                  padding: 12,
+                  color: "#5a4333",
+                  fontSize: 12,
+                  fontWeight: "bold",
+                  lineHeight: 1.35,
+                }}
+              >
+                {momento}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -972,7 +1263,7 @@ textAlign: "center",
             }}
           >
             <h2 style={{ marginTop: 0 }}>
-              💎 Minha Seleção
+              Minha seleção
             </h2>
   <button
   onClick={() => setDrawer(false)}
@@ -1001,7 +1292,7 @@ textAlign: "center",
   ← Ver mais produtos
 </button>
             {selecao.length === 0 && (
-              <p>Nenhum item selecionado.</p>
+              <p>Escolha suas peças favoritas para receber atendimento personalizado.</p>
             )}
 
             {selecao.map((item) => (
@@ -1017,6 +1308,7 @@ textAlign: "center",
               >
                 <img
                   src={item.imagem_url}
+                  alt={nomeBonito(item.nome)}
                   style={{
                     width: 70,
                     height: 70,
@@ -1121,7 +1413,7 @@ textAlign: "center",
                     cursor: "pointer",
                   }}
                 >
-                  💬 Finalizar pelo WhatsApp
+                  Garantir minhas peças pelo WhatsApp
                 </button>
 
                 <button
@@ -1166,9 +1458,31 @@ textAlign: "center",
       gap: 8,
     }}
   >
-    💎 Minha Seleção ({selecao.length})
+    Minha seleção ({selecao.length})
   </button>
 )}
+      <button
+        onClick={falarComAtendimento}
+        aria-label="Falar com atendimento Geovana pelo WhatsApp"
+        style={{
+          position: "fixed",
+          right: mobile ? 20 : 24,
+          bottom: mobile ? 86 : 24,
+          zIndex: 210,
+          border: "none",
+          borderRadius: 18,
+          background: "#6f7f64",
+          color: "#fff",
+          padding: mobile ? "13px 16px" : "14px 18px",
+          fontWeight: "bold",
+          fontSize: mobile ? 14 : 15,
+          cursor: "pointer",
+          boxShadow: "0 12px 26px rgba(0,0,0,.2)",
+          maxWidth: mobile ? "calc(100% - 40px)" : 280,
+        }}
+      >
+        Falar com atendimento
+      </button>
       {/* ZOOM */}
       {zoom && (
   <div
@@ -1209,6 +1523,7 @@ textAlign: "center",
 
     <img
       src={zoom}
+      alt="Peça Geovana Acessórios em detalhe"
       style={{
         maxWidth: "92%",
         maxHeight: "92%",
