@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.2.2";
+const SITE_VERSION = "4.2.3";
 
 const beneficios = [
   "Garantia nas peças",
@@ -485,15 +485,24 @@ textAlign: "center",
           <button
             onClick={verColecao}
             style={{
-              border: "none",
-              background: "#8f735d",
+              border: "1px solid rgba(255,255,255,.55)",
+              background: "linear-gradient(135deg,#92745e,#6f5745)",
               color: "#fff",
               padding: mobile ? "12px 18px" : "12px 20px",
               borderRadius: 30,
               fontWeight: "bold",
               cursor: "pointer",
               minWidth: mobile ? "100%" : 150,
-              boxShadow: "0 10px 22px rgba(143,115,93,.22)",
+              boxShadow: "0 12px 28px rgba(80,58,47,.18), inset 0 1px 0 rgba(255,255,255,.28)",
+              transition: "transform .2s ease, box-shadow .2s ease, filter .2s ease",
+            }}
+            onMouseEnter={(event) => {
+              event.currentTarget.style.transform = "translateY(-1px)";
+              event.currentTarget.style.filter = "brightness(1.03)";
+            }}
+            onMouseLeave={(event) => {
+              event.currentTarget.style.transform = "translateY(0)";
+              event.currentTarget.style.filter = "brightness(1)";
             }}
           >
             Ver coleção
@@ -503,13 +512,23 @@ textAlign: "center",
             onClick={falarComAtendimento}
             style={{
               border: "1px solid #d8c7b9",
-              background: "#fff",
+              background: "rgba(255,255,255,.92)",
               color: "#6d5848",
               padding: mobile ? "12px 18px" : "12px 20px",
               borderRadius: 30,
               fontWeight: "bold",
               cursor: "pointer",
               minWidth: mobile ? "100%" : 220,
+              boxShadow: "0 10px 24px rgba(80,58,47,.08)",
+              transition: "transform .2s ease, box-shadow .2s ease, border-color .2s ease",
+            }}
+            onMouseEnter={(event) => {
+              event.currentTarget.style.transform = "translateY(-1px)";
+              event.currentTarget.style.borderColor = "#bfa996";
+            }}
+            onMouseLeave={(event) => {
+              event.currentTarget.style.transform = "translateY(0)";
+              event.currentTarget.style.borderColor = "#d8c7b9";
             }}
           >
             Atendimento via WhatsApp
@@ -595,7 +614,6 @@ textAlign: "center",
                   onClick={() => {
                     if (["Prata", "Semijoias"].includes(item)) {
                       setColecao(item);
-                      setTipo("Todos");
                       return;
                     }
 
@@ -606,17 +624,26 @@ textAlign: "center",
                     }
 
                     setTipo(item);
-                    setColecao("Todos");
                   }}
                   style={{
-                    border: "1px solid #ddd",
+                    border: ativo ? "1px solid #8f735d" : "1px solid #ddd",
                     padding: "8px 12px",
                     borderRadius: 18,
                     cursor: "pointer",
-                    background: ativo ? "#8f735d" : "#fff",
+                    background: ativo ? "linear-gradient(135deg,#92745e,#725a47)" : "#fff",
                     color: ativo ? "#fff" : "#6d5848",
                     fontSize: 12,
                     fontWeight: ativo ? "bold" : 500,
+                    boxShadow: ativo ? "0 8px 18px rgba(80,58,47,.14)" : "0 4px 12px rgba(80,58,47,.04)",
+                    transition: "transform .18s ease, box-shadow .18s ease, border-color .18s ease",
+                  }}
+                  onMouseEnter={(event) => {
+                    event.currentTarget.style.transform = "translateY(-1px)";
+                    event.currentTarget.style.borderColor = "#bfa996";
+                  }}
+                  onMouseLeave={(event) => {
+                    event.currentTarget.style.transform = "translateY(0)";
+                    event.currentTarget.style.borderColor = ativo ? "#8f735d" : "#ddd";
                   }}
                 >
                   {item}
@@ -635,6 +662,7 @@ textAlign: "center",
                 color: "#6d5848",
                 fontSize: 12,
                 cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(80,58,47,.04)",
               }}
             >
               <option value="padrao">Padrão</option>
@@ -653,6 +681,14 @@ textAlign: "center",
                 cursor: "pointer",
                 fontWeight: "bold",
                 fontSize: 12,
+                boxShadow: somenteNovidades ? "0 8px 18px rgba(80,58,47,.12)" : "0 4px 12px rgba(80,58,47,.04)",
+                transition: "transform .18s ease, box-shadow .18s ease",
+              }}
+              onMouseEnter={(event) => {
+                event.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(event) => {
+                event.currentTarget.style.transform = "translateY(0)";
               }}
             >
               Novidades
@@ -667,7 +703,7 @@ textAlign: "center",
         style={{
           maxWidth: 1450,
           margin: "0 auto",
-          padding: "0 20px 56px",
+          padding: mobile ? "0 16px 56px" : "0 20px 56px",
         }}
       >
         <div
@@ -686,8 +722,8 @@ textAlign: "center",
           style={{
             display: "grid",
             gridTemplateColumns:
-  "repeat(auto-fit,minmax(270px,320px))",
-justifyContent: lista.length <= 3 ? "center" : "start",
+  mobile ? "minmax(0, min(100%, 320px))" : "repeat(auto-fit,minmax(270px,320px))",
+justifyContent: mobile || lista.length <= 3 ? "center" : "start",
             gap: mobile ? 18 : 26,
           }}
         >
@@ -722,7 +758,8 @@ justifyContent: lista.length <= 3 ? "center" : "start",
     overflow: "hidden",
     boxShadow:
       "0 14px 34px rgba(0,0,0,.06)",
-    transition: "all .25s ease",
+    transition: "transform .25s ease, box-shadow .25s ease",
+    width: "100%",
   }}
 >
            <div
@@ -867,26 +904,28 @@ justifyContent: lista.length <= 3 ? "center" : "start",
 
   onMouseEnter={(e)=>{
     if(!mobile){
-      e.currentTarget.style.transform="scale(1.02)"
+      e.currentTarget.style.transform="translateY(-1px)"
+      e.currentTarget.style.filter="brightness(1.03)"
     }
   }}
 
   onMouseLeave={(e)=>{
     if(!mobile){
-      e.currentTarget.style.transform="scale(1)"
+      e.currentTarget.style.transform="translateY(0)"
+      e.currentTarget.style.filter="brightness(1)"
     }
   }}
   style={{
     width: "100%",
     padding: 14,
-    border: "none",
+    border: "1px solid rgba(255,255,255,.48)",
     borderRadius: 16,
     cursor: "pointer",
     background:
-      "linear-gradient(135deg,#8f735d,#6f5745)",
+      "linear-gradient(135deg,#967761,#6f5745)",
     boxShadow:
-      "0 8px 20px rgba(143,115,93,.25)",
-    transition: "all .2s ease",
+      "0 12px 24px rgba(80,58,47,.18), inset 0 1px 0 rgba(255,255,255,.25)",
+    transition: "transform .2s ease, box-shadow .2s ease, filter .2s ease",
     color: "#fff",
     fontWeight: "bold",
     fontSize: 15,
@@ -909,12 +948,26 @@ justifyContent: lista.length <= 3 ? "center" : "start",
     marginTop: 8,
     padding: 10,
     borderRadius: 12,
-    border: "1px solid #ddd",
+    border: "1px solid #e1d4ca",
     background: "#fff",
     color: "#6d5848",
     fontWeight: "bold",
     fontSize: 13,
     cursor: "pointer",
+    boxShadow: "0 8px 18px rgba(80,58,47,.05)",
+    transition: "transform .2s ease, border-color .2s ease, box-shadow .2s ease",
+  }}
+  onMouseEnter={(event) => {
+    if (!mobile) {
+      event.currentTarget.style.transform = "translateY(-1px)";
+      event.currentTarget.style.borderColor = "#bfa996";
+    }
+  }}
+  onMouseLeave={(event) => {
+    if (!mobile) {
+      event.currentTarget.style.transform = "translateY(0)";
+      event.currentTarget.style.borderColor = "#e1d4ca";
+    }
   }}
 >
   Falar com atendimento
@@ -997,8 +1050,10 @@ textAlign: "center",
             style={{
               position: "fixed",
               inset: 0,
-              background: "rgba(0,0,0,.35)",
+              background: "rgba(40,30,24,.38)",
               zIndex: 100,
+              opacity: 1,
+              transition: "opacity .24s ease",
             }}
           />
 
@@ -1012,11 +1067,46 @@ textAlign: "center",
               height: "100vh",
               background: "#fff",
               zIndex: 101,
-              padding: 22,
+              padding: mobile ? "22px 18px 26px" : 22,
               overflowY: "auto",
+              boxShadow: "-18px 0 40px rgba(40,30,24,.18)",
+              transform: "translateX(0)",
+              transition: "transform .28s ease",
             }}
           >
-            <h2 style={{ marginTop: 0 }}>
+            <button
+              type="button"
+              aria-label="Fechar minha seleção"
+              onClick={() => setDrawer(false)}
+              style={{
+                position: "absolute",
+                top: 14,
+                right: 14,
+                width: 38,
+                height: 38,
+                borderRadius: "50%",
+                border: "1px solid #e6d8cb",
+                background: "#fffaf6",
+                color: "#6d5848",
+                cursor: "pointer",
+                fontSize: 22,
+                lineHeight: 1,
+                boxShadow: "0 8px 18px rgba(80,58,47,.08)",
+                transition: "transform .18s ease, background .18s ease, box-shadow .18s ease",
+              }}
+              onMouseEnter={(event) => {
+                event.currentTarget.style.transform = "translateY(-1px)";
+                event.currentTarget.style.background = "#f3e8df";
+              }}
+              onMouseLeave={(event) => {
+                event.currentTarget.style.transform = "translateY(0)";
+                event.currentTarget.style.background = "#fffaf6";
+              }}
+            >
+              ×
+            </button>
+
+            <h2 style={{ marginTop: 0, paddingRight: 42 }}>
               Minha seleção
             </h2>
   <button
@@ -1040,7 +1130,8 @@ textAlign: "center",
     color: "#8f735d",
     cursor: "pointer",
     fontWeight: "bold",
-    transition: "all 0.2s ease",
+    boxShadow: "0 8px 18px rgba(80,58,47,.05)",
+    transition: "transform .18s ease, background .18s ease, box-shadow .18s ease",
   }}
 >
   ← Ver mais produtos
@@ -1140,10 +1231,20 @@ textAlign: "center",
                     padding: 14,
                     border: "none",
                     borderRadius: 14,
-                    background: "#8f735d",
+                    background: "linear-gradient(135deg,#967761,#6f5745)",
                     color: "#fff",
                     fontWeight: "bold",
                     cursor: "pointer",
+                    boxShadow: "0 12px 24px rgba(80,58,47,.18)",
+                    transition: "transform .2s ease, filter .2s ease",
+                  }}
+                  onMouseEnter={(event) => {
+                    event.currentTarget.style.transform = "translateY(-1px)";
+                    event.currentTarget.style.filter = "brightness(1.03)";
+                  }}
+                  onMouseLeave={(event) => {
+                    event.currentTarget.style.transform = "translateY(0)";
+                    event.currentTarget.style.filter = "brightness(1)";
                   }}
                 >
                   Garantir minhas peças pelo WhatsApp
@@ -1156,9 +1257,11 @@ textAlign: "center",
                     padding: 12,
                     marginTop: 10,
                     borderRadius: 14,
-                    border: "1px solid #ddd",
+                    border: "1px solid #e1d4ca",
                     background: "#fff",
                     cursor: "pointer",
+                    color: "#6d5848",
+                    boxShadow: "0 8px 18px rgba(80,58,47,.05)",
                   }}
                 >
                   Limpar Seleção
@@ -1179,12 +1282,12 @@ textAlign: "center",
       zIndex: 200,
       padding: 16,
       borderRadius: 16,
-      border: "none",
-      background: "#8f735d",
+      border: "1px solid rgba(255,255,255,.45)",
+      background: "linear-gradient(135deg,#967761,#6f5745)",
       color: "#fff",
       fontWeight: "bold",
       fontSize: 16,
-      boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+      boxShadow: "0 14px 28px rgba(80,58,47,.22), inset 0 1px 0 rgba(255,255,255,.24)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -1204,14 +1307,23 @@ textAlign: "center",
           zIndex: 210,
           border: "none",
           borderRadius: 18,
-          background: "#6f7f64",
+          background: "linear-gradient(135deg,#7c8b71,#5f6e55)",
           color: "#fff",
           padding: mobile ? "13px 16px" : "14px 18px",
           fontWeight: "bold",
           fontSize: mobile ? 14 : 15,
           cursor: "pointer",
-          boxShadow: "0 12px 26px rgba(0,0,0,.2)",
+          boxShadow: "0 12px 26px rgba(60,72,54,.2), inset 0 1px 0 rgba(255,255,255,.22)",
           maxWidth: mobile ? "calc(100% - 40px)" : 280,
+          transition: "transform .2s ease, filter .2s ease",
+        }}
+        onMouseEnter={(event) => {
+          event.currentTarget.style.transform = "translateY(-1px)";
+          event.currentTarget.style.filter = "brightness(1.03)";
+        }}
+        onMouseLeave={(event) => {
+          event.currentTarget.style.transform = "translateY(0)";
+          event.currentTarget.style.filter = "brightness(1)";
         }}
       >
         Falar com atendimento
