@@ -6,12 +6,26 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.2.1";
+const SITE_VERSION = "4.2.2";
 
 const beneficios = [
   "Garantia nas peças",
   "Peças selecionadas",
   "Atendimento personalizado",
+];
+
+const termosTecnicosBloqueados = [
+  "saquinho",
+  "saquinho transp",
+  "zip",
+  "ziplock",
+  "embalagem",
+  "saco",
+  "pacote",
+  "plastico",
+  "organizador",
+  "material interno",
+  "materiais internos",
 ];
 
 // =====================================================
@@ -48,6 +62,12 @@ function normalizar(txt = "") {
 
 function textoCompleto(produto) {
   return normalizar(`${produto.nome || ""} ${produto.categoria || ""}`);
+}
+
+function ehItemTecnico(produto) {
+  const txt = textoCompleto(produto);
+
+  return termosTecnicosBloqueados.some((termo) => txt.includes(normalizar(termo)));
 }
 
 function moeda(v) {
@@ -190,6 +210,10 @@ export default function Home() {
   // =====================================================
   const filtrados = useMemo(() => {
     return produtos.filter((p) => {
+      if (ehItemTecnico(p)) {
+        return false;
+      }
+
       const txt = textoCompleto(p);
 
       const okBusca =
@@ -414,10 +438,10 @@ textAlign: "center",
       {/* HERO PREMIUM */}
       <section
         style={{
-          maxWidth: 1040,
+          maxWidth: 980,
           margin: "0 auto",
           textAlign: "center",
-          padding: mobile ? "28px 18px 18px" : "38px 28px 24px",
+          padding: mobile ? "20px 18px 14px" : "26px 28px 18px",
           position: "relative",
          overflow: "hidden",
           borderRadius: mobile ? 0 : 28,
@@ -427,7 +451,7 @@ textAlign: "center",
       >
         <h1
           style={{
-            fontSize: "clamp(25px,3vw,34px)",
+            fontSize: "clamp(24px,2.7vw,32px)",
             margin: 0,
             color: "#503a2f",
             lineHeight: 1.1,
@@ -438,8 +462,8 @@ textAlign: "center",
 
              <p
           style={{
-            marginTop: 10,
-            fontSize: 15,
+            marginTop: 8,
+            fontSize: 14,
             color: "#8b7565",
             maxWidth: 760,
             marginInline: "auto",
@@ -451,7 +475,7 @@ textAlign: "center",
 
         <div
           style={{
-            marginTop: 18,
+            marginTop: 14,
             display: "flex",
             justifyContent: "center",
             gap: 12,
@@ -464,7 +488,7 @@ textAlign: "center",
               border: "none",
               background: "#8f735d",
               color: "#fff",
-              padding: "14px 22px",
+              padding: mobile ? "12px 18px" : "12px 20px",
               borderRadius: 30,
               fontWeight: "bold",
               cursor: "pointer",
@@ -481,7 +505,7 @@ textAlign: "center",
               border: "1px solid #d8c7b9",
               background: "#fff",
               color: "#6d5848",
-              padding: "14px 22px",
+              padding: mobile ? "12px 18px" : "12px 20px",
               borderRadius: 30,
               fontWeight: "bold",
               cursor: "pointer",
@@ -496,7 +520,7 @@ textAlign: "center",
       <section
         style={{
           maxWidth: 760,
-          margin: "10px auto 0",
+          margin: "8px auto 0",
           padding: "0 16px",
         }}
       >
@@ -525,162 +549,116 @@ textAlign: "center",
         </div>
       </section>
 
-     {/* BUSCA */}
-     <section
-        style={{
-          maxWidth: 850,
-          margin: "0 auto",
-          padding: mobile ? "18px 16px 6px" : "24px 16px 6px",
-        }}
-      >
-        <input
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar brincos, anéis, colares..."
-          style={{
-            width: "100%",
-            padding: 14,
-            borderRadius: 16,
-            border: "1px solid #ddd",
-            fontSize: 16,
-            background: "#fff",
-          }}
-        />
-      </section> 
-<section
-  style={{
-    maxWidth: 850,
-    margin: "0 auto",
-    padding: "6px 16px 0",
-    display: "flex",
-    justifyContent: "center",
-    gap: 10,
-    flexWrap: "wrap",
-  }}
->
-  {[
-    { label: "Padrão", value: "padrao" },
-    { label: "Menor preço", value: "menor" },
-    { label: "Maior preço", value: "maior" },
-  ].map((item) => (
-    <button
-      key={item.value}
-      onClick={() => setOrdenacao(item.value)}
-      style={{
-        border: "1px solid #ddd",
-        padding: "8px 14px",
-        borderRadius: 20,
-        cursor: "pointer",
-        fontWeight: "bold",
-        background:
-          ordenacao === item.value ? "#8f735d" : "#fff",
-        color:
-          ordenacao === item.value ? "#fff" : "#6d5848",
-        fontSize: 13,
-      }}
-    >
-      {item.label}
-    </button>
-  ))}
-</section>
-
-      {/* FILTROS */}
-<section
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    padding: "10px 20px 0",
-  }}
->
-  <button
-    onClick={() =>
-      setSomenteNovidades(!somenteNovidades)
-    }
-    style={{
-      border: "1px solid #f0d7b8",
-      background: somenteNovidades
-        ? "#b66a2c"
-        : "#fff7ef",
-      color: somenteNovidades
-        ? "#fff"
-        : "#b66a2c",
-      padding: "10px 18px",
-      borderRadius: 30,
-      cursor: "pointer",
-      fontWeight: "bold",
-      fontSize: 13,
-      boxShadow:
-        somenteNovidades
-          ? "0 8px 20px rgba(182,106,44,.2)"
-          : "none",
-    }}
-  >
-    ✨ Ver novidades
-  </button>
-</section>      
-<section
-        style={{
-          padding: "28px 20px 8px",
-          display: "flex",
-          justifyContent: "center",
-          gap: 10,
-          flexWrap: "wrap",
-        }}
-      >
-        {["Todos", "Prata", "Semijoias"].map((item) => (
-          <button
-            key={item}
-            onClick={() => setColecao(item)}
-            style={{
-              border: "1px solid #ddd",
-              padding: "12px 20px",
-              borderRadius: 30,
-              cursor: "pointer",
-              fontWeight: "bold",
-              background:
-                colecao === item ? "#8f735d" : "#fff",
-              color:
-                colecao === item ? "#fff" : "#6d5848",
-            }}
-          >
-            {item}
-          </button>
-        ))}
-      </section>
-
       <section
         style={{
-          padding: "0 20px 45px",
-          display: "flex",
-          justifyContent: "center",
-          gap: 10,
-          flexWrap: "wrap",
+          maxWidth: 1180,
+          margin: "0 auto",
+          padding: mobile ? "14px 16px 14px" : "16px 20px 18px",
         }}
       >
-        {[
-          "Todos",
-          "Brincos",
-          "Colares",
-          "Pulseiras",
-          "Anéis",
-        ].map((item) => (
-          <button
-            key={item}
-            onClick={() => setTipo(item)}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: mobile ? "1fr" : "minmax(260px, 360px) 1fr",
+            gap: mobile ? 10 : 14,
+            alignItems: "center",
+          }}
+        >
+          <input
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar peças..."
             style={{
+              width: "100%",
+              padding: mobile ? 11 : 12,
+              borderRadius: 14,
               border: "1px solid #ddd",
-              padding: "10px 16px",
-              borderRadius: 30,
-              cursor: "pointer",
-              fontWeight: "bold",
-              background:
-                tipo === item ? "#e6d8cb" : "#fff",
-              color: "#6d5848",
+              fontSize: 15,
+              background: "#fff",
+            }}
+          />
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: mobile ? "flex-start" : "flex-end",
+              gap: 8,
+              flexWrap: "wrap",
             }}
           >
-            {item}
-          </button>
-        ))}
+            {["Todos", "Prata", "Semijoias", "Brincos", "Colares", "Pulseiras", "Anéis"].map((item) => {
+              const ativo = colecao === item || tipo === item || (item === "Todos" && colecao === "Todos" && tipo === "Todos");
+
+              return (
+                <button
+                  key={item}
+                  onClick={() => {
+                    if (["Prata", "Semijoias"].includes(item)) {
+                      setColecao(item);
+                      setTipo("Todos");
+                      return;
+                    }
+
+                    if (item === "Todos") {
+                      setColecao("Todos");
+                      setTipo("Todos");
+                      return;
+                    }
+
+                    setTipo(item);
+                    setColecao("Todos");
+                  }}
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "8px 12px",
+                    borderRadius: 18,
+                    cursor: "pointer",
+                    background: ativo ? "#8f735d" : "#fff",
+                    color: ativo ? "#fff" : "#6d5848",
+                    fontSize: 12,
+                    fontWeight: ativo ? "bold" : 500,
+                  }}
+                >
+                  {item}
+                </button>
+              );
+            })}
+
+            <select
+              value={ordenacao}
+              onChange={(event) => setOrdenacao(event.target.value)}
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: 18,
+                padding: "8px 12px",
+                background: "#fff",
+                color: "#6d5848",
+                fontSize: 12,
+                cursor: "pointer",
+              }}
+            >
+              <option value="padrao">Padrão</option>
+              <option value="menor">Menor preço</option>
+              <option value="maior">Maior preço</option>
+            </select>
+
+            <button
+              onClick={() => setSomenteNovidades(!somenteNovidades)}
+              style={{
+                border: "1px solid #e5d2bf",
+                background: somenteNovidades ? "#6f7f64" : "#fff",
+                color: somenteNovidades ? "#fff" : "#6f7f64",
+                padding: "8px 12px",
+                borderRadius: 18,
+                cursor: "pointer",
+                fontWeight: "bold",
+                fontSize: 12,
+              }}
+            >
+              Novidades
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* GRID */}
@@ -689,21 +667,20 @@ textAlign: "center",
         style={{
           maxWidth: 1450,
           margin: "0 auto",
-          padding: "0 20px 60px",
+          padding: "0 20px 56px",
         }}
       >
         <div
           style={{
             maxWidth: 980,
-            margin: "0 auto 24px",
+            margin: "0 auto 14px",
             textAlign: "center",
             color: "#7b6556",
-            fontSize: 14,
+            fontSize: 13,
             lineHeight: 1.5,
           }}
         >
-          <strong style={{ color: "#503a2f" }}>{filtrados.length}</strong> peças selecionadas para você.
-          Escolha suas favoritas e fale com a Geovana para reservar antes que saiam do estoque.
+          <strong style={{ color: "#503a2f" }}>{filtrados.length}</strong> peças selecionadas.
         </div>
         <div
           style={{
@@ -711,7 +688,7 @@ textAlign: "center",
             gridTemplateColumns:
   "repeat(auto-fit,minmax(270px,320px))",
 justifyContent: lista.length <= 3 ? "center" : "start",
-            gap: 28,
+            gap: mobile ? 18 : 26,
           }}
         >
       {produtos.length === 0 && (
