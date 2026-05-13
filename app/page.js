@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.2.3";
+const SITE_VERSION = "4.3.0";
 
 const beneficios = [
   "Garantia nas peças",
@@ -319,7 +319,7 @@ const total = selecao.reduce((acc, item) => {
       .map((p) => `• ${nomeBonito(p.nome)} - ${moeda(p.preco_venda)}`)
       .join("\n");
 
-    const mensagem = `Olá, Geovana Acessórios! Quero reservar essas peças e receber atendimento personalizado:\n\n${texto}\n\nPode me ajudar a finalizar?`;
+    const mensagem = `Olá, Geovana Semi Joias! Quero reservar essas peças e receber atendimento personalizado:\n\n${texto}\n\nPode me ajudar a finalizar?`;
 
     window.open(whatsappUrl(mensagem), "_blank");
   }
@@ -327,7 +327,7 @@ const total = selecao.reduce((acc, item) => {
   function falarComAtendimento() {
     window.open(
       whatsappUrl(
-        "Olá, Geovana Acessórios! Quero atendimento personalizado para escolher uma peça elegante. Pode me ajudar?"
+        "Olá, Geovana Semi Joias! Quero atendimento personalizado para escolher uma peça elegante. Pode me ajudar?"
       ),
       "_blank"
     );
@@ -342,73 +342,77 @@ const total = selecao.reduce((acc, item) => {
       style={{
         minHeight: "100vh",
         background:
-  "linear-gradient(to bottom,#f8f5f1,#f5efe8)",
+  "linear-gradient(to bottom,#faf7f1,#f2e7d8 52%,#fbf8f3)",
       }}
     >
      {/* HEADER */}
 <header
   style={{
-    position: "relative",
-    zIndex: 1,
-    background: "#fff",
-    borderBottom: "1px solid #eee",
-    padding: "8px 16px",
+    position: "sticky",
+    top: 0,
+    zIndex: 80,
+    background: "rgba(250,247,241,.92)",
+    borderBottom: "1px solid rgba(204,181,146,.35)",
+    padding: mobile ? "8px 14px" : "10px 20px",
+    backdropFilter: "blur(14px)",
   }}
 >
   <div
     style={{
       maxWidth: 1320,
       margin: "0 auto",
-      display: "grid",
-      gridTemplateColumns: "1fr",
-      justifyContent: "center",
-flexWrap: "wrap",
-textAlign: "center",
-      gap: 10,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 16,
     }}
   >
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
-flexWrap: "wrap",
-textAlign: "center",
-        gap: 10,
+        alignItems: "center",
+        gap: mobile ? 10 : 13,
         minWidth: 0,
       }}
     >
       <img
-        src="/logo.jpeg"
-        alt="Geovana Acessórios"
+        src="/geovana-gv-mark.png"
+        alt="Geovana Semi Joias"
         style={{
-          width: 44,
-          height: 44,
-          borderRadius: 16,
+          width: mobile ? 42 : 50,
+          height: mobile ? 42 : 50,
+          borderRadius: mobile ? 15 : 18,
           objectFit: "cover",
           flexShrink: 0,
+          boxShadow: "0 10px 24px rgba(80,58,47,.12)",
         }}
       />
 
       <div>
         <div
           style={{
-            fontSize: mobile ? 20 : 26,
-            fontWeight: "bold",
-            color: "#5a4333",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: mobile ? 18 : 24,
+            fontWeight: 500,
+            letterSpacing: mobile ? 2.5 : 4,
+            color: "#513d30",
             lineHeight: 1,
+            textTransform: "uppercase",
           }}
         >
-          Geovana Acessórios
+          Geovana
         </div>
 
         <div
           style={{
-            fontSize: 13,
+            fontSize: mobile ? 10 : 11,
             color: "#9a7e69",
-            marginTop: 4,
+            marginTop: 5,
+            letterSpacing: mobile ? 2 : 3,
+            textTransform: "uppercase",
           }}
         >
-          Peças sofisticadas para mulheres elegantes ✨
+          Semi Joias
         </div>
       </div>
     </div>
@@ -416,21 +420,21 @@ textAlign: "center",
     <button
   onClick={() => setDrawer(true)}
   style={{
-    border: "none",
-    background: "#8f735d",
+    border: "1px solid rgba(255,255,255,.45)",
+    background: "linear-gradient(135deg,#9a7b61,#6b5342)",
     color: "#fff",
-    padding: "12px 18px",
+    padding: mobile ? "10px 13px" : "12px 18px",
     borderRadius: 30,
     fontWeight: "bold",
     cursor: "pointer",
     whiteSpace: "nowrap",
 
     width: "fit-content",
-    justifySelf: "center",
-    marginTop: mobile ? 8 : 0,
+    boxShadow: "0 12px 28px rgba(80,58,47,.16), inset 0 1px 0 rgba(255,255,255,.22)",
+    fontSize: mobile ? 12 : 14,
   }}
 >
-  Minha seleção ({selecao.length})
+  Seleção ({selecao.length})
 </button>
   </div>
 </header>
@@ -446,18 +450,22 @@ textAlign: "center",
          overflow: "hidden",
           borderRadius: mobile ? 0 : 28,
           background:
-  "linear-gradient(135deg,#fff,#f7efe7)",
+  "linear-gradient(135deg,#fffdf9,#f2e4d2)",
+          border: "1px solid rgba(204,181,146,.28)",
+          boxShadow: mobile ? "none" : "0 18px 46px rgba(80,58,47,.06)",
         }}
       >
         <h1
           style={{
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: "clamp(24px,2.7vw,32px)",
+            fontWeight: 500,
             margin: 0,
-            color: "#503a2f",
+            color: "#4a372b",
             lineHeight: 1.1,
           }}
         >
-          Elegância que acompanha seus momentos especiais.
+          Semi joias para momentos que merecem presença.
         </h1>
 
              <p
@@ -470,7 +478,7 @@ textAlign: "center",
             lineHeight: 1.5,
           }}
         >
-          Peças selecionadas para realçar sua beleza com sutileza e presença.
+          Curadoria delicada, acabamento premium e atendimento de boutique.
         </p>
 
         <div
@@ -740,7 +748,7 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
     if (!mobile) {
       e.currentTarget.style.transform = "translateY(-6px)";
       e.currentTarget.style.boxShadow =
-        "0 24px 48px rgba(0,0,0,.12)";
+        "0 24px 52px rgba(80,58,47,.14)";
     }
   }}
 
@@ -748,16 +756,17 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
     if (!mobile) {
       e.currentTarget.style.transform = "translateY(0)";
       e.currentTarget.style.boxShadow =
-        "0 14px 34px rgba(0,0,0,.06)";
+        "0 16px 38px rgba(80,58,47,.07)";
     }
   }}
 
   style={{
-    background: "#fff",
-    borderRadius: 24,
+    background: "#fffdf9",
+    border: "1px solid rgba(204,181,146,.24)",
+    borderRadius: 22,
     overflow: "hidden",
     boxShadow:
-      "0 14px 34px rgba(0,0,0,.06)",
+      "0 16px 38px rgba(80,58,47,.07)",
     transition: "transform .25s ease, box-shadow .25s ease",
     width: "100%",
   }}
@@ -775,17 +784,17 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
         left: 14,
         zIndex: 2,
         background:
-          "linear-gradient(135deg,#ffcc80,#ff9800)",
-        color: "#fff",
+          "linear-gradient(135deg,#d9bf8f,#b78945)",
+        color: "#fffdf8",
         padding: "6px 12px",
         borderRadius: 30,
         fontSize: 11,
         fontWeight: "bold",
         boxShadow:
-          "0 6px 16px rgba(255,152,0,.25)",
+          "0 8px 18px rgba(116,78,35,.18)",
       }}
     >
-      ✨ NOVIDADE
+      NOVIDADE
     </div>
   )}
 
@@ -824,10 +833,11 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
   style={{
     minHeight: 62,
     margin: 0,
-    fontSize: 18,
-    fontWeight: 600,
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    fontSize: 17,
+    fontWeight: 500,
       lineHeight: 1.35,
-      color: "#4e3d31",
+      color: "#46372d",
       textAlign: "center",
     }}
   >
@@ -859,7 +869,7 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
         fontSize: 38,
         letterSpacing: -1,
         fontWeight: "bold",
-        color: "#8f735d",
+        color: "#8c6b4f",
         lineHeight: 1,
       }}
     >
@@ -870,7 +880,7 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
       style={{
         marginTop: 6,
         fontSize: 12,
-        color: "#a38a77",
+        color: "#a08a75",
       }}
     >
       Edição selecionada
@@ -882,8 +892,8 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
         margin: "0 auto 12px",
         display: "block",
         width: "fit-content",
-        background: ehPrata(p) ? "#e8f5e9" : "#fff8e1",
-        color: ehPrata(p) ? "#2e7d32" : "#b28704",
+        background: ehPrata(p) ? "#f1eee7" : "#fbf4e7",
+        color: ehPrata(p) ? "#6a665f" : "#9a6f36",
         padding: "5px 12px",
         borderRadius: 20,
         fontSize: 11,
@@ -891,9 +901,9 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
   }}
 >
         {ehPrata(p)
-          ? "✨GARANTIA VITALÍCIA"
+          ? "GARANTIA VITALÍCIA"
           : ehSemijoia(p)
-          ? "✨1 ANO DE GARANTIA"
+          ? "1 ANO DE GARANTIA"
           : ""}
 </div>
   </div> 
@@ -937,7 +947,7 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
 {/* BOTÃO SECUNDÁRIO */}
 <button
   onClick={() => {
-    const texto = `Olá, Geovana Acessórios! Quero garantir essa peça: ${nomeBonito(p.nome)}. Pode me atender pelo WhatsApp?`;
+    const texto = `Olá, Geovana Semi Joias! Quero garantir essa peça: ${nomeBonito(p.nome)}. Pode me atender pelo WhatsApp?`;
     window.open(
       whatsappUrl(texto),
       "_blank"
@@ -1035,7 +1045,7 @@ textAlign: "center",
         }}
       >
        <>
-  © {new Date().getFullYear()} Geovana Acessórios • Versão {SITE_VERSION}
+  © {new Date().getFullYear()} Geovana Semi Joias • Versão {SITE_VERSION}
   <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7 }}>
     Desenvolvido por Luís Mendes
   </div>
@@ -1106,9 +1116,37 @@ textAlign: "center",
               ×
             </button>
 
-            <h2 style={{ marginTop: 0, paddingRight: 42 }}>
-              Minha seleção
-            </h2>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 14,
+                paddingRight: 42,
+              }}
+            >
+              <img
+                src="/geovana-gv-mark.png"
+                alt="Geovana Semi Joias"
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 14,
+                  objectFit: "cover",
+                  boxShadow: "0 8px 18px rgba(80,58,47,.1)",
+                }}
+              />
+              <h2
+                style={{
+                  margin: 0,
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  fontWeight: 500,
+                  color: "#46372d",
+                }}
+              >
+                Minha seleção
+              </h2>
+            </div>
   <button
   onClick={() => setDrawer(false)}
 
@@ -1368,7 +1406,7 @@ textAlign: "center",
 
     <img
       src={zoom}
-      alt="Peça Geovana Acessórios em detalhe"
+      alt="Peça Geovana Semi Joias em detalhe"
       style={{
         maxWidth: "92%",
         maxHeight: "92%",
