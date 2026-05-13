@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.6";
+const SITE_VERSION = "4.3.7";
 
 const beneficios = [
   "Garantia nas peças",
@@ -456,12 +456,14 @@ const total = selecao.reduce((acc, item) => {
     appearance: "none",
     border: "1px solid rgba(174,145,105,.38)",
     borderRadius: 18,
-    padding: mobile ? "13px 42px 13px 15px" : "14px 44px 14px 16px",
+    padding: mobile ? "13px 42px 13px 42px" : "14px 48px 14px 48px",
     background:
       "linear-gradient(135deg,rgba(255,253,249,.98),rgba(246,238,227,.96))",
     color: "#513d30",
     fontSize: 14,
     fontWeight: 600,
+    textAlign: "center",
+    textAlignLast: "center",
     cursor: "pointer",
     boxShadow: "0 12px 28px rgba(80,58,47,.08), inset 0 1px 0 rgba(255,255,255,.75)",
     transition: "border-color .18s ease, box-shadow .18s ease, transform .18s ease",
