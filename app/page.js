@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.4";
+const SITE_VERSION = "4.3.5";
 
 const beneficios = [
   "Garantia nas peças",
@@ -131,25 +131,35 @@ function ehPrata(produto) {
 function ehRodio(produto) {
   const txt = textoCompleto(produto);
 
-  return txt.includes("rodio branco") || txt.includes("rodio") || txt.includes("ródio");
+  return (
+    txt.includes("rodio branco") ||
+    txt.includes("rodio bra") ||
+    txt.includes("rodio br") ||
+    txt.includes("rodio") ||
+    txt.includes("ródio") ||
+    /(^|[\s/.,>-])rb($|[\s/.,<-])/.test(txt)
+  );
 }
 
 function ehSemijoia(produto) {
   const txt = textoCompleto(produto);
   const categoria = textoCategoria(produto);
 
+  if (ehPrata(produto) || ehRodio(produto)) {
+    return false;
+  }
+
   if (categoria.includes("semijoia") || categoria.includes("semi joia") || categoria.includes("semi-joia")) {
     return true;
   }
 
   return (
-    !ehPrata(produto) &&
-    (txt.includes("semijoia") ||
+    txt.includes("semijoia") ||
       txt.includes("semi joia") ||
       txt.includes("semi-joia") ||
       txt.includes("dourado") ||
       txt.includes("banho") ||
-      txt.includes("ouro"))
+      txt.includes("ouro")
   );
 }
 

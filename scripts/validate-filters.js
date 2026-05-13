@@ -33,26 +33,35 @@ function ehPrata(produto) {
 
 function ehRodio(produto) {
   const txt = textoCompleto(produto);
-  return txt.includes("rodio branco") || txt.includes("rodio") || txt.includes("ródio");
+  return (
+    txt.includes("rodio branco") ||
+    txt.includes("rodio bra") ||
+    txt.includes("rodio br") ||
+    txt.includes("rodio") ||
+    txt.includes("ródio") ||
+    /(^|[\s/.,>-])rb($|[\s/.,<-])/.test(txt)
+  );
 }
 
 function ehSemijoia(produto) {
   const txt = textoCompleto(produto);
   const categoria = textoCategoria(produto);
 
+  if (ehPrata(produto) || ehRodio(produto)) {
+    return false;
+  }
+
   if (categoria.includes("semijoia") || categoria.includes("semi joia") || categoria.includes("semi-joia")) {
     return true;
   }
 
   return (
-    !ehPrata(produto) &&
-    (txt.includes("semijoia") ||
+    txt.includes("semijoia") ||
       txt.includes("semi joia") ||
       txt.includes("semi-joia") ||
       txt.includes("dourado") ||
-      txt.includes("rodio branco") ||
       txt.includes("banho") ||
-      txt.includes("ouro"))
+      txt.includes("ouro")
   );
 }
 
@@ -137,7 +146,8 @@ const antigo = new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString();
 
 const produtos = [
   { nome: "Brinco cristal dourado", categoria: "Brincos > Semijoia - Cód. 1001", preco_venda: 89, imported_at: hoje },
-  { nome: "Brinco ródio branco", categoria: "Brincos > Ródio Branco - Cód. 7265", preco_venda: 89, imported_at: hoje },
+  { nome: "Brinco ródio branco", categoria: "Brincos > Semijoia Ródio Branco - Cód. 7265", preco_venda: 89, imported_at: hoje },
+  { nome: "Brinco cravejado perola glamour rb", categoria: "Brincos > Semijoia - Cód. 7266", preco_venda: 89, imported_at: hoje },
   { nome: "Brinco cristal prata 925", categoria: "Brincos > Prata 925 - Cód. 1004", preco_venda: 119, imported_at: hoje },
   { nome: "Anel solitario prata 925", categoria: "Anel > Prata 925 - Cód. 1005", preco_venda: 129, imported_at: hoje },
   { nome: "Anel dourado zirconia", categoria: "Anel > Semijoia - Cód. 1002", preco_venda: 99, imported_at: antigo },
@@ -151,7 +161,7 @@ const cenarios = [
   {
     nome: "Semijoias + Brincos",
     filtros: { colecao: "Semijoias", tipo: "Brincos", busca: "", somenteNovidades: false },
-    esperado: ["Brinco cristal dourado", "Brinco ródio branco"],
+    esperado: ["Brinco cristal dourado"],
   },
   {
     nome: "Prata + Anéis",
@@ -166,7 +176,7 @@ const cenarios = [
   {
     nome: "Novidades + Semijoias",
     filtros: { colecao: "Semijoias", tipo: "Todos", busca: "", somenteNovidades: true },
-    esperado: ["Brinco cristal dourado", "Brinco ródio branco", "Colar coração liso zirconia na contra argola", "Colar cristal dourado"],
+    esperado: ["Brinco cristal dourado", "Colar coração liso zirconia na contra argola", "Colar cristal dourado"],
   },
   {
     nome: "Brincos + cristal",
@@ -186,7 +196,7 @@ const cenarios = [
   {
     nome: "Ródio + Brincos",
     filtros: { colecao: "Ródio", tipo: "Brincos", busca: "", somenteNovidades: false },
-    esperado: ["Brinco ródio branco"],
+    esperado: ["Brinco cravejado perola glamour rb", "Brinco ródio branco"],
   },
 ];
 
