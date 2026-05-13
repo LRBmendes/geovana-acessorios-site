@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.5";
+const SITE_VERSION = "4.3.6";
 
 const beneficios = [
   "Garantia nas peças",
@@ -623,7 +623,7 @@ const total = selecao.reduce((acc, item) => {
             lineHeight: 1.1,
           }}
         >
-          Semi joias para momentos que merecem presença.
+          Sofisticação delicada para acompanhar seus momentos.
         </h1>
 
              <p
@@ -636,7 +636,7 @@ const total = selecao.reduce((acc, item) => {
             lineHeight: 1.5,
           }}
         >
-          Curadoria delicada, acabamento premium e atendimento de boutique.
+          Peças selecionadas com cuidado para valorizar sua beleza com elegância.
         </p>
 
         <div
@@ -736,7 +736,7 @@ const total = selecao.reduce((acc, item) => {
 
       <section
         style={{
-          maxWidth: 980,
+          maxWidth: 1060,
           margin: "0 auto",
           padding: mobile ? "14px 16px 16px" : "18px 20px 20px",
         }}
@@ -744,13 +744,14 @@ const total = selecao.reduce((acc, item) => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: mobile ? "1fr" : "repeat(3, minmax(0, 1fr))",
-            gap: mobile ? 10 : 12,
+            gridTemplateColumns: mobile ? "minmax(0, min(100%, 360px))" : "repeat(3, minmax(260px, 320px))",
+            gap: mobile ? 10 : 14,
             alignItems: "end",
+            justifyContent: "center",
           }}
         >
-          <label style={{ display: "grid", gap: 6 }}>
-            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase" }}>
+          <label style={{ display: "grid", gap: 6, width: "100%" }}>
+            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase", textAlign: "center" }}>
               Categoria
             </span>
             <select
@@ -773,8 +774,8 @@ const total = selecao.reduce((acc, item) => {
             </select>
           </label>
 
-          <label style={{ display: "grid", gap: 6 }}>
-            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase" }}>
+          <label style={{ display: "grid", gap: 6, width: "100%" }}>
+            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase", textAlign: "center" }}>
               Tipo
             </span>
             <select
@@ -797,8 +798,8 @@ const total = selecao.reduce((acc, item) => {
             </select>
           </label>
 
-          <label style={{ display: "grid", gap: 6 }}>
-            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase" }}>
+          <label style={{ display: "grid", gap: 6, width: "100%" }}>
+            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase", textAlign: "center" }}>
               Ordenação
             </span>
             <select
