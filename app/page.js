@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.3";
+const SITE_VERSION = "4.3.4";
 
 const beneficios = [
   "Garantia nas peças",
@@ -467,7 +467,7 @@ const total = selecao.reduce((acc, item) => {
   }
 
   function atualizarOrdenacao(valor) {
-    if (valor === "padrao") {
+    if (valor === "padrao" || valor === "reset") {
       resetarFiltros();
       return;
     }
@@ -475,6 +475,15 @@ const total = selecao.reduce((acc, item) => {
     setOrdenacao(valor);
     setSomenteNovidades(valor === "novidades");
   }
+
+  const filtrosAtivos =
+    busca.trim() !== "" ||
+    colecao !== "Todos" ||
+    tipo !== "Todos" ||
+    somenteNovidades ||
+    ordenacao !== "padrao";
+
+  const valorOrdenacaoSelect = ordenacao === "padrao" && filtrosAtivos ? "reset" : ordenacao;
 
   return (
     <main
@@ -783,7 +792,7 @@ const total = selecao.reduce((acc, item) => {
               Ordenação
             </span>
             <select
-              value={ordenacao}
+              value={valorOrdenacaoSelect}
               onChange={(event) => atualizarOrdenacao(event.target.value)}
               style={{
                 ...selectStyle,
@@ -794,6 +803,11 @@ const total = selecao.reduce((acc, item) => {
                 backgroundRepeat: "no-repeat",
               }}
             >
+              {valorOrdenacaoSelect === "reset" ? (
+                <option value="reset" hidden>
+                  Padrão
+                </option>
+              ) : null}
               <option value="padrao">Padrão</option>
               <option value="maior">Maior preço</option>
               <option value="menor">Menor preço</option>
