@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.7";
+const SITE_VERSION = "4.3.8";
 
 const beneficios = [
   "Garantia nas peças",
@@ -1468,27 +1468,53 @@ textAlign: "center",
           right: mobile ? 20 : 24,
           bottom: mobile ? 86 : 24,
           zIndex: 210,
-          border: "none",
-          borderRadius: 18,
-          background: "linear-gradient(135deg,#7c8b71,#5f6e55)",
-          color: "#fff",
-          padding: mobile ? "13px 16px" : "14px 18px",
-          fontWeight: "bold",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 9,
+          border: "1px solid rgba(231,219,196,.42)",
+          borderRadius: 999,
+          background: "linear-gradient(135deg,#9a7d54,#6f6549 58%,#505b43)",
+          color: "#fffaf2",
+          padding: mobile ? "13px 18px" : "14px 20px",
+          fontWeight: 700,
           fontSize: mobile ? 14 : 15,
           cursor: "pointer",
-          boxShadow: "0 12px 26px rgba(60,72,54,.2), inset 0 1px 0 rgba(255,255,255,.22)",
+          letterSpacing: 0.1,
+          boxShadow: "0 16px 34px rgba(80,65,43,.2), 0 4px 12px rgba(80,65,43,.12), inset 0 1px 0 rgba(255,255,255,.24)",
           maxWidth: mobile ? "calc(100% - 40px)" : 280,
-          transition: "transform .2s ease, filter .2s ease",
+          transition: "transform .22s ease, filter .22s ease, box-shadow .22s ease",
         }}
         onMouseEnter={(event) => {
-          event.currentTarget.style.transform = "translateY(-1px)";
-          event.currentTarget.style.filter = "brightness(1.03)";
+          event.currentTarget.style.transform = "translateY(-2px)";
+          event.currentTarget.style.filter = "brightness(1.04)";
+          event.currentTarget.style.boxShadow =
+            "0 20px 40px rgba(80,65,43,.24), 0 6px 16px rgba(80,65,43,.14), inset 0 1px 0 rgba(255,255,255,.28)";
         }}
         onMouseLeave={(event) => {
           event.currentTarget.style.transform = "translateY(0)";
           event.currentTarget.style.filter = "brightness(1)";
+          event.currentTarget.style.boxShadow =
+            "0 16px 34px rgba(80,65,43,.2), 0 4px 12px rgba(80,65,43,.12), inset 0 1px 0 rgba(255,255,255,.24)";
         }}
       >
+        <span
+          aria-hidden="true"
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: "50%",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "1px solid rgba(255,250,242,.5)",
+            fontSize: 11,
+            fontWeight: 700,
+            lineHeight: 1,
+          }}
+        >
+          W
+        </span>
         Falar com atendimento
       </button>
       {/* ZOOM */}
