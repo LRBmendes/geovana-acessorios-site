@@ -28,7 +28,7 @@ function ehItemTecnico(produto) {
 
 function ehPrata(produto) {
   const txt = textoCompleto(produto);
-  return txt.includes("prata") || txt.includes("925") || txt.includes("rodio branco");
+  return txt.includes("prata") || txt.includes("925");
 }
 
 function ehSemijoia(produto) {
@@ -45,15 +45,50 @@ function ehSemijoia(produto) {
       txt.includes("semi joia") ||
       txt.includes("semi-joia") ||
       txt.includes("dourado") ||
+      txt.includes("rodio branco") ||
       txt.includes("banho") ||
       txt.includes("ouro"))
   );
 }
 
-const ehBrinco = (produto) => ["brinco", "argola", "ear cuff", "piercing"].some((termo) => textoCompleto(produto).includes(termo));
-const ehColar = (produto) => ["colar", "corrente", "choker", "gargantilha", "pingente"].some((termo) => textoCompleto(produto).includes(termo));
-const ehPulseira = (produto) => textoCompleto(produto).includes("pulseira") || textoCompleto(produto).includes("bracelete");
-const ehAnel = (produto) => ["anel", "alianca", "alianca", "solitario"].some((termo) => textoCompleto(produto).includes(termo));
+function ehBrinco(produto) {
+  const categoria = textoCategoria(produto);
+  if (categoria) {
+    return categoria.includes("brinco") || categoria.includes("piercing") || categoria.includes("ear cuff");
+  }
+  return ["brinco", "argola", "ear cuff", "piercing"].some((termo) => textoCompleto(produto).includes(termo));
+}
+
+function ehColar(produto) {
+  const categoria = textoCategoria(produto);
+  if (categoria) {
+    return (
+      categoria.includes("colar") ||
+      categoria.includes("corrente") ||
+      categoria.includes("chocker") ||
+      categoria.includes("choker") ||
+      categoria.includes("gargantilha") ||
+      categoria.includes("pingente")
+    );
+  }
+  return ["colar", "corrente", "choker", "gargantilha", "pingente"].some((termo) => textoCompleto(produto).includes(termo));
+}
+
+function ehPulseira(produto) {
+  const categoria = textoCategoria(produto);
+  if (categoria) {
+    return categoria.includes("pulseira") || categoria.includes("bracelete");
+  }
+  return textoCompleto(produto).includes("pulseira") || textoCompleto(produto).includes("bracelete");
+}
+
+function ehAnel(produto) {
+  const categoria = textoCategoria(produto);
+  if (categoria) {
+    return categoria.includes("anel") || categoria.includes("alianca") || categoria.includes("alianca");
+  }
+  return ["anel", "alianca", "alianca", "solitario"].some((termo) => textoCompleto(produto).includes(termo));
+}
 
 function ehNovidade(produto) {
   if (!produto.imported_at) return false;
@@ -95,12 +130,14 @@ const hoje = new Date().toISOString();
 const antigo = new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString();
 
 const produtos = [
-  { nome: "Brinco cristal dourado", categoria: "Semijoias", preco_venda: 89, imported_at: hoje },
-  { nome: "Brinco cristal prata 925", categoria: "Prata", preco_venda: 119, imported_at: hoje },
-  { nome: "Anel solitario prata 925", categoria: "Prata", preco_venda: 129, imported_at: hoje },
-  { nome: "Anel dourado zirconia", categoria: "Semijoias", preco_venda: 99, imported_at: antigo },
-  { nome: "Colar cristal dourado", categoria: "Semijoias", preco_venda: 109, imported_at: hoje },
-  { nome: "Pulseira prata 925 delicada", categoria: "Prata", preco_venda: 139, imported_at: hoje },
+  { nome: "Brinco cristal dourado", categoria: "Brincos > Semijoia - Cód. 1001", preco_venda: 89, imported_at: hoje },
+  { nome: "Brinco ródio branco", categoria: "Brincos > Ródio Branco - Cód. 7265", preco_venda: 89, imported_at: hoje },
+  { nome: "Brinco cristal prata 925", categoria: "Brincos > Prata 925 - Cód. 1004", preco_venda: 119, imported_at: hoje },
+  { nome: "Anel solitario prata 925", categoria: "Anel > Prata 925 - Cód. 1005", preco_venda: 129, imported_at: hoje },
+  { nome: "Anel dourado zirconia", categoria: "Anel > Semijoia - Cód. 1002", preco_venda: 99, imported_at: antigo },
+  { nome: "Colar cristal dourado", categoria: "Correntes > Feminina Semijoia - Cód. 1003", preco_venda: 109, imported_at: hoje },
+  { nome: "Colar coração liso zirconia na contra argola", categoria: "Correntes > Feminina Semijoia - Cód. 4092", preco_venda: 109, imported_at: hoje },
+  { nome: "Pulseira prata 925 delicada", categoria: "Pulseira > Feminina Prata 925 - Cód. 1006", preco_venda: 139, imported_at: hoje },
   { nome: "Saquinho zip transparente", categoria: "Embalagem", preco_venda: 1, imported_at: hoje },
 ];
 
@@ -108,7 +145,7 @@ const cenarios = [
   {
     nome: "Semijoias + Brincos",
     filtros: { colecao: "Semijoias", tipo: "Brincos", busca: "", somenteNovidades: false },
-    esperado: ["Brinco cristal dourado"],
+    esperado: ["Brinco cristal dourado", "Brinco ródio branco"],
   },
   {
     nome: "Prata + Anéis",
@@ -123,12 +160,17 @@ const cenarios = [
   {
     nome: "Novidades + Semijoias",
     filtros: { colecao: "Semijoias", tipo: "Todos", busca: "", somenteNovidades: true },
-    esperado: ["Brinco cristal dourado", "Colar cristal dourado"],
+    esperado: ["Brinco cristal dourado", "Brinco ródio branco", "Colar coração liso zirconia na contra argola", "Colar cristal dourado"],
   },
   {
     nome: "Brincos + cristal",
     filtros: { colecao: "Todos", tipo: "Brincos", busca: "cristal", somenteNovidades: false },
     esperado: ["Brinco cristal dourado", "Brinco cristal prata 925"],
+  },
+  {
+    nome: "Semijoias + Brincos + cristal nao inclui colar contra argola",
+    filtros: { colecao: "Semijoias", tipo: "Brincos", busca: "cristal", somenteNovidades: false },
+    esperado: ["Brinco cristal dourado"],
   },
   {
     nome: "Pulseiras + prata + novidades",

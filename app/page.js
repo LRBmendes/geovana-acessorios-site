@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.1";
+const SITE_VERSION = "4.3.2";
 
 const beneficios = [
   "Garantia nas peças",
@@ -118,8 +118,7 @@ function ehPrata(produto) {
 
   return (
     txt.includes("prata") ||
-    txt.includes("925") ||
-    txt.includes("rodio branco")
+    txt.includes("925")
   );
 }
 
@@ -137,6 +136,7 @@ function ehSemijoia(produto) {
       txt.includes("semi joia") ||
       txt.includes("semi-joia") ||
       txt.includes("dourado") ||
+      txt.includes("rodio branco") ||
       txt.includes("banho") ||
       txt.includes("ouro"))
   );
@@ -144,6 +144,15 @@ function ehSemijoia(produto) {
 
 function ehBrinco(produto) {
   const txt = textoCompleto(produto);
+  const categoria = textoCategoria(produto);
+
+  if (categoria) {
+    return (
+      categoria.includes("brinco") ||
+      categoria.includes("piercing") ||
+      categoria.includes("ear cuff")
+    );
+  }
 
   return (
     txt.includes("brinco") ||
@@ -155,6 +164,18 @@ function ehBrinco(produto) {
 
 function ehColar(produto) {
   const txt = textoCompleto(produto);
+  const categoria = textoCategoria(produto);
+
+  if (categoria) {
+    return (
+      categoria.includes("colar") ||
+      categoria.includes("corrente") ||
+      categoria.includes("chocker") ||
+      categoria.includes("choker") ||
+      categoria.includes("gargantilha") ||
+      categoria.includes("pingente")
+    );
+  }
 
   return (
     txt.includes("colar") ||
@@ -167,12 +188,22 @@ function ehColar(produto) {
 
 function ehPulseira(produto) {
   const txt = textoCompleto(produto);
+  const categoria = textoCategoria(produto);
+
+  if (categoria) {
+    return categoria.includes("pulseira") || categoria.includes("bracelete");
+  }
 
   return txt.includes("pulseira") || txt.includes("bracelete");
 }
 
 function ehAnel(produto) {
   const txt = textoCompleto(produto);
+  const categoria = textoCategoria(produto);
+
+  if (categoria) {
+    return categoria.includes("anel") || categoria.includes("alianca") || categoria.includes("aliança");
+  }
 
   return (
     txt.includes("anel") ||
