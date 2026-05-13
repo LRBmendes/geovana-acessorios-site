@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.0";
+const SITE_VERSION = "4.3.1";
 
 const beneficios = [
   "Garantia nas peças",
@@ -27,6 +27,9 @@ const termosTecnicosBloqueados = [
   "material interno",
   "materiais internos",
 ];
+
+const categoriasPrincipais = ["Prata", "Semijoias"];
+const subcategorias = ["Brincos", "Colares", "Pulseiras", "Anéis"];
 
 // =====================================================
 // API
@@ -62,6 +65,10 @@ function normalizar(txt = "") {
 
 function textoCompleto(produto) {
   return normalizar(`${produto.nome || ""} ${produto.categoria || ""}`);
+}
+
+function textoCategoria(produto) {
+  return normalizar(produto.categoria || "");
 }
 
 function ehItemTecnico(produto) {
@@ -118,14 +125,20 @@ function ehPrata(produto) {
 
 function ehSemijoia(produto) {
   const txt = textoCompleto(produto);
+  const categoria = textoCategoria(produto);
+
+  if (categoria.includes("semijoia") || categoria.includes("semi joia") || categoria.includes("semi-joia")) {
+    return true;
+  }
 
   return (
-    txt.includes("semijoia") ||
-    txt.includes("semi joia") ||
-    txt.includes("semi-joia") ||
-    txt.includes("dourado") ||
-    txt.includes("rodio") ||
-    txt.includes("ouro")
+    !ehPrata(produto) &&
+    (txt.includes("semijoia") ||
+      txt.includes("semi joia") ||
+      txt.includes("semi-joia") ||
+      txt.includes("dourado") ||
+      txt.includes("banho") ||
+      txt.includes("ouro"))
   );
 }
 
@@ -169,6 +182,79 @@ function ehAnel(produto) {
   );
 }
 
+function produtoCombinaComColecao(produto, colecaoAtual) {
+  if (colecaoAtual === "Todos") {
+    return true;
+  }
+
+  if (colecaoAtual === "Prata") {
+    return ehPrata(produto);
+  }
+
+  if (colecaoAtual === "Semijoias") {
+    return ehSemijoia(produto);
+  }
+
+  return true;
+}
+
+function produtoCombinaComTipo(produto, tipoAtual) {
+  if (tipoAtual === "Todos") {
+    return true;
+  }
+
+  if (tipoAtual === "Brincos") {
+    return ehBrinco(produto);
+  }
+
+  if (tipoAtual === "Colares") {
+    return ehColar(produto);
+  }
+
+  if (tipoAtual === "Pulseiras") {
+    return ehPulseira(produto);
+  }
+
+  if (tipoAtual === "Anéis") {
+    return ehAnel(produto);
+  }
+
+  return true;
+}
+
+function produtoCombinaComBusca(produto, buscaAtual) {
+  const termoBusca = normalizar(buscaAtual.trim());
+
+  if (!termoBusca) {
+    return true;
+  }
+
+  return textoCompleto(produto).includes(termoBusca);
+}
+
+function filtrarProdutos(produtosBase, filtros) {
+  return produtosBase
+    .filter((produto) => !ehItemTecnico(produto))
+    .filter((produto) => produtoCombinaComColecao(produto, filtros.colecao))
+    .filter((produto) => produtoCombinaComTipo(produto, filtros.tipo))
+    .filter((produto) => produtoCombinaComBusca(produto, filtros.busca))
+    .filter((produto) => (filtros.somenteNovidades ? ehNovidade(produto) : true));
+}
+
+function ordenarProdutos(produtosBase, ordenacaoAtual) {
+  const dados = [...produtosBase];
+
+  if (ordenacaoAtual === "menor") {
+    dados.sort((a, b) => Number(a.preco_venda || 0) - Number(b.preco_venda || 0));
+  }
+
+  if (ordenacaoAtual === "maior") {
+    dados.sort((a, b) => Number(b.preco_venda || 0) - Number(a.preco_venda || 0));
+  }
+
+  return dados;
+}
+
 // =====================================================
 // COMPONENTE
 // =====================================================
@@ -209,39 +295,11 @@ export default function Home() {
   // FILTRAGEM
   // =====================================================
   const filtrados = useMemo(() => {
-    return produtos.filter((p) => {
-      if (ehItemTecnico(p)) {
-        return false;
-      }
-
-      const txt = textoCompleto(p);
-
-      const okBusca =
-        busca.trim() === ""
-          ? true
-          : txt.includes(normalizar(busca));
-
-      let okColecao = true;
-
-      if (colecao === "Prata") okColecao = ehPrata(p);
-      if (colecao === "Semijoias") okColecao = ehSemijoia(p);
-
-     let okTipo = true;
-
-      if (tipo === "Brincos") okTipo = ehBrinco(p);
-      if (tipo === "Colares") okTipo = ehColar(p);
-      if (tipo === "Pulseiras") okTipo = ehPulseira(p);
-      if (tipo === "Anéis") okTipo = ehAnel(p);
-      
-      const okNovidade =
-        somenteNovidades ? ehNovidade(p) : true;
-      
-      return (
-        okBusca &&
-        okColecao &&
-        okTipo &&
-        okNovidade
-);
+    return filtrarProdutos(produtos, {
+      busca,
+      colecao,
+      tipo,
+      somenteNovidades
     });
   }, [produtos, busca, colecao, tipo, somenteNovidades]);
 
@@ -255,15 +313,7 @@ export default function Home() {
 
   
   const lista = useMemo(() => {
-  let dados = [...filtrados];
-
-  if (ordenacao === "menor") {
-  dados.sort((a, b) => Number(a.preco_venda || 0) - Number(b.preco_venda || 0));
-}
-
-if (ordenacao === "maior") {
-  dados.sort((a, b) => Number(b.preco_venda || 0) - Number(a.preco_venda || 0));
-}
+  const dados = ordenarProdutos(filtrados, ordenacao);
 
   const inicio = (pagina - 1) * POR_PAGINA;
   const fim = inicio + POR_PAGINA;
@@ -620,7 +670,7 @@ const total = selecao.reduce((acc, item) => {
                 <button
                   key={item}
                   onClick={() => {
-                    if (["Prata", "Semijoias"].includes(item)) {
+                    if (categoriasPrincipais.includes(item)) {
                       setColecao(item);
                       return;
                     }
@@ -631,7 +681,9 @@ const total = selecao.reduce((acc, item) => {
                       return;
                     }
 
-                    setTipo(item);
+                    if (subcategorias.includes(item)) {
+                      setTipo(item);
+                    }
                   }}
                   style={{
                     border: ativo ? "1px solid #8f735d" : "1px solid #ddd",
