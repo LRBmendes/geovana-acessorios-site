@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.2";
+const SITE_VERSION = "4.3.3";
 
 const beneficios = [
   "Garantia nas peças",
@@ -28,8 +28,14 @@ const termosTecnicosBloqueados = [
   "materiais internos",
 ];
 
-const categoriasPrincipais = ["Prata", "Semijoias"];
-const subcategorias = ["Brincos", "Colares", "Pulseiras", "Anéis"];
+const categoriasFiltro = [
+  { value: "Todos", label: "Todos" },
+  { value: "Semijoias", label: "Semi joias" },
+  { value: "Prata", label: "Prata" },
+  { value: "Ródio", label: "Ródio" },
+];
+
+const tiposFiltro = ["Todos", "Brincos", "Colares", "Pulseiras", "Anéis"];
 
 // =====================================================
 // API
@@ -122,6 +128,12 @@ function ehPrata(produto) {
   );
 }
 
+function ehRodio(produto) {
+  const txt = textoCompleto(produto);
+
+  return txt.includes("rodio branco") || txt.includes("rodio") || txt.includes("ródio");
+}
+
 function ehSemijoia(produto) {
   const txt = textoCompleto(produto);
   const categoria = textoCategoria(produto);
@@ -136,7 +148,6 @@ function ehSemijoia(produto) {
       txt.includes("semi joia") ||
       txt.includes("semi-joia") ||
       txt.includes("dourado") ||
-      txt.includes("rodio branco") ||
       txt.includes("banho") ||
       txt.includes("ouro"))
   );
@@ -226,6 +237,10 @@ function produtoCombinaComColecao(produto, colecaoAtual) {
     return ehSemijoia(produto);
   }
 
+  if (colecaoAtual === "Ródio") {
+    return ehRodio(produto);
+  }
+
   return true;
 }
 
@@ -274,6 +289,14 @@ function filtrarProdutos(produtosBase, filtros) {
 
 function ordenarProdutos(produtosBase, ordenacaoAtual) {
   const dados = [...produtosBase];
+
+  if (ordenacaoAtual === "novidades") {
+    dados.sort((a, b) => {
+      const dataA = new Date(a.imported_at || a.created_at || a.data_importacao || 0).getTime();
+      const dataB = new Date(b.imported_at || b.created_at || b.data_importacao || 0).getTime();
+      return dataB - dataA;
+    });
+  }
 
   if (ordenacaoAtual === "menor") {
     dados.sort((a, b) => Number(a.preco_venda || 0) - Number(b.preco_venda || 0));
@@ -416,6 +439,41 @@ const total = selecao.reduce((acc, item) => {
 
   function verColecao() {
     document.getElementById("colecao")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  const selectStyle = {
+    width: "100%",
+    appearance: "none",
+    border: "1px solid rgba(174,145,105,.38)",
+    borderRadius: 18,
+    padding: mobile ? "13px 42px 13px 15px" : "14px 44px 14px 16px",
+    background:
+      "linear-gradient(135deg,rgba(255,253,249,.98),rgba(246,238,227,.96))",
+    color: "#513d30",
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+    boxShadow: "0 12px 28px rgba(80,58,47,.08), inset 0 1px 0 rgba(255,255,255,.75)",
+    transition: "border-color .18s ease, box-shadow .18s ease, transform .18s ease",
+  };
+
+  function resetarFiltros() {
+    setBusca("");
+    setColecao("Todos");
+    setTipo("Todos");
+    setSomenteNovidades(false);
+    setOrdenacao("padrao");
+    setPagina(1);
+  }
+
+  function atualizarOrdenacao(valor) {
+    if (valor === "padrao") {
+      resetarFiltros();
+      return;
+    }
+
+    setOrdenacao(valor);
+    setSomenteNovidades(valor === "novidades");
   }
 
   return (
@@ -659,132 +717,89 @@ const total = selecao.reduce((acc, item) => {
 
       <section
         style={{
-          maxWidth: 1180,
+          maxWidth: 980,
           margin: "0 auto",
-          padding: mobile ? "14px 16px 14px" : "16px 20px 18px",
+          padding: mobile ? "14px 16px 16px" : "18px 20px 20px",
         }}
       >
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: mobile ? "1fr" : "minmax(260px, 360px) 1fr",
-            gap: mobile ? 10 : 14,
-            alignItems: "center",
+            gridTemplateColumns: mobile ? "1fr" : "repeat(3, minmax(0, 1fr))",
+            gap: mobile ? 10 : 12,
+            alignItems: "end",
           }}
         >
-          <input
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            placeholder="Buscar peças..."
-            style={{
-              width: "100%",
-              padding: mobile ? 11 : 12,
-              borderRadius: 14,
-              border: "1px solid #ddd",
-              fontSize: 15,
-              background: "#fff",
-            }}
-          />
+          <label style={{ display: "grid", gap: 6 }}>
+            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase" }}>
+              Categoria
+            </span>
+            <select
+              value={colecao}
+              onChange={(event) => setColecao(event.target.value)}
+              style={{
+                ...selectStyle,
+                backgroundImage:
+                  "linear-gradient(135deg,rgba(255,253,249,.98),rgba(246,238,227,.96)), linear-gradient(45deg,transparent 50%,#8f735d 50%), linear-gradient(135deg,#8f735d 50%,transparent 50%)",
+                backgroundPosition: "center, calc(100% - 22px) 52%, calc(100% - 16px) 52%",
+                backgroundSize: "auto, 6px 6px, 6px 6px",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              {categoriasFiltro.map((categoria) => (
+                <option value={categoria.value} key={categoria.value}>
+                  {categoria.label}
+                </option>
+              ))}
+            </select>
+          </label>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: mobile ? "flex-start" : "flex-end",
-              gap: 8,
-              flexWrap: "wrap",
-            }}
-          >
-            {["Todos", "Prata", "Semijoias", "Brincos", "Colares", "Pulseiras", "Anéis"].map((item) => {
-              const ativo = colecao === item || tipo === item || (item === "Todos" && colecao === "Todos" && tipo === "Todos");
+          <label style={{ display: "grid", gap: 6 }}>
+            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase" }}>
+              Tipo
+            </span>
+            <select
+              value={tipo}
+              onChange={(event) => setTipo(event.target.value)}
+              style={{
+                ...selectStyle,
+                backgroundImage:
+                  "linear-gradient(135deg,rgba(255,253,249,.98),rgba(246,238,227,.96)), linear-gradient(45deg,transparent 50%,#8f735d 50%), linear-gradient(135deg,#8f735d 50%,transparent 50%)",
+                backgroundPosition: "center, calc(100% - 22px) 52%, calc(100% - 16px) 52%",
+                backgroundSize: "auto, 6px 6px, 6px 6px",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              {tiposFiltro.map((tipoFiltro) => (
+                <option value={tipoFiltro} key={tipoFiltro}>
+                  {tipoFiltro}
+                </option>
+              ))}
+            </select>
+          </label>
 
-              return (
-                <button
-                  key={item}
-                  onClick={() => {
-                    if (categoriasPrincipais.includes(item)) {
-                      setColecao(item);
-                      return;
-                    }
-
-                    if (item === "Todos") {
-                      setColecao("Todos");
-                      setTipo("Todos");
-                      return;
-                    }
-
-                    if (subcategorias.includes(item)) {
-                      setTipo(item);
-                    }
-                  }}
-                  style={{
-                    border: ativo ? "1px solid #8f735d" : "1px solid #ddd",
-                    padding: "8px 12px",
-                    borderRadius: 18,
-                    cursor: "pointer",
-                    background: ativo ? "linear-gradient(135deg,#92745e,#725a47)" : "#fff",
-                    color: ativo ? "#fff" : "#6d5848",
-                    fontSize: 12,
-                    fontWeight: ativo ? "bold" : 500,
-                    boxShadow: ativo ? "0 8px 18px rgba(80,58,47,.14)" : "0 4px 12px rgba(80,58,47,.04)",
-                    transition: "transform .18s ease, box-shadow .18s ease, border-color .18s ease",
-                  }}
-                  onMouseEnter={(event) => {
-                    event.currentTarget.style.transform = "translateY(-1px)";
-                    event.currentTarget.style.borderColor = "#bfa996";
-                  }}
-                  onMouseLeave={(event) => {
-                    event.currentTarget.style.transform = "translateY(0)";
-                    event.currentTarget.style.borderColor = ativo ? "#8f735d" : "#ddd";
-                  }}
-                >
-                  {item}
-                </button>
-              );
-            })}
-
+          <label style={{ display: "grid", gap: 6 }}>
+            <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase" }}>
+              Ordenação
+            </span>
             <select
               value={ordenacao}
-              onChange={(event) => setOrdenacao(event.target.value)}
+              onChange={(event) => atualizarOrdenacao(event.target.value)}
               style={{
-                border: "1px solid #ddd",
-                borderRadius: 18,
-                padding: "8px 12px",
-                background: "#fff",
-                color: "#6d5848",
-                fontSize: 12,
-                cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(80,58,47,.04)",
+                ...selectStyle,
+                backgroundImage:
+                  "linear-gradient(135deg,rgba(255,253,249,.98),rgba(246,238,227,.96)), linear-gradient(45deg,transparent 50%,#8f735d 50%), linear-gradient(135deg,#8f735d 50%,transparent 50%)",
+                backgroundPosition: "center, calc(100% - 22px) 52%, calc(100% - 16px) 52%",
+                backgroundSize: "auto, 6px 6px, 6px 6px",
+                backgroundRepeat: "no-repeat",
               }}
             >
               <option value="padrao">Padrão</option>
-              <option value="menor">Menor preço</option>
               <option value="maior">Maior preço</option>
+              <option value="menor">Menor preço</option>
+              <option value="novidades">Novidades</option>
             </select>
-
-            <button
-              onClick={() => setSomenteNovidades(!somenteNovidades)}
-              style={{
-                border: "1px solid #e5d2bf",
-                background: somenteNovidades ? "#6f7f64" : "#fff",
-                color: somenteNovidades ? "#fff" : "#6f7f64",
-                padding: "8px 12px",
-                borderRadius: 18,
-                cursor: "pointer",
-                fontWeight: "bold",
-                fontSize: 12,
-                boxShadow: somenteNovidades ? "0 8px 18px rgba(80,58,47,.12)" : "0 4px 12px rgba(80,58,47,.04)",
-                transition: "transform .18s ease, box-shadow .18s ease",
-              }}
-              onMouseEnter={(event) => {
-                event.currentTarget.style.transform = "translateY(-1px)";
-              }}
-              onMouseLeave={(event) => {
-                event.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              Novidades
-            </button>
-          </div>
+          </label>
         </div>
       </section>
 

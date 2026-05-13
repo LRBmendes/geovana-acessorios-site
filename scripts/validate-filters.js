@@ -31,6 +31,11 @@ function ehPrata(produto) {
   return txt.includes("prata") || txt.includes("925");
 }
 
+function ehRodio(produto) {
+  const txt = textoCompleto(produto);
+  return txt.includes("rodio branco") || txt.includes("rodio") || txt.includes("ródio");
+}
+
 function ehSemijoia(produto) {
   const txt = textoCompleto(produto);
   const categoria = textoCategoria(produto);
@@ -100,6 +105,7 @@ function produtoCombinaComColecao(produto, colecaoAtual) {
   if (colecaoAtual === "Todos") return true;
   if (colecaoAtual === "Prata") return ehPrata(produto);
   if (colecaoAtual === "Semijoias") return ehSemijoia(produto);
+  if (colecaoAtual === "Ródio") return ehRodio(produto);
   return true;
 }
 
@@ -176,6 +182,11 @@ const cenarios = [
     nome: "Pulseiras + prata + novidades",
     filtros: { colecao: "Prata", tipo: "Pulseiras", busca: "", somenteNovidades: true },
     esperado: ["Pulseira prata 925 delicada"],
+  },
+  {
+    nome: "Ródio + Brincos",
+    filtros: { colecao: "Ródio", tipo: "Brincos", busca: "", somenteNovidades: false },
+    esperado: ["Brinco ródio branco"],
   },
 ];
 
