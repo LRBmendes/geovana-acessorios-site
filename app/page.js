@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.8";
+const SITE_VERSION = "4.3.9";
 
 const beneficios = [
   "Garantia nas peças",
@@ -1462,7 +1462,7 @@ textAlign: "center",
 )}
       <button
         onClick={falarComAtendimento}
-        aria-label="Falar com atendimento Geovana pelo WhatsApp"
+        aria-label="Falar com a Geovana pelo WhatsApp"
         style={{
           position: "fixed",
           right: mobile ? 20 : 24,
@@ -1515,7 +1515,7 @@ textAlign: "center",
         >
           W
         </span>
-        Falar com atendimento
+        Falar com a Geovana
       </button>
       {/* ZOOM */}
       {zoom && (
