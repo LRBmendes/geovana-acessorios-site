@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.3.9";
+const SITE_VERSION = "4.4.0";
 
 const beneficios = [
   "Garantia nas peças",
@@ -469,6 +469,21 @@ const total = selecao.reduce((acc, item) => {
     transition: "border-color .18s ease, box-shadow .18s ease, transform .18s ease",
   };
 
+  const searchStyle = {
+    width: "100%",
+    border: "1px solid rgba(174,145,105,.34)",
+    borderRadius: 999,
+    padding: mobile ? "13px 44px" : "14px 48px",
+    background: "linear-gradient(135deg,rgba(255,253,249,.98),rgba(247,240,231,.96))",
+    color: "#513d30",
+    fontSize: 14,
+    fontWeight: 600,
+    textAlign: "center",
+    outline: "none",
+    boxShadow: "0 12px 28px rgba(80,58,47,.07), inset 0 1px 0 rgba(255,255,255,.78)",
+    transition: "border-color .18s ease, box-shadow .18s ease, transform .18s ease",
+  };
+
   function resetarFiltros() {
     setBusca("");
     setColecao("Todos");
@@ -743,6 +758,53 @@ const total = selecao.reduce((acc, item) => {
           padding: mobile ? "14px 16px 16px" : "18px 20px 20px",
         }}
       >
+        <label
+          style={{
+            display: "grid",
+            gap: 6,
+            width: "100%",
+            maxWidth: mobile ? 360 : 520,
+            margin: mobile ? "0 auto 12px" : "0 auto 14px",
+            position: "relative",
+          }}
+        >
+          <span style={{ color: "#8b7565", fontSize: 11, letterSpacing: 1.8, textTransform: "uppercase", textAlign: "center" }}>
+            Buscar
+          </span>
+          <span
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              left: mobile ? 18 : 20,
+              bottom: mobile ? 13 : 14,
+              color: "#9a8068",
+              fontSize: 14,
+              lineHeight: 1,
+              pointerEvents: "none",
+            }}
+          >
+            ⌕
+          </span>
+          <input
+            type="search"
+            value={busca}
+            onChange={(event) => setBusca(event.target.value)}
+            placeholder="Buscar por brinco, colar, cristal..."
+            aria-label="Buscar peças no catálogo"
+            style={searchStyle}
+            onFocus={(event) => {
+              event.currentTarget.style.borderColor = "rgba(154,125,84,.62)";
+              event.currentTarget.style.boxShadow =
+                "0 14px 32px rgba(80,58,47,.1), inset 0 1px 0 rgba(255,255,255,.82)";
+            }}
+            onBlur={(event) => {
+              event.currentTarget.style.borderColor = "rgba(174,145,105,.34)";
+              event.currentTarget.style.boxShadow =
+                "0 12px 28px rgba(80,58,47,.07), inset 0 1px 0 rgba(255,255,255,.78)";
+            }}
+          />
+        </label>
+
         <div
           style={{
             display: "grid",
