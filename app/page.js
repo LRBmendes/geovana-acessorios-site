@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.4.2";
+const SITE_VERSION = "4.4.3";
 
 const beneficios = [
   "Garantia nas peças",
@@ -676,7 +676,7 @@ const total = selecao.reduce((acc, item) => {
           maxWidth: 980,
           margin: "0 auto",
           textAlign: "center",
-          padding: mobile ? "20px 18px 14px" : "26px 28px 18px",
+          padding: mobile ? "14px 16px 10px" : "18px 26px 14px",
           position: "relative",
          overflow: "hidden",
           borderRadius: mobile ? 0 : 28,
@@ -689,11 +689,11 @@ const total = selecao.reduce((acc, item) => {
         <h1
           style={{
             fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "clamp(24px,2.7vw,32px)",
+            fontSize: "clamp(22px,2.35vw,30px)",
             fontWeight: 500,
             margin: 0,
             color: "#4a372b",
-            lineHeight: 1.1,
+            lineHeight: 1.06,
           }}
         >
           Sofisticação delicada para acompanhar seus momentos.
@@ -701,12 +701,12 @@ const total = selecao.reduce((acc, item) => {
 
              <p
           style={{
-            marginTop: 8,
-            fontSize: 14,
+            marginTop: mobile ? 6 : 7,
+            fontSize: mobile ? 13 : 14,
             color: "#8b7565",
-            maxWidth: 760,
+            maxWidth: 680,
             marginInline: "auto",
-            lineHeight: 1.5,
+            lineHeight: 1.38,
           }}
         >
           Peças selecionadas com cuidado para valorizar sua beleza com elegância.
@@ -714,10 +714,10 @@ const total = selecao.reduce((acc, item) => {
 
         <div
           style={{
-            marginTop: 14,
+            marginTop: mobile ? 10 : 12,
             display: "flex",
             justifyContent: "center",
-            gap: 12,
+            gap: mobile ? 8 : 10,
             flexWrap: "wrap",
           }}
         >
@@ -727,7 +727,7 @@ const total = selecao.reduce((acc, item) => {
               border: "1px solid rgba(255,255,255,.55)",
               background: "linear-gradient(135deg,#92745e,#6f5745)",
               color: "#fff",
-              padding: mobile ? "12px 18px" : "12px 20px",
+              padding: mobile ? "10px 16px" : "11px 19px",
               borderRadius: 30,
               fontWeight: "bold",
               cursor: "pointer",
@@ -753,7 +753,7 @@ const total = selecao.reduce((acc, item) => {
               border: "1px solid #d8c7b9",
               background: "rgba(255,255,255,.92)",
               color: "#6d5848",
-              padding: mobile ? "12px 18px" : "12px 20px",
+              padding: mobile ? "10px 16px" : "11px 19px",
               borderRadius: 30,
               fontWeight: "bold",
               cursor: "pointer",
@@ -778,7 +778,7 @@ const total = selecao.reduce((acc, item) => {
       <section
         style={{
           maxWidth: 760,
-          margin: "8px auto 0",
+          margin: mobile ? "5px auto 0" : "6px auto 0",
           padding: "0 16px",
         }}
       >
@@ -795,7 +795,7 @@ const total = selecao.reduce((acc, item) => {
               key={beneficio}
               style={{
                 borderBottom: "1px solid #d8c7b9",
-                padding: "0 2px 4px",
+                padding: "0 2px 3px",
                 textAlign: "center",
                 color: "#8b7565",
                 fontSize: 12,
@@ -811,7 +811,7 @@ const total = selecao.reduce((acc, item) => {
         style={{
           maxWidth: 1060,
           margin: "0 auto",
-          padding: mobile ? "14px 16px 16px" : "18px 20px 20px",
+          padding: mobile ? "10px 16px 12px" : "12px 20px 16px",
         }}
       >
         <label
@@ -820,7 +820,7 @@ const total = selecao.reduce((acc, item) => {
             gap: 6,
             width: "100%",
             maxWidth: mobile ? 360 : 520,
-            margin: mobile ? "0 auto 12px" : "0 auto 14px",
+            margin: mobile ? "0 auto 10px" : "0 auto 12px",
             position: "relative",
           }}
         >
