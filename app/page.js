@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.4.0";
+const SITE_VERSION = "4.4.1";
 
 const beneficios = [
   "Garantia nas peças",
@@ -36,6 +36,12 @@ const categoriasFiltro = [
 ];
 
 const tiposFiltro = ["Todos", "Brincos", "Colares", "Pulseiras", "Anéis"];
+
+const filtrosComerciais = [
+  { value: "Novidades", label: "✨ Novidades" },
+  { value: "Mais vendidos", label: "🔥 Mais vendidos" },
+  { value: "Em alta", label: "📈 Em alta" },
+];
 
 // =====================================================
 // API
@@ -102,18 +108,47 @@ function whatsappUrl(mensagem) {
 }
 
 function ehNovidade(produto) {
-  const data =
-    produto.imported_at ||
-    produto.created_at ||
-    produto.data_importacao;
+  return produto?.is_novidade === true;
+}
 
-  if (!data) return false;
+function badgeComercial(produto) {
+  if (produto?.is_ultimas_unidades === true) {
+    return {
+      label: "Últimas unidades",
+      background: "linear-gradient(135deg,#8c6b4f,#6f5745)",
+      color: "#fffaf2",
+      shadow: "0 8px 18px rgba(80,58,47,.2)",
+    };
+  }
 
-  const dias =
-    (Date.now() - new Date(data).getTime()) /
-    (1000 * 60 * 60 * 24);
+  if (produto?.is_mais_vendido === true) {
+    return {
+      label: "Mais vendido",
+      background: "linear-gradient(135deg,#d2b579,#a98242)",
+      color: "#fffdf8",
+      shadow: "0 8px 18px rgba(116,78,35,.16)",
+    };
+  }
 
-  return dias <= 30;
+  if (produto?.is_em_alta === true) {
+    return {
+      label: "Em alta",
+      background: "linear-gradient(135deg,#7f8a68,#5d674d)",
+      color: "#fffdf8",
+      shadow: "0 8px 18px rgba(74,86,54,.16)",
+    };
+  }
+
+  if (produto?.is_novidade === true) {
+    return {
+      label: "Novidade",
+      background: "linear-gradient(135deg,#d9bf8f,#b78945)",
+      color: "#fffdf8",
+      shadow: "0 8px 18px rgba(116,78,35,.14)",
+    };
+  }
+
+  return null;
 }
 
 // =====================================================
@@ -288,12 +323,29 @@ function produtoCombinaComBusca(produto, buscaAtual) {
   return textoCompleto(produto).includes(termoBusca);
 }
 
+function produtoCombinaComDestaque(produto, destaqueAtual) {
+  if (destaqueAtual === "Novidades") {
+    return produto?.is_novidade === true;
+  }
+
+  if (destaqueAtual === "Mais vendidos") {
+    return produto?.is_mais_vendido === true;
+  }
+
+  if (destaqueAtual === "Em alta") {
+    return produto?.is_em_alta === true;
+  }
+
+  return true;
+}
+
 function filtrarProdutos(produtosBase, filtros) {
   return produtosBase
     .filter((produto) => !ehItemTecnico(produto))
     .filter((produto) => produtoCombinaComColecao(produto, filtros.colecao))
     .filter((produto) => produtoCombinaComTipo(produto, filtros.tipo))
     .filter((produto) => produtoCombinaComBusca(produto, filtros.busca))
+    .filter((produto) => produtoCombinaComDestaque(produto, filtros.destaqueComercial))
     .filter((produto) => (filtros.somenteNovidades ? ehNovidade(produto) : true));
 }
 
@@ -329,6 +381,7 @@ export default function Home() {
   const [colecao, setColecao] = useState("Todos");
   const [tipo, setTipo] = useState("Todos");
   const [somenteNovidades, setSomenteNovidades] = useState(false);
+  const [destaqueComercial, setDestaqueComercial] = useState("Todos");
   const [ordenacao, setOrdenacao] = useState("padrao");
   const [pagina, setPagina] = useState(1);
 
@@ -353,7 +406,7 @@ export default function Home() {
 
   useEffect(() => {
   setPagina(1);
-}, [busca, colecao, tipo, ordenacao, somenteNovidades]);
+}, [busca, colecao, tipo, ordenacao, somenteNovidades, destaqueComercial]);
 
   // =====================================================
   // FILTRAGEM
@@ -363,9 +416,10 @@ export default function Home() {
       busca,
       colecao,
       tipo,
+      destaqueComercial,
       somenteNovidades
     });
-  }, [produtos, busca, colecao, tipo, somenteNovidades]);
+  }, [produtos, busca, colecao, tipo, destaqueComercial, somenteNovidades]);
 
   // =====================================================
   // PAGINAÇÃO
@@ -489,6 +543,7 @@ const total = selecao.reduce((acc, item) => {
     setColecao("Todos");
     setTipo("Todos");
     setSomenteNovidades(false);
+    setDestaqueComercial("Todos");
     setOrdenacao("padrao");
     setPagina(1);
   }
@@ -507,6 +562,7 @@ const total = selecao.reduce((acc, item) => {
     busca.trim() !== "" ||
     colecao !== "Todos" ||
     tipo !== "Todos" ||
+    destaqueComercial !== "Todos" ||
     somenteNovidades ||
     ordenacao !== "padrao";
 
@@ -890,6 +946,58 @@ const total = selecao.reduce((acc, item) => {
             </select>
           </label>
         </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 8,
+            flexWrap: "wrap",
+            marginTop: mobile ? 12 : 14,
+          }}
+        >
+          {filtrosComerciais.map((filtro) => {
+            const ativo = destaqueComercial === filtro.value;
+
+            return (
+              <button
+                key={filtro.value}
+                type="button"
+                onClick={() =>
+                  setDestaqueComercial((atual) =>
+                    atual === filtro.value ? "Todos" : filtro.value
+                  )
+                }
+                style={{
+                  border: ativo
+                    ? "1px solid rgba(143,111,69,.52)"
+                    : "1px solid rgba(204,181,146,.38)",
+                  background: ativo
+                    ? "linear-gradient(135deg,#9a7d54,#746048)"
+                    : "rgba(255,253,249,.82)",
+                  color: ativo ? "#fffaf2" : "#7a6656",
+                  borderRadius: 999,
+                  padding: mobile ? "9px 12px" : "9px 14px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  boxShadow: ativo
+                    ? "0 12px 24px rgba(80,58,47,.14)"
+                    : "0 8px 18px rgba(80,58,47,.06)",
+                  transition: "transform .18s ease, box-shadow .18s ease, background .18s ease",
+                }}
+                onMouseEnter={(event) => {
+                  event.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(event) => {
+                  event.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                {filtro.label}
+              </button>
+            );
+          })}
+        </div>
       </section>
 
       {/* GRID */}
@@ -963,27 +1071,34 @@ justifyContent: mobile || lista.length <= 3 ? "center" : "start",
     position: "relative",
   }}
 >
-  {ehNovidade(p) && (
-    <div
-      style={{
-        position: "absolute",
-        top: 14,
-        left: 14,
-        zIndex: 2,
-        background:
-          "linear-gradient(135deg,#d9bf8f,#b78945)",
-        color: "#fffdf8",
-        padding: "6px 12px",
-        borderRadius: 30,
-        fontSize: 11,
-        fontWeight: "bold",
-        boxShadow:
-          "0 8px 18px rgba(116,78,35,.18)",
-      }}
-    >
-      NOVIDADE
-    </div>
-  )}
+  {(() => {
+    const badge = badgeComercial(p);
+
+    if (!badge) {
+      return null;
+    }
+
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: 14,
+          left: 14,
+          zIndex: 2,
+          background: badge.background,
+          color: badge.color,
+          padding: "6px 12px",
+          borderRadius: 30,
+          fontSize: 11,
+          fontWeight: "bold",
+          boxShadow: badge.shadow,
+          letterSpacing: 0.2,
+        }}
+      >
+        {badge.label}
+      </div>
+    );
+  })()}
 
   <div
     onClick={() => setZoom(p.imagem_url)}

@@ -105,9 +105,7 @@ function ehAnel(produto) {
 }
 
 function ehNovidade(produto) {
-  if (!produto.imported_at) return false;
-  const dias = (Date.now() - new Date(produto.imported_at).getTime()) / (1000 * 60 * 60 * 24);
-  return dias <= 30;
+  return produto?.is_novidade === true;
 }
 
 function produtoCombinaComColecao(produto, colecaoAtual) {
@@ -132,12 +130,20 @@ function produtoCombinaComBusca(produto, buscaAtual) {
   return !termoBusca || textoCompleto(produto).includes(termoBusca);
 }
 
+function produtoCombinaComDestaque(produto, destaqueAtual) {
+  if (destaqueAtual === "Novidades") return produto?.is_novidade === true;
+  if (destaqueAtual === "Mais vendidos") return produto?.is_mais_vendido === true;
+  if (destaqueAtual === "Em alta") return produto?.is_em_alta === true;
+  return true;
+}
+
 function filtrarProdutos(produtosBase, filtros) {
   return produtosBase
     .filter((produto) => !ehItemTecnico(produto))
     .filter((produto) => produtoCombinaComColecao(produto, filtros.colecao))
     .filter((produto) => produtoCombinaComTipo(produto, filtros.tipo))
     .filter((produto) => produtoCombinaComBusca(produto, filtros.busca))
+    .filter((produto) => produtoCombinaComDestaque(produto, filtros.destaqueComercial))
     .filter((produto) => (filtros.somenteNovidades ? ehNovidade(produto) : true));
 }
 
@@ -145,15 +151,15 @@ const hoje = new Date().toISOString();
 const antigo = new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString();
 
 const produtos = [
-  { nome: "Brinco cristal dourado", categoria: "Brincos > Semijoia - Cód. 1001", preco_venda: 89, imported_at: hoje },
-  { nome: "Brinco ródio branco", categoria: "Brincos > Semijoia Ródio Branco - Cód. 7265", preco_venda: 89, imported_at: hoje },
-  { nome: "Brinco cravejado perola glamour rb", categoria: "Brincos > Semijoia - Cód. 7266", preco_venda: 89, imported_at: hoje },
-  { nome: "Brinco cristal prata 925", categoria: "Brincos > Prata 925 - Cód. 1004", preco_venda: 119, imported_at: hoje },
-  { nome: "Anel solitario prata 925", categoria: "Anel > Prata 925 - Cód. 1005", preco_venda: 129, imported_at: hoje },
+  { nome: "Brinco cristal dourado", categoria: "Brincos > Semijoia - Cód. 1001", preco_venda: 89, imported_at: hoje, is_novidade: true, is_mais_vendido: true },
+  { nome: "Brinco ródio branco", categoria: "Brincos > Semijoia Ródio Branco - Cód. 7265", preco_venda: 89, imported_at: hoje, is_em_alta: true },
+  { nome: "Brinco cravejado perola glamour rb", categoria: "Brincos > Semijoia - Cód. 7266", preco_venda: 89, imported_at: hoje, is_ultimas_unidades: true },
+  { nome: "Brinco cristal prata 925", categoria: "Brincos > Prata 925 - Cód. 1004", preco_venda: 119, imported_at: hoje, is_novidade: true },
+  { nome: "Anel solitario prata 925", categoria: "Anel > Prata 925 - Cód. 1005", preco_venda: 129, imported_at: hoje, is_novidade: true },
   { nome: "Anel dourado zirconia", categoria: "Anel > Semijoia - Cód. 1002", preco_venda: 99, imported_at: antigo },
-  { nome: "Colar cristal dourado", categoria: "Correntes > Feminina Semijoia - Cód. 1003", preco_venda: 109, imported_at: hoje },
-  { nome: "Colar coração liso zirconia na contra argola", categoria: "Correntes > Feminina Semijoia - Cód. 4092", preco_venda: 109, imported_at: hoje },
-  { nome: "Pulseira prata 925 delicada", categoria: "Pulseira > Feminina Prata 925 - Cód. 1006", preco_venda: 139, imported_at: hoje },
+  { nome: "Colar cristal dourado", categoria: "Correntes > Feminina Semijoia - Cód. 1003", preco_venda: 109, imported_at: hoje, is_novidade: true },
+  { nome: "Colar coração liso zirconia na contra argola", categoria: "Correntes > Feminina Semijoia - Cód. 4092", preco_venda: 109, imported_at: hoje, is_novidade: true },
+  { nome: "Pulseira prata 925 delicada", categoria: "Pulseira > Feminina Prata 925 - Cód. 1006", preco_venda: 139, imported_at: hoje, is_novidade: true },
   { nome: "Saquinho zip transparente", categoria: "Embalagem", preco_venda: 1, imported_at: hoje },
 ];
 
@@ -197,6 +203,21 @@ const cenarios = [
     nome: "Ródio + Brincos",
     filtros: { colecao: "Ródio", tipo: "Brincos", busca: "", somenteNovidades: false },
     esperado: ["Brinco cravejado perola glamour rb", "Brinco ródio branco"],
+  },
+  {
+    nome: "Mais vendidos + Brincos",
+    filtros: { colecao: "Todos", tipo: "Brincos", busca: "", destaqueComercial: "Mais vendidos", somenteNovidades: false },
+    esperado: ["Brinco cristal dourado"],
+  },
+  {
+    nome: "Em alta + Ródio",
+    filtros: { colecao: "Ródio", tipo: "Todos", busca: "", destaqueComercial: "Em alta", somenteNovidades: false },
+    esperado: ["Brinco ródio branco"],
+  },
+  {
+    nome: "Novidades + busca cristal",
+    filtros: { colecao: "Todos", tipo: "Todos", busca: "cristal", destaqueComercial: "Novidades", somenteNovidades: false },
+    esperado: ["Brinco cristal dourado", "Brinco cristal prata 925", "Colar cristal dourado"],
   },
 ];
 
