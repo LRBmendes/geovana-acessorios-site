@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "5567984224485";
 const POR_PAGINA = 16;
-const SITE_VERSION = "4.4.1";
+const SITE_VERSION = "4.4.2";
 
 const beneficios = [
   "Garantia nas peças",
